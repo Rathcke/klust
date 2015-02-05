@@ -1,4 +1,5 @@
-\documentclass[12pt]{article}
+\documentclass[12pt,a4paper]{article}
+
 \usepackage[dot, autosize, outputdir="dotgraphs/"]{dot2texi}
 \usepackage{tikz}
 \usetikzlibrary{shapes}
@@ -14,15 +15,44 @@
 \usepackage{graphicx}
 \pagestyle{fancy}
 \fancyfoot[C]{\footnotesize Page \thepage\ of 5}
-\DeclareGraphicsExtensions{.pdf,.png,.jpg}
-\title{Bachelor Project: Synopsis}
-\author{}
 \chead{}
+\DeclareGraphicsExtensions{.pdf,.png,.jpg}
+
+\title{Bachelor Project: Synopsis}
+\author{Anders Kiel Hovgaard \and Nikolaj Dybdahl Rathcke}
+\date{February 23, 2015}
 
 \begin{document}
 \maketitle
 
 \section{Problem Statement}
+\begin{quotation}
+  Clustering huge amounts of RNA-sequences (up to 500 million strings of 50-500
+  characters) based on a given similarity threshold so that any one sequence only
+  appears in exactly one cluster.
+   
+  There are not many available algorithms and tools for efficient clustering of
+  sequencing data. The one tool ‘uclust’ that does the job is closed-source and
+  cost money.
+   
+  Is it possible to create a tool that can match the performance of the
+  proprietary version of uclust?
+\end{quotation}
+
+
+\begin{quotation}
+  Can we implement an algorithm that can cluster sequencing data and compete
+  with the performance of 'uclust'? And if not, how close can we get?"
+\end{quotation}
+
+\begin{itemize}
+  \item En præcisering af hvilken størrelse data vi taler om, måske et minimum?
+  \item En afgrænsning omkring at vi ikke nødvendigvis laver implementation
+    eller algoritme fra scratch.
+  \item En afgrænsning om hvorvidt vi vil analysere det formelt.
+  \item En afgrænsning om hvorvidt vi vil afprøve programmet på de rigtige data.
+\end{itemize}
+
 
 \section{Restrictions on Project}
 
@@ -31,4 +61,3 @@
 
 
 \end{document}
-
