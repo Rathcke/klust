@@ -1,4 +1,3 @@
-
 Edit distance
 =============
 
@@ -34,6 +33,21 @@ A different goal/method than clustering, but might be useful for discovering
 similarities in strings, that e.g. Levenshtein can't discover.
 
 
+k-means clustering, k-medoids, Expectation-maximization algorithm
+=================================================================
+
+  * Requires the number of clusters, k, be specified as a parameter.
+
+  * Optimal solution: k = n clusters for n elements.
+      "Intuitively then, the optimal choice of k will strike a balance between
+       maximum compression of the data using a single cluster, and maximum
+       accuracy by assigning each data point to its own cluster"
+      (Wikipedia: Determining the number of clusters in a data set)
+
+  * Several methods for deciding the number of clusters, k, a few given in the
+    wikipedia article mentioned previously.
+
+
 Other concepts to look into
 ===========================
 
@@ -44,3 +58,10 @@ Other concepts to look into
   * mixture of gaussians
 
   * gauss mixture model
+
+  * Density-based spatial clustering of applications with noise (DBSCAN)
+      - maybe only suitable for Euclidean distanced metric
+      - doesn't require k to be specified a priori
+      - fast for two dimensional clustering
+    Similar: Ordering points to identify the clustering structure (OPTICS)
+
