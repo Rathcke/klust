@@ -11,53 +11,61 @@
 \usepackage{pdfpages}
 \usepackage{gauss}
 \usepackage{fancyvrb}
-\usepackage{fancyhdr}
 \usepackage{graphicx}
-\pagestyle{fancy}
-\fancyfoot[C]{\footnotesize Page \thepage\ of 5}
-\chead{}
-\DeclareGraphicsExtensions{.pdf,.png,.jpg}
+\usepackage{url}
 
-\title{Bachelor Project: Synopsis}
+\usepackage{fancyhdr, lastpage}
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0pt}
+\cfoot{Page \thepage\ of \pageref{LastPage}}
+
+\title{Bachelor project: Synopsis \\ \vspace{2mm}
+      {\LARGE DNA/RNA-sequence clustering algorithm}}
 \author{Anders Kiel Hovgaard \and Nikolaj Dybdahl Rathcke}
 \date{February 23, 2015}
 
 \begin{document}
 \maketitle
+\thispagestyle{fancy}
 
-\section{Problem Statement}
+\section{Problem statement}
 \begin{quotation}
-  Clustering huge amounts of RNA-sequences (up to 500 million strings of 50-500
-  characters) based on a given similarity threshold so that any one sequence only
-  appears in exactly one cluster.
-   
-  There are not many available algorithms and tools for efficient clustering of
-  sequencing data. The one tool ‘uclust’ that does the job is closed-source and
-  cost money.
-   
-  Is it possible to create a tool that can match the performance of the
-  proprietary version of uclust?
+  Can we implement an algorithm that can cluster DNA/RNA-sequencing data, of
+  sizes at least half a million sequences of 50-500 characters each, and
+  compete with the performance of \texttt{UCLUST}? If not, how close can we
+  get?
 \end{quotation}
 
+% Can we implement an algorithm that can cluster sequencing data and compete
+% with the performance of 'uclust'? And if not, how close can we get?"
 
-\begin{quotation}
-  Can we implement an algorithm that can cluster sequencing data and compete
-  with the performance of 'uclust'? And if not, how close can we get?"
-\end{quotation}
+% En præcisering af hvilken størrelse data vi taler om, måske et minimum?
+% En afgrænsning omkring at vi ikke nødvendigvis laver implementation eller
+% algoritme fra scratch.
+% En afgrænsning om hvorvidt vi vil analysere det formelt.
+% En afgrænsning om hvorvidt vi vil afprøve programmet på de rigtige data.
 
-\begin{itemize}
-  \item En præcisering af hvilken størrelse data vi taler om, måske et minimum?
-  \item En afgrænsning omkring at vi ikke nødvendigvis laver implementation
-    eller algoritme fra scratch.
-  \item En afgrænsning om hvorvidt vi vil analysere det formelt.
-  \item En afgrænsning om hvorvidt vi vil afprøve programmet på de rigtige data.
-\end{itemize}
-
-
-\section{Restrictions on Project}
+\subsection{Restrictions on the scope of the project}
+Clustering of protein sequences will not be considered in this project, i.e.
+only RNA and DNA sequences will be considered.
 
 
-\section{•}
+\section{Motivation}
+The problem consists of clustering huge amounts of DNA/RNA-sequences (up to 500
+million strings of 50-500 characters each), based on a given similarity
+threshold, so that any one sequence only appears in exactly one cluster.
+ 
+There are not many available algorithms and tools for efficient clustering of
+sequencing data. The one tool
+\texttt{UCLUST}\footnote{\url{http://drive5.com/usearch/}} that does the job is
+closed-source and cost money.
 
+The goal of this project is to research the possibilities of creating an open
+tool that can match the performance of the proprietary version of
+\texttt{UCLUST}.
+
+%Is it possible to create a tool that can match the performance of the
+%proprietary version of uclust?
 
 \end{document}
