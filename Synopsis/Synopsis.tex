@@ -20,6 +20,8 @@
 \renewcommand{\headrulewidth}{0pt}
 \cfoot{Page \thepage\ of \pageref{LastPage}}
 
+\usepackage{gantt}
+
 \title{Bachelor project: Synopsis \\ \vspace{2mm}
       {\LARGE DNA/RNA-sequence clustering algorithm}}
 \author{Anders Kiel Hovgaard \and Nikolaj Dybdahl Rathcke}
@@ -117,5 +119,24 @@ tool that can match the performance of the proprietary version of
 \item Workload: \textit{5 workdays}
 \end{itemize}
 
+
+\begin{gantt}[xunitlength=0.5cm,fontsize=\small,titlefontsize=\small]{10}{20}
+  \begin{ganttitle}
+    \titleelement{Feb}{4}
+    \titleelement{Mar}{4}
+    \titleelement{Apr}{4}
+    \titleelement{May}{4}
+    \titleelement{Jun}{4}
+  \end{ganttitle}
+  \ganttbar{Alg. design}{2}{2}
+  \ganttbar{Impl. of metric}{4}{10}
+  \ganttbar{Impl. of alg.}{4}{10}
+  \ganttbar{Optimization}{8}{8}
+  \ganttbar{Testing}{6}{10}
+  \ganttbar{Complexity}{12}{4}
+  \ganttbar{Writing}{2}{15}
+  \ganttmilestone[color=cyan]{Report}{17}
+  \ganttmilestone[color=red]{Defense}{18}
+\end{gantt}
 
 \end{document}
