@@ -54,6 +54,14 @@ only RNA and DNA sequences will be considered.
 
 
 \section{Motivation}
+The main motivation for this project comes from a need for efficient tools for
+clustering of sequence data, and other techniques, in the microbiology
+department at the University of Copenhagen. In particular, the idea for this
+project comes from a collaboration between the supervisor of this project,
+Rasmus Fonseca, and Martin Asser Hansen, whom is a bioinformatician in the
+Molecular Microbial Ecology
+Group\footnote{\url{http://www2.bio.ku.dk/microbiology/}}.
+
 The problem consists of clustering huge amounts of DNA/RNA-sequences (up to 500
 million strings of 50-500 characters each), based on a given similarity
 threshold, so that any one sequence only appears in exactly one cluster.
@@ -61,62 +69,70 @@ threshold, so that any one sequence only appears in exactly one cluster.
 There are not many available algorithms and tools for efficient clustering of
 sequencing data. The one tool
 \texttt{UCLUST}\footnote{\url{http://drive5.com/usearch/}} that does the job is
-closed-source and cost money.
+closed-source and considered too expensive. % and cost money.
 
 The goal of this project is to research the possibilities of creating an open
 tool that can match the performance of the proprietary version of
 \texttt{UCLUST}.
 
-%Is it possible to create a tool that can match the performance of the
-%proprietary version of uclust?
 
 \section{Tasks and Time Planning}
 \textbf{Initial algorithm design}
 \begin{itemize}
-\item Product: \textit{An initial design of an algorithm that performs clustering on DNA/RNA sequences. Choice of distance metric and parameters.}
-\item Dependencies: \textit{None.}
-\item Workload: \textit{10 workdays}
+  \item Product: \textit{An initial design of an algorithm that performs
+    clustering on DNA/RNA sequences. Choice of distance metric and parameters.}
+  \item Dependencies: \textit{None.}
+  \item Workload: \textit{10 workdays}
 \end{itemize}
 
 \noindent
 \textbf{Implementation of distance metric}
 \begin{itemize}
-\item Product: \textit{An implementation of the chosen distance metric in \texttt{C}/\texttt{C++} or similar.}
-\item Dependencies: \textit{Distance metric from "Initial algorithm design". Ongoing testing and optimization.}
-\item Workload: \textit{10 workdays}
+  \item Product: \textit{An implementation of the chosen distance metric in
+    \texttt{C}/\texttt{C++} or similar.}
+  \item Dependencies: \textit{Distance metric from "Initial algorithm design".
+    Ongoing testing and optimization.}
+  \item Workload: \textit{10 workdays}
 \end{itemize}
 
 \noindent
 \textbf{Algorithm implementation}
 \begin{itemize}
-\item Product: \textit{An implementation of the algorithm in \texttt{C}/\texttt{C++} or similar.}
-\item Dependencies: \textit{Clustering algorithm from "Initial algorithm design" and the product from the task "Implementation of distance metric". Ongoing testing and optimization}
-\item Workload: \textit{20 workdays}
+  \item Product: \textit{An implementation of the algorithm in
+    \texttt{C}/\texttt{C++} or similar.}
+  \item Dependencies: \textit{Clustering algorithm from "Initial algorithm
+    design" and the product from the task "Implementation of distance metric".
+    Ongoing testing and optimization}
+  \item Workload: \textit{20 workdays}
 \end{itemize}
 
 \noindent
 \textbf{Optimization}
 \begin{itemize}
-\item Product: \textit{A modified algorithm with reduced running time.}
-\item Dependencies: \textit{Ongoing process with the tasks "Implementation of distance metric", "Algorithm implementation" and "Testing".}
-\item Workload: \textit{20 workdays}
+  \item Product: \textit{A modified algorithm with reduced running time.}
+  \item Dependencies: \textit{Ongoing process with the tasks "Implementation of
+    distance metric", "Algorithm implementation" and "Testing".}
+  \item Workload: \textit{20 workdays}
 \end{itemize}
 
 \noindent
 \textbf{Testing}
 \begin{itemize}
-\item Product: \textit{Ongoing feedback on the algorithm and optimization.}
-\item Resources: \textit{Real life data and a powerful computer with similar specifications to what would be used.}
-\item Dependencies: \textit{Ongoing process with the tasks "Implementation of distance metric", "Algorithm implementation" and "Optimization"}
-\item Workload: \textit{10 workdays}
+  \item Product: \textit{Ongoing feedback on the algorithm and optimization.}
+  \item Resources: \textit{Real life data and a powerful computer with similar
+    specifications to what would be used.}
+  \item Dependencies: \textit{Ongoing process with the tasks "Implementation of
+    distance metric", "Algorithm implementation" and "Optimization"}
+  \item Workload: \textit{10 workdays}
 \end{itemize}
 
 \noindent
 \textbf{Time complexity analysis}
 \begin{itemize}
-\item Product: \textit{An analysis of the algorithm and possibly major optimizations.}
-\item Dependencies: \textit{Algorithm and major optimizations.}
-\item Workload: \textit{5 workdays}
+  \item Product: \textit{An analysis of the algorithm and possibly major
+    optimizations.}
+  \item Dependencies: \textit{Algorithm and major optimizations.}
+  \item Workload: \textit{5 workdays}
 \end{itemize}
 
 
