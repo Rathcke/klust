@@ -1,4 +1,4 @@
-\documentclass[12pt,a4paper]{article}
+\documentclass[11pt,a4paper]{article}
 
 \usepackage[dot, autosize, outputdir="dotgraphs/"]{dot2texi}
 \usepackage{tikz}
@@ -13,6 +13,7 @@
 \usepackage{graphicx}
 \usepackage{url}
 
+% headers and footers
 \usepackage{fancyhdr, lastpage}
 \pagestyle{fancy}
 \fancyhf{}
@@ -22,14 +23,13 @@
 % Gantt diagrams
 \usepackage{gantt}
 
-\title{Bachelor project: Synopsis \\
-       \vspace{2mm}
-       {\LARGE DNA/RNA-sequence clustering algorithm}} % TODO: without "algorithm" ?
 % Alternative titles:
 %   "Efficient clustering of massive sequencing data"
 %   "Efficient DNA/RNA-sequence clustering"
 %   "Efficient clustering of massive amounts of DNA/RNA-sequences"
-
+\title{Bachelor project: Synopsis \\
+       \vspace{2mm}
+       {\LARGE DNA/RNA-sequence clustering algorithm}} % TODO: without "algorithm" ?
 \author{Anders Kiel Hovgaard \and Nikolaj Dybdahl Rathcke}
 \date{February 23, 2015}
 
@@ -52,11 +52,18 @@ with the performance of \texttt{UCLUST}? If not, how close can we get?
 % En afgrænsning om hvorvidt vi vil afprøve programmet på de rigtige data.
 
 \subsection{Restrictions on the scope of the project}
-The algorithm to be implemented might either be an original algorithm that we
-create or a tweaked version of an existing algorthim. The same holds for the
-implementation: we might build upon and change an existing implementation, we
-might start from scratch or we might just reuse parts of existing open
-implementations. % TODO: too weak?
+%The algorithm to be implemented might either be an original algorithm that we
+%create or a modified version of an existing algorithm. Similarly for the
+%implementation, we might reuse parts of existing open implementation to some
+%extent.
+%The same holds for the implementation: we might build upon and change an
+%existing implementation, we might start from scratch or we might just reuse
+%parts of existing open implementations. % TODO: too weak?
+
+The algorithm to be implemented might either be one that we design from scratch
+or a modified version of an existing algorithm. Similarly for the
+implementation, we might reuse parts of existing open implementation to some
+extent.
 
 Clustering of protein sequences will not be considered in this project, i.e.
 only RNA and DNA sequences will be considered.
@@ -64,10 +71,10 @@ only RNA and DNA sequences will be considered.
 
 \section{Motivation}
 The main motivation for this project comes from a need for efficient tools for
-clustering of sequence data, and other techniques, in the microbiology
+clustering of sequence data, and related techniques, in the microbiology
 department at the University of Copenhagen. In particular, the idea for this
 project comes from a collaboration between the supervisor of this project,
-Rasmus Fonseca, and Martin Asser Hansen, whom is a bioinformatician in the
+Rasmus Fonseca, and Martin Asser Hansen, who is a bioinformatician in the
 Molecular Microbial Ecology
 Group\footnote{\url{http://www2.bio.ku.dk/microbiology/}}.
 
@@ -85,7 +92,33 @@ tool that can match the performance of the proprietary version of
 \texttt{UCLUST}.
 
 
-\section{Tasks and Time Planning}
+\section{Tasks and time planning}
+\begin{itemize}
+  \item Survey existing literature, algorithms and implementations of sequence
+    clustering. ($\sim$1-2 weeks)
+
+  \item Choose distance metric and parameters, design algorithm for calculating
+    distance. ($\sim$1 week)
+
+  \item Design initial version of clustering algorithm. ($\sim$1-2 weeks)
+
+  \item Implement distance metric. ($\sim$1-2 weeks) % TODO: why mention language here?
+
+  \item Implement clustering algorithm. ($\sim$3-4 weeks)
+
+  \item Analyze and profile the implementation, investigate possibilities for
+    optimization and perform these on the implementation. ($\sim$3-4 weeks)
+
+  \item Perform ongoing testing after implementation of initial algorithm and
+    in-between optimizations and modifications. ($\sim$3-4 weeks)
+
+  \item Analyze the time and space complexity of the algorithm. ($\sim$1-2
+    weeks)
+\end{itemize}
+
+\hfill\\
+\hfill\\
+\hfill\\
 \textbf{Initial algorithm design}
 \begin{itemize}
   \item Product: \textit{An initial design of an algorithm that performs
