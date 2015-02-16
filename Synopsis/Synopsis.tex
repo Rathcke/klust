@@ -7,7 +7,6 @@
 \usepackage{amsmath}
 \usepackage{mathtools}
 \usepackage{amsfonts}
-\usepackage{lastpage}
 \usepackage{pdfpages}
 \usepackage{gauss}
 \usepackage{fancyvrb}
@@ -20,10 +19,17 @@
 \renewcommand{\headrulewidth}{0pt}
 \cfoot{Page \thepage\ of \pageref{LastPage}}
 
+% Gantt diagrams
 \usepackage{gantt}
 
-\title{Bachelor project: Synopsis \\ \vspace{2mm}
-      {\LARGE DNA/RNA-sequence clustering algorithm}}
+\title{Bachelor project: Synopsis \\
+       \vspace{2mm}
+       {\LARGE DNA/RNA-sequence clustering algorithm}} % TODO: without "algorithm" ?
+% Alternative titles:
+%   "Efficient clustering of massive sequencing data"
+%   "Efficient DNA/RNA-sequence clustering"
+%   "Efficient clustering of massive amounts of DNA/RNA-sequences"
+
 \author{Anders Kiel Hovgaard \and Nikolaj Dybdahl Rathcke}
 \date{February 23, 2015}
 
@@ -32,12 +38,9 @@
 \thispagestyle{fancy}
 
 \section{Problem statement}
-\begin{quotation}
-  Can we implement an algorithm that can cluster DNA/RNA-sequencing data, of
-  sizes at least half a million sequences of 50-500 characters each, and
-  compete with the performance of \texttt{UCLUST}? If not, how close can we
-  get?
-\end{quotation}
+Can we implement an algorithm that can cluster DNA/RNA-sequencing data, of
+sizes at least half a million sequences of 50-500 characters each, and compete
+with the performance of \texttt{UCLUST}? If not, how close can we get?
 
 % Can we implement an algorithm that can cluster sequencing data and compete
 % with the performance of 'uclust'? And if not, how close can we get?"
@@ -49,6 +52,12 @@
 % En afgrænsning om hvorvidt vi vil afprøve programmet på de rigtige data.
 
 \subsection{Restrictions on the scope of the project}
+The algorithm to be implemented might either be an original algorithm that we
+create or a tweaked version of an existing algorthim. The same holds for the
+implementation: we might build upon and change an existing implementation, we
+might start from scratch or we might just reuse parts of existing open
+implementations. % TODO: too weak?
+
 Clustering of protein sequences will not be considered in this project, i.e.
 only RNA and DNA sequences will be considered.
 
