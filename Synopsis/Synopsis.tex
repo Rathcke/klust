@@ -12,6 +12,7 @@
 \usepackage{fancyvrb}
 \usepackage{graphicx}
 \usepackage{url}
+\usepackage{float}
 
 % headers and footers
 \usepackage{fancyhdr, lastpage}
@@ -29,7 +30,7 @@
 %   "Efficient clustering of massive amounts of DNA/RNA-sequences"
 \title{Bachelor project: Synopsis \\
        \vspace{2mm}
-       {\LARGE DNA/RNA-sequence clustering algorithm}} % TODO: without "algorithm" ?
+       {\LARGE Efficient DNA/RNA-sequence clustering}} % TODO: without "algorithm" ?
 \author{Anders Kiel Hovgaard \and Nikolaj Dybdahl Rathcke}
 \date{February 23, 2015}
 
@@ -93,6 +94,14 @@ tool that can match the performance of the proprietary version of
 
 
 \section{Tasks and time planning}
+The following tasks are not necessarily dependent on each other in the order
+presented, for instance, the implementation of the distance metric and
+clustering algorithm will be interleaved with testing and optimization.
+Thus, some of the tasks will be completed in parallel. Furthermore, the report
+will be written concurrently with some of the tasks.
+
+A Gantt diagram for the project plan is shown in figure \ref{fig:gantt}.
+
 \begin{itemize}
   \item Survey existing literature, algorithms and implementations of sequence
     clustering. ($\sim$1-2 weeks)
@@ -102,12 +111,13 @@ tool that can match the performance of the proprietary version of
 
   \item Design initial version of clustering algorithm. ($\sim$1-2 weeks)
 
-  \item Implement distance metric. ($\sim$1-2 weeks) % TODO: why mention language here?
+  \item Implement distance metric. ($\sim$1-2 weeks)
 
   \item Implement clustering algorithm. ($\sim$3-4 weeks)
 
   \item Analyze and profile the implementation, investigate possibilities for
-    optimization and perform these on the implementation. ($\sim$3-4 weeks)
+    optimization and perform these on the implementation. Possibly perform
+    parallelization of the implementation. ($\sim$3-4 weeks)
 
   \item Perform ongoing testing after implementation of initial algorithm and
     in-between optimizations and modifications. ($\sim$3-4 weeks)
@@ -116,9 +126,39 @@ tool that can match the performance of the proprietary version of
     weeks)
 \end{itemize}
 
-\hfill\\
-\hfill\\
-\hfill\\
+\begin{figure}[H]
+  \begin{gantt}[xunitlength=0.5cm,fontsize=\small,titlefontsize=\small]{10}{20}
+    \begin{ganttitle}
+      \titleelement{Feb}{4}
+      \titleelement{Mar}{4}
+      \titleelement{Apr}{4}
+      \titleelement{May}{4}
+      \titleelement{Jun}{4}
+    \end{ganttitle}
+    \ganttbar{Alg. design}{2}{4}
+    \ganttbar{Impl. of metric}{4}{10}
+    \ganttbar{Impl. of alg.}{4}{10}
+    \ganttbar{Optimization}{8}{8}
+    \ganttbar{Testing}{5}{11}
+    \ganttbar{Complexity}{12}{4}
+    \ganttbar{Writing}{3}{14}
+    \ganttmilestone[color=cyan]{Report}{17}
+    \ganttmilestone[color=red]{Defense}{18}
+  \end{gantt}
+  \caption{Gantt diagram of the project plan.}
+  \label{fig:gantt}
+\end{figure}
+
+
+\section{Product}
+We will design and implement an algorithm for efficient clustering of massive
+amounts of DNA/RNA-sequences, most likely in a programming language such as
+\texttt{C} or \texttt{C++}. Furthermore, we will write a report that documents
+our efforts, the algorithms and implementations produced and evaluates their
+performance.
+
+\newpage
+\subsection{Alternative task list}
 \textbf{Initial algorithm design}
 \begin{itemize}
   \item Product: \textit{An initial design of an algorithm that performs
@@ -177,24 +217,5 @@ tool that can match the performance of the proprietary version of
   \item Workload: \textit{5 workdays}
 \end{itemize}
 
-
-\begin{gantt}[xunitlength=0.5cm,fontsize=\small,titlefontsize=\small]{10}{20}
-  \begin{ganttitle}
-    \titleelement{Feb}{4}
-    \titleelement{Mar}{4}
-    \titleelement{Apr}{4}
-    \titleelement{May}{4}
-    \titleelement{Jun}{4}
-  \end{ganttitle}
-  \ganttbar{Alg. design}{2}{2}
-  \ganttbar{Impl. of metric}{4}{10}
-  \ganttbar{Impl. of alg.}{4}{10}
-  \ganttbar{Optimization}{8}{8}
-  \ganttbar{Testing}{6}{10}
-  \ganttbar{Complexity}{12}{4}
-  \ganttbar{Writing}{2}{15}
-  \ganttmilestone[color=cyan]{Report}{17}
-  \ganttmilestone[color=red]{Defense}{18}
-\end{gantt}
 
 \end{document}
