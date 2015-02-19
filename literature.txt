@@ -1,0 +1,30 @@
+Books
+=====
+
+  * "Sequence Data Mining" (book, Springer),
+    Guozhu Dong PhD, Jian Pei PhD
+
+  * "Parallel Computing for Bioinformatics and Computational Biology: Models,
+     Enabling Technologies, and Case Studies"
+
+     Chapter: "10. Parallel Implementations of Local Sequence Alignment:
+               Hardware and Software" 
+
+Articles
+========
+
+  * "Fast DNA Sequence Clustering Based on Longest Common Subsequence"
+      Namiki, Ishida, Akiyama (Tokyo Institute of Technology)
+      (Communications in Computer and Information Science, 2013, Vol.304)
+
+  * "A grammar-based distance metric enables fast and accurate clustering of
+     large sets of 16S sequences", Russell et al.
+
+  * "A measure of DNA sequence similarity by Fourier Transform with
+     applications on hierarchical clustering",
+    Changchuan Yin, Ying Chen, Stephen S.-T. Yau.
+
+  * "ESPRIT-Tree: hierarchical clustering analysis of millions of 16S rRNA
+     pyrosequences in quasilinear computational time"
+
+  * "Evolving Better Multiple Sequence Alignments"
