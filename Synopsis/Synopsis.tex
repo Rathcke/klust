@@ -13,6 +13,7 @@
 \usepackage{graphicx}
 \usepackage{url}
 \usepackage{float}
+\usepackage[bottom]{footmisc}
 
 % headers and footers
 \usepackage{fancyhdr, lastpage}
@@ -30,7 +31,7 @@
 %   "Efficient clustering of massive amounts of DNA/RNA-sequences"
 \title{Bachelor project: Synopsis \\
        \vspace{2mm}
-       {\LARGE Efficient DNA/RNA-sequence clustering}} % TODO: without "algorithm" ?
+       {\LARGE Efficient DNA/RNA-sequence clustering}}
 \author{Anders Kiel Hovgaard \and Nikolaj Dybdahl Rathcke}
 \date{February 23, 2015}
 
@@ -39,35 +40,23 @@
 \thispagestyle{fancy}
 
 \section{Problem statement}
-Can we implement an algorithm that can cluster DNA/RNA-sequencing data, of
-sizes at least half a million sequences of 50-500 characters each, and compete
-with the performance of \texttt{UCLUST}? If not, how close can we get?
+Can we implement an algorithm that can cluster DNA/RNA-sequencing data, of at
+least half a million sequences of 500-1500 characters each, and compete with
+the performance of \texttt{UCLUST}? If not, how close can we get?
 
-% Can we implement an algorithm that can cluster sequencing data and compete
-% with the performance of 'uclust'? And if not, how close can we get?"
 
-% En præcisering af hvilken størrelse data vi taler om, måske et minimum?
-% En afgrænsning omkring at vi ikke nødvendigvis laver implementation eller
-% algoritme fra scratch.
-% En afgrænsning om hvorvidt vi vil analysere det formelt.
-% En afgrænsning om hvorvidt vi vil afprøve programmet på de rigtige data.
+\subsection{Limitations on the scope of the project}
+The algorithm might either be one that we design from scratch or a modified
+version of an existing algorithm. Similarly for the implementation, we might
+reuse parts of existing open implementations to some extent.
 
-\subsection{Restrictions on the scope of the project}
-%The algorithm to be implemented might either be an original algorithm that we
-%create or a modified version of an existing algorithm. Similarly for the
-%implementation, we might reuse parts of existing open implementation to some
-%extent.
-%The same holds for the implementation: we might build upon and change an
-%existing implementation, we might start from scratch or we might just reuse
-%parts of existing open implementations. % TODO: too weak?
+Clustering of protein sequences will not be considered in this project,
+i.e. only RNA and DNA sequences will be considered.
 
-The algorithm to be implemented might either be one that we design from scratch
-or a modified version of an existing algorithm. Similarly for the
-implementation, we might reuse parts of existing open implementation to some
-extent.
+The implementation will be developed on GNU/Linux systems and will not be
+guaranteed to work on other operating systems.
 
-Clustering of protein sequences will not be considered in this project, i.e.
-only RNA and DNA sequences will be considered.
+We will only write a brief user manual for the program.
 
 
 \section{Motivation}
@@ -80,13 +69,15 @@ Molecular Microbial Ecology
 Group\footnote{\url{http://www2.bio.ku.dk/microbiology/}}.
 
 The problem consists of clustering huge amounts of DNA/RNA-sequences (up to 500
-million strings of 50-500 characters each), based on a given similarity
-threshold, so that any one sequence only appears in exactly one cluster.
+million strings of 500-1500 characters each), based on a given similarity
+threshold, such that each sequence belongs to only one cluster and the
+sequences within a cluster are more similar to each other than to sequences in
+other clusters.
  
 There are not many available algorithms and tools for efficient clustering of
 sequencing data. The one tool
 \texttt{UCLUST}\footnote{\url{http://drive5.com/usearch/}} that does the job is
-closed-source and considered too expensive. % and cost money.
+closed-source and considered too expensive.
 
 The goal of this project is to research the possibilities of creating an open
 tool that can match the performance of the proprietary version of
@@ -104,7 +95,8 @@ A Gantt diagram for the project plan is shown in figure \ref{fig:gantt}.
 
 \begin{itemize}
   \item Survey existing literature, algorithms and implementations of sequence
-    clustering. ($\sim$1-2 weeks)
+    clustering. ($\sim$1-2 weeks\footnote{Approximate workload, not necessarily
+    actual duration of task.})
 
   \item Choose distance metric and parameters, design algorithm for calculating
     distance. ($\sim$1 week)
@@ -127,7 +119,7 @@ A Gantt diagram for the project plan is shown in figure \ref{fig:gantt}.
 \end{itemize}
 
 \begin{figure}[H]
-  \begin{gantt}[xunitlength=0.5cm,fontsize=\small,titlefontsize=\small]{10}{20}
+  \begin{gantt}[xunitlength=0.5cm,fontsize=\small,titlefontsize=\small]{12}{20}
     \begin{ganttitle}
       \titleelement{Feb}{4}
       \titleelement{Mar}{4}
@@ -136,12 +128,14 @@ A Gantt diagram for the project plan is shown in figure \ref{fig:gantt}.
       \titleelement{Jun}{4}
     \end{ganttitle}
     \ganttbar{Alg. design}{2}{4}
-    \ganttbar{Impl. of metric}{4}{10}
-    \ganttbar{Impl. of alg.}{4}{10}
-    \ganttbar{Optimization}{8}{8}
-    \ganttbar{Testing}{5}{11}
-    \ganttbar{Complexity}{12}{4}
-    \ganttbar{Writing}{3}{14}
+    \ganttbar{Impl. of metric}{4}{7}
+    \ganttbar{Impl. of alg.}{4}{7}
+    \ganttmilestone[color=green]{Prototype}{8}
+    \ganttbar{Optimization}{8}{7}
+    \ganttbar{Testing}{5}{10}
+    \ganttbar{Complexity}{12}{3}
+    \ganttbar{Writing}{4}{13}
+    \ganttmilestone[color=cyan]{Mid-way report}{10}
     \ganttmilestone[color=cyan]{Report}{17}
     \ganttmilestone[color=red]{Defense}{18}
   \end{gantt}
@@ -156,66 +150,6 @@ amounts of DNA/RNA-sequences, most likely in a programming language such as
 \texttt{C} or \texttt{C++}. Furthermore, we will write a report that documents
 our efforts, the algorithms and implementations produced and evaluates their
 performance.
-
-\newpage
-\subsection{Alternative task list}
-\textbf{Initial algorithm design}
-\begin{itemize}
-  \item Product: \textit{An initial design of an algorithm that performs
-    clustering on DNA/RNA sequences. Choice of distance metric and parameters.}
-  \item Dependencies: \textit{None.}
-  \item Workload: \textit{10 workdays}
-\end{itemize}
-
-\noindent
-\textbf{Implementation of distance metric}
-\begin{itemize}
-  \item Product: \textit{An implementation of the chosen distance metric in
-    \texttt{C}/\texttt{C++} or similar.}
-  \item Dependencies: \textit{Distance metric from "Initial algorithm design".
-    Ongoing testing and optimization.}
-  \item Workload: \textit{10 workdays}
-\end{itemize}
-
-\noindent
-\textbf{Algorithm implementation}
-\begin{itemize}
-  \item Product: \textit{An implementation of the algorithm in
-    \texttt{C}/\texttt{C++} or similar.}
-  \item Dependencies: \textit{Clustering algorithm from "Initial algorithm
-    design" and the product from the task "Implementation of distance metric".
-    Ongoing testing and optimization}
-  \item Workload: \textit{20 workdays}
-\end{itemize}
-
-\noindent
-\textbf{Optimization}
-\begin{itemize}
-  \item Product: \textit{A modified algorithm with reduced running time.}
-  \item Dependencies: \textit{Ongoing process with the tasks "Implementation of
-    distance metric", "Algorithm implementation" and "Testing".}
-  \item Workload: \textit{20 workdays}
-\end{itemize}
-
-\noindent
-\textbf{Testing}
-\begin{itemize}
-  \item Product: \textit{Ongoing feedback on the algorithm and optimization.}
-  \item Resources: \textit{Real life data and a powerful computer with similar
-    specifications to what would be used.}
-  \item Dependencies: \textit{Ongoing process with the tasks "Implementation of
-    distance metric", "Algorithm implementation" and "Optimization"}
-  \item Workload: \textit{10 workdays}
-\end{itemize}
-
-\noindent
-\textbf{Time complexity analysis}
-\begin{itemize}
-  \item Product: \textit{An analysis of the algorithm and possibly major
-    optimizations.}
-  \item Dependencies: \textit{Algorithm and major optimizations.}
-  \item Workload: \textit{5 workdays}
-\end{itemize}
 
 
 \end{document}
