@@ -52,7 +52,7 @@ int Distance::gram_pos(string s) {
                 cost += 3*pow(4,slen-i-1);
                 break;
             default:
-                cout << "Unknown char passed to gram_pos";
+                cout << "Unknown char passed to gram_pos" << '\n';
         }
     }
     return cost;
