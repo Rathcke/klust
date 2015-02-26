@@ -28,12 +28,16 @@ int main()
     cout << "b = " << b << endl;
     cout << "c = " << c << endl;
     cout << "d = " << d << endl;
-
-    cout << "d2 distance(a,b): "            << dist.d2(a,b,3)           << endl;
-    cout << "Levenshtein distance(a,b): "   << dist.levenshtein(a,b)    << endl;
     cout << endl;
-    cout << "d2 distance(c,d): "            << dist.d2(c,d,3)           << endl;
-    cout << "Levenshtein distance(c,d): "   << dist.levenshtein(c,d)    << endl;
+
+    //string a = "aaaaagg";
+    //string b = "cccccgg";
+
+    cout << "d2 distance(a,b): "            << dist.d2(a,b,2)           << endl;
+    cout << "Levenshtein distance(a,b): "   << dist.levenshtein(a,b)    << endl;
+
+    //string a = "acgtgtgacgtgcatagcgtacgtgac";
+    //string b = "gtgtacgatagtcgtactgatcatg";
 
     return 0;
 }

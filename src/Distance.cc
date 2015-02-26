@@ -4,32 +4,45 @@
 #include <string>
 #include <algorithm>
 #include <cmath>
+#include <map>
 using namespace std;
 
+#include <assert.h>
+
 int Distance::d2(string s, string t, int k) {
-    int gramlen = pow(4,k);
-    int slen = s.length(), tlen = t.length();
-    int dist = 0;
-    int v0[gramlen], v1[gramlen];
-    int i;
-    // Initialize two array to count how many times each substring occurs in
-    // string
-    for (i = 0; i < gramlen; i++) {
-        v0[i] = 0;
-        v1[i] = 0;
-    }
+    int slen = s.length(),  // length of input strings
+        tlen = t.length();
+    int dist = 0;           // resulting distance
+    map<int, int> grams;    // gram count index in lexicographical order
+
+    int i, index;
     // Amount of each substring in s
     for (i = 0; i <= slen-k; i++) {
-        v0[gram_pos(s.substr(i,k))]++;
+        index = gram_pos(s.substr(i,k));
+
+        if (grams.find(index) == grams.end())
+            grams.insert(pair<int,int>(index, 1));
+        else
+            grams[index]++;
     }
+
     // Amount of each substring in t
     for (i = 0; i <= tlen-k; i++) {
-        v1[gram_pos(t.substr(i,k))]++;
+        index = gram_pos(t.substr(i,k));
+
+        if (grams.find(index) == grams.end())
+            grams.insert(pair<int,int>(index, -1));
+        else
+            grams[index]--;
     }
+
     // Euclidian distance between the two arrays
-    for (i = 0; i < gramlen; i++) {
-        dist += pow(v0[i]-v1[i],2);
+    for (map<int,int>::iterator it = grams.begin(); it != grams.end(); ++it) {
+        dist += pow(it->second, 2);
+        cout << it->second << " ";
     }
+    cout << endl;
+
     return sqrt(dist);
 }
 
