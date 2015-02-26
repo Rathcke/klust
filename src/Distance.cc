@@ -72,30 +72,30 @@ int Distance::gram_pos(string s) {
 }
 
 int Distance::levenshtein(string s, string t) {
-	int slen = s.length();
-	int tlen = t.length();
+    int slen = s.length();
+    int tlen = t.length();
     // Trivial cases
-	if (slen == 0) {
-		return tlen;
-	}
-	if (tlen == 0) {
-		return slen;
-	}
-	int col[slen + 1];
-	int pcol[slen + 1];
-	for (int i = 0; i < slen+1; i++) {
-		pcol[i] = i;
-	}
+    if (slen == 0) {
+        return tlen;
+    }
+    if (tlen == 0) {
+        return slen;
+    }
+    int col[slen + 1];
+    int pcol[slen + 1];
+    for (int i = 0; i < slen+1; i++) {
+        pcol[i] = i;
+    }
     // Dynamic approach to calculate the distance between two strings
-	for (int i = 0; i < tlen; i++) {
-		col[0] = i+1;
-		for (int j = 0; j < slen; j++) {
-			int cost = !(s[i] == t[j]);
-			col[j+1] = min(col[j] + 1, min(pcol[j+1] + 1, pcol[j] + cost));
-		}
-		for (int j = 0; j < slen + 1; j++) {
-			pcol[j] = col[j];
-		}
-	}
-	return col[slen];
+    for (int i = 0; i < tlen; i++) {
+        col[0] = i+1;
+        for (int j = 0; j < slen; j++) {
+            int cost = !(s[i] == t[j]);
+            col[j+1] = min(col[j] + 1, min(pcol[j+1] + 1, pcol[j] + cost));
+        }
+        for (int j = 0; j < slen + 1; j++) {
+            pcol[j] = col[j];
+        }
+    }
+    return col[slen];
 }
