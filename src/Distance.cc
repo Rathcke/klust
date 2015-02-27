@@ -90,7 +90,7 @@ int Distance::levenshtein(string s, string t) {
 	for (int i = 0; i < tlen; i++) {
 		col[0] = i+1;
 		for (int j = 0; j < slen; j++) {
-			int cost = !(s[i] == t[j]);
+			int cost = !(s[j] == t[i]);
 			col[j+1] = min(col[j] + 1, min(pcol[j+1] + 1, pcol[j] + cost));
 		}
 		for (int j = 0; j < slen + 1; j++) {
