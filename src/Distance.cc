@@ -1,14 +1,18 @@
-#include "Distance.h"
-
-#include <iostream>
-#include <string>
 #include <algorithm>
 #include <cmath>
+#include <iostream>
 #include <map>
+#include <string>
+
+#include "Distance.h"
+
 using namespace std;
 
-#include <assert.h>
-
+/**
+ * Given two strings and an integer k, calculated the d2-distance between the
+ * strings based on k-grams: count the occurences of each poosible k-mer and
+ * return the Euclidean distance between the two k-mer occurence vectors.
+ */
 int Distance::d2(string s, string t, int k) {
     int slen = s.length(),  // length of input strings
         tlen = t.length();
@@ -46,6 +50,12 @@ int Distance::d2(string s, string t, int k) {
     return sqrt(dist);
 }
 
+/**
+ * Calculate (0-based) index for a given k-gram in lexicographical order and
+ * based on lenght k of given input string. Example:
+ *   gram_pos("ag") == 2
+ *   gram_pos("ca") == 4
+ */
 int Distance::gram_pos(string s) {
     int slen = s.length();
     int cost = 0;

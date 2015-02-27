@@ -12,6 +12,7 @@ class Distance
 
         int d2(string s, string t, int k);
         int levenshtein(string s, string t);
+        int lev(string s, string t);
 
     private:
         int gram_pos(string s);
