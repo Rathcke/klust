@@ -1,45 +1,84 @@
-#include "Distance.h"
-#include <string>
-#include <iostream>
+#include <cstdlib>
 #include <fstream>
+#include <iomanip>
+#include <iostream>
+#include <string>
 
-using namespace std;
+#include "Distance.h"
+
+//using namespace std;
 
 Distance dist;
 
-int main()
+/**
+ * Read [DR]NA sequence from given filestream in given string.
+ * Return 0 on success and -1 if there's no more to read.
+ */
+int readSequence(std::fstream& fs, std::string& s) {
+    std::string tmp;
+    s = ""; // clear s
+
+    std::getline(fs, tmp);
+    if (tmp.empty())
+        return -1;
+    while (tmp[0] == '>')
+        std::getline(fs, tmp);                  // ignore '>' line
+    while (!tmp.empty() && tmp[0] != '>') {     // read until next '>' line
+        s += tmp;
+        std::getline(fs, tmp);
+    }
+    return 0;
+}
+
+
+int main(int argc, char *argv[])
 {
-
-    string a, b, c, d;
-    ifstream myfile ("data.txt");
-    if (myfile.is_open()) {
-        getline(myfile, a);
-        getline(myfile, b);
-        getline(myfile, c);
-        getline(myfile, d);
-        myfile.close();
-    } else
+    if (argc < 4) {
+        std::cout << "Usage: " << argv[0] << " <name of .fasta file> "
+                                             " <k in k-mers> "
+                                             " <# of sequences to compare>"
+                                          << std::endl << std::endl;
+        std::cout << "This program will measure the d2 distance between \n"
+                     "all of the specified number of sequences from the \n"
+                     "given .fasta file and output a distance matrix.\n"
+                  << std::endl;
         return 1;
+    }
 
-    //int d2_dist  = dist.d2(a, b, 2);            // d2 distance using 2-grams
-    //int lev_dist = dist.levenshtein(a, b);      // Levenshtein distance
-    
-    cout << "a = " << a << endl;
-    cout << "b = " << b << endl;
-    cout << "c = " << c << endl;
-    cout << "d = " << d << endl;
-    cout << endl;
+    std::fstream fs0(argv[1]);
+    std::fstream fs1(argv[1]);
 
-    //string a = "aaaaagg";
-    //string b = "cccccgg";
-    string e = "abcbadfe";
-    string f = "bacbdfe";
+    std::string fst, snd;
 
-    cout << "d2 distance(a,b): "            << dist.d2(a,b,2)           << endl;
-    cout << "Levenshtein distance(a,b): "   << dist.levenshtein(a,b)    << endl;
+    const int k = std::atoi(argv[2]);       // k in k-mer
+    const int count = std::atoi(argv[3]);   // # of sequences to measure
 
-    //string a = "acgtgtgacgtgcatagcgtacgtgac";
-    //string b = "gtgtacgatagtcgtactgatcatg";
+    int distances[count][count];
+
+    for (int i = 0; i < count; ++i) {
+        readSequence(fs0, fst);
+
+        for (int j = 0; j < count; ++j) {
+            readSequence(fs1, snd);
+            if (i == j) { // don't compare a sequence to itself
+                distances[i][j] = 0;
+                continue;
+            }
+            distances[i][j] = dist.d2(fst, snd, k);
+        }
+        fs1.seekg(0, std::ios::beg); // rewind fs1 to start
+    }
+
+    for (int i = 0; i < count; ++i) {
+        //std::cout << "i = " << std::setw(3) <<  i << " : ";
+        for (int j = 0; j < count; ++j) {
+            std::cout << std::setw(4) << distances[i][j] << "\t";
+        }
+        std::cout << std::endl;
+    }
+
+    fs0.close();
+    fs1.close();
 
     return 0;
 }
