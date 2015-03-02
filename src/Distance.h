@@ -3,19 +3,17 @@
 
 #include <string>
 
-using namespace std;
-
 class Distance
 {
     public:
         Distance() {}
 
-        int d2(string s, string t, int k);
-        int levenshtein(string s, string t);
-        int lev(string s, string t);
+        int d2(std::string s, std::string t, int k);
+        int levenshtein(std::string s, std::string t);
+        int lev(std::string s, std::string t);
 
     private:
-        int gram_pos(string s);
+        int gram_pos(std::string s);
 };
 
 #endif
