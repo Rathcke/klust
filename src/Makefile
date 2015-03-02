@@ -16,6 +16,6 @@ run:
 	./main
 
 clean:
-	rm main ./*.o ./*.h.gch
+	rm main ./*.o
 
 .PHONY: all run clean
