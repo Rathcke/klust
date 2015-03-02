@@ -43,9 +43,9 @@ int Distance::d2(string s, string t, int k) {
     // Euclidian distance between the two arrays
     for (map<int,int>::iterator it = grams.begin(); it != grams.end(); ++it) {
         dist += pow(it->second, 2);
-        cout << it->second << " ";
+        //cout << it->second << " ";
     }
-    cout << endl;
+    //cout << endl;
 
     return sqrt(dist);
 }
@@ -63,19 +63,25 @@ int Distance::gram_pos(string s) {
     for (int i = slen - 1; i >= 0; i--) {
         switch (s[i]) {
             case 'a':
+            case 'A':
                 break;
             case 'c':
+            case 'C':
                 cost += pow(4,slen-i-1);
                 break;
             case 'g':
+            case 'G':
                 cost += 2*pow(4,slen-i-1);
                 break;
             case 't':
+            case 'T':
             case 'u':
+            case 'U':
                 cost += 3*pow(4,slen-i-1);
                 break;
             default:
-                cout << "Unknown char passed to gram_pos" << '\n';
+                //cout << "Unknown char passed to gram_pos" << '\n';
+                ;
         }
     }
     return cost;
