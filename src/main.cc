@@ -64,7 +64,7 @@ int main(int argc, char *argv[])
                 distances[i][j] = 0;
                 continue;
             }
-            distances[i][j] = dist.d2(fst, snd, k);
+            distances[i][j] = dist.d2window(fst, snd, k);
         }
         fs1.seekg(0, std::ios::beg); // rewind fs1 to start
     }
