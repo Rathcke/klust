@@ -56,6 +56,8 @@ int Distance::d2window(const string s, const string t, int k) {
     //cout << init << endl;
     int min_dist = init; // variable containing the least distance window so far
     int cur_dist = init; // distance in current window
+    if (s == "acat")
+        cout << "min: " << min_dist << endl;
 
     int win_size = short_len;
     int windows = long_len - short_len;
@@ -63,6 +65,9 @@ int Distance::d2window(const string s, const string t, int k) {
     for (int i = 0; i < windows; i++) {
         pre_gram  = longer.substr(i, k);
         post_gram = longer.substr(i + win_size - k + 1, k);
+
+        if (pre_gram == post_gram)
+            continue;
 
         grams[gram_pos(pre_gram)] += 1;
         grams[gram_pos(post_gram)] -= 1;

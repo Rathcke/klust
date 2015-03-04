@@ -91,8 +91,8 @@ int main(int argc, char *argv[])
     fs0.close();
     fs1.close();
 
-/*    std::string a = "ctg";
-    std::string b = "caacat";
+    std::string a = "AAAAC";
+    std::string b = "CGACTA";
     std::cout << dist.d2window(a,b,2);
-    return 0;*/
+    return 0;
 }
