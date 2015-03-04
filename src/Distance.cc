@@ -54,25 +54,41 @@ int Distance::d2window(const string s, const string t, int k) {
         init += pow(it->second, 2);
 
     //cout << init << endl;
-
     int min_dist = init; // variable containing the least distance window so far
-    int cur_dist; // distance in current window
+    int cur_dist = init; // distance in current window
+    //int d_pre_gram, d_post_gram;
 
     int win_size = short_len;
     int windows = long_len - short_len;
     string pre_gram, post_gram;
-    int delta_pre, delta_post;
-    for (int i = 0; i < windows; ++i) {
+    for (int i = 0; i < windows; i++) {
         pre_gram  = longer.substr(i, k);
         post_gram = longer.substr(i + win_size - k + 1, k);
 
-        delta_pre  = grams[gram_pos(pre_gram)]; // FIXME: this will blow up at some point
-        delta_post = grams[gram_pos(post_gram)];
+        grams[gram_pos(pre_gram)] += 1;
+        grams[gram_pos(post_gram)] -= 1;
 
-        cur_dist = init + 2*(delta_pre - delta_post + 1);
-        init = init + 2*(delta_pre - delta_post + 1);
+/*        if (grams[gram_pos(pre_gram)] <= 0)
+            d_pre_gram = -1;
+        else
+            d_pre_gram = 1;
+
+        if (grams[gram_pos(post_gram)] <= 0)
+            d_post_gram = -1;
+        else
+            d_post_gram = 1;*/
+
+        cur_dist = 0;
+        for (map<int,int>::iterator it = grams.begin(); it != grams.end(); ++it)
+            cur_dist += pow(it->second, 2);
+
+        //cur_dist = cur_dist + d_pre_gram + d_post_gram;
 
         min_dist = min(min_dist, cur_dist);
+
+        if (s == "aca") {
+            cout << "Current distance: " << cur_dist << endl;
+        }
     }
 
     return sqrt(min_dist);

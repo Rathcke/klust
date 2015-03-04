@@ -55,6 +55,12 @@ int main(int argc, char *argv[])
 
     int distances[count][count];
 
+    for (int i = 0; i < count; i++) {
+        for (int j = 0; j < count; j++) {
+            distances[i][j] = -1;
+        }
+    }
+
     for (int i = 0; i < count; ++i) {
         readSequence(fs0, fst);
 
@@ -64,7 +70,12 @@ int main(int argc, char *argv[])
                 distances[i][j] = 0;
                 continue;
             }
-            distances[i][j] = dist.d2window(fst, snd, k);
+            if (distances[i][j] != -1) {
+                continue;
+            }
+            int newdist = dist.d2window(fst, snd, k);
+            distances[i][j] = newdist;
+            distances[j][i] = newdist;
         }
         fs1.seekg(0, std::ios::beg); // rewind fs1 to start
     }
@@ -80,5 +91,8 @@ int main(int argc, char *argv[])
     fs0.close();
     fs1.close();
 
+    std::string a = "acag";
+    std::string b = "caacat";
+    std::cout << dist.d2window(a,b,2);
     return 0;
 }
