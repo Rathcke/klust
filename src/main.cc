@@ -83,7 +83,7 @@ int main(int argc, char *argv[])
     for (int i = 0; i < count; ++i) {
         //std::cout << "i = " << std::setw(3) <<  i << " : ";
         for (int j = 0; j < count; ++j) {
-            std::cout << std::setw(4) << distances[i][j] << "\t";
+            std::cout << std::setw(4) << distances[i][j];
         }
         std::cout << std::endl;
     }
@@ -91,8 +91,8 @@ int main(int argc, char *argv[])
     fs0.close();
     fs1.close();
 
-    std::string a = "acag";
+/*    std::string a = "ctg";
     std::string b = "caacat";
     std::cout << dist.d2window(a,b,2);
-    return 0;
+    return 0;*/
 }
