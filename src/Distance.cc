@@ -42,6 +42,7 @@ int Distance::d2window(const string s, const string t, int k) {
         else {
             grams[index]++;
         }
+        total += 2*grams[index]-1;  // sum of squared gram counts in shorter
     }
 
     // Amount of each substring in t
@@ -50,7 +51,6 @@ int Distance::d2window(const string s, const string t, int k) {
 
         if (grams.find(index) == grams.end()) {
             grams.insert(pair<int,int>(index, -1));
-            total += 2*grams[index]-1;
         }
         else {
             grams[index]--;
