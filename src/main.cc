@@ -4,6 +4,8 @@
 #include <iostream>
 #include <string>
 
+#include <assert.h>
+
 #include "Distance.h"
 
 //using namespace std;
@@ -74,6 +76,8 @@ int main(int argc, char *argv[])
                 continue;
             }
             int newdist = dist.d2window(fst, snd, k);
+            // TODO: testing equal to naive version
+            //assert(newdist == dist.d2window_naive(fst, snd, k));
             distances[i][j] = newdist;
             distances[j][i] = newdist;
         }
@@ -94,5 +98,8 @@ int main(int argc, char *argv[])
     std::string a = "AAAAC";
     std::string b = "CGACTA";
     std::cout << dist.d2window(a,b,2);
+
+    std::cout << std::endl;
+
     return 0;
 }

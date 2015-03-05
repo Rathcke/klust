@@ -4,6 +4,8 @@
 #include <map>
 #include <string>
 
+#include <assert.h>
+
 #include "Distance.h"
 
 using namespace std;
@@ -53,11 +55,8 @@ int Distance::d2window(const string s, const string t, int k) {
     for (map<int,int>::iterator it = grams.begin(); it != grams.end(); ++it)
         init += pow(it->second, 2);
 
-    //cout << init << endl;
     int min_dist = init; // variable containing the least distance window so far
     int cur_dist = init; // distance in current window
-    if (s == "acat")
-        cout << "min: " << min_dist << endl;
 
     int win_size = short_len;
     int windows = long_len - short_len;
@@ -70,16 +69,50 @@ int Distance::d2window(const string s, const string t, int k) {
             continue;
 
         grams[gram_pos(pre_gram)] += 1;
-        grams[gram_pos(post_gram)] -= 1;
 
-        cur_dist = cur_dist + 2*grams[gram_pos(pre_gram)] - 
+        int post_gram_pos = gram_pos(post_gram);
+        if (grams.find(post_gram_pos) == grams.end())
+            grams.insert(pair<int,int>(post_gram_pos, -1));
+        else
+            grams[gram_pos(post_gram)] -= 1;
+
+        cur_dist = cur_dist + 2*grams[gram_pos(pre_gram)] -
                     2*grams[gram_pos(post_gram)] - 2;
 
         min_dist = min(min_dist, cur_dist);
-
     }
 
     return sqrt(min_dist);
+}
+
+int Distance::d2window_naive(string s, string t, int k) {
+    int slen = s.length(),
+        tlen = t.length();
+    string shorter, longer;
+    int short_len, long_len;
+
+    if (slen <= tlen) {
+        shorter = s;
+        short_len = slen;
+        longer = t;
+        long_len = tlen;
+    } else {
+        shorter = t;
+        short_len = tlen;
+        longer = s;
+        long_len = slen;
+    }
+
+
+    int cur_dist, min_dist = 999999;
+    int win_size = short_len;
+    int windows = long_len - short_len;
+
+    for (int i = 0; i < windows; i++) {
+        cur_dist = d2(shorter, longer.substr(i, win_size), k);
+        min_dist = min(min_dist, cur_dist);
+    }
+    return min_dist;
 }
 
 
