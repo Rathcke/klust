@@ -6,39 +6,23 @@
 
 #include <assert.h>
 
+#include "IO.h"
 #include "Distance.h"
+#include "Cluster.h"
 
 //using namespace std;
 
+IO io;
 Distance dist;
-
-/**
- * Read [DR]NA sequence from given filestream in given string.
- * Return 0 on success and -1 if there's no more to read.
- */
-int readSequence(std::fstream& fs, std::string& s) {
-    std::string tmp;
-    s = ""; // clear s
-
-    std::getline(fs, tmp);
-    if (tmp.empty())
-        return -1;
-    while (tmp[0] == '>')
-        std::getline(fs, tmp);                  // ignore '>' line
-    while (!tmp.empty() && tmp[0] != '>') {     // read until next '>' line
-        s += tmp;
-        std::getline(fs, tmp);
-    }
-    return 0;
-}
-
+Cluster cluster;
 
 int main(int argc, char *argv[])
 {
-    if (argc < 4) {
+    if (argc < 5) {
         std::cout << "Usage: " << argv[0] << " <name of .fasta file> "
                                              " <k in k-mers> "
                                              " <# of sequences to compare>"
+                                             " <Similarity threshold>"
                                           << std::endl << std::endl;
         std::cout << "This program will measure the d2 distance between \n"
                      "all of the specified number of sequences from the \n"
@@ -54,8 +38,13 @@ int main(int argc, char *argv[])
 
     const int k = std::atoi(argv[2]);       // k in k-mer
     const int count = std::atoi(argv[3]);   // # of sequences to measure
+    const int threshold = std::atoi(argv[4]); // Simlilarity threshold
+
+    std::cout << cluster.clust(fs0, fs1, threshold, k, count) << std::endl;
 
     int distances[count][count];
+    
+    fs0.seekg(0, std::ios::beg);
 
     for (int i = 0; i < count; i++) {
         for (int j = 0; j < count; j++) {
@@ -64,10 +53,10 @@ int main(int argc, char *argv[])
     }
 
     for (int i = 0; i < count; ++i) {
-        readSequence(fs0, fst);
+        io.readSequence(fs0, fst);
 
         for (int j = 0; j < count; ++j) {
-            readSequence(fs1, snd);
+            io.readSequence(fs1, snd);
             if (i == j) { // don't compare a sequence to itself
                 distances[i][j] = 0;
                 continue;
@@ -94,12 +83,6 @@ int main(int argc, char *argv[])
 
     fs0.close();
     fs1.close();
-
-    std::string a = "AAAAC";
-    std::string b = "CGACTA";
-    std::cout << dist.d2window(a,b,2);
-
-    std::cout << std::endl;
 
     return 0;
 }

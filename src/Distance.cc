@@ -1,7 +1,7 @@
 #include <algorithm>
 #include <cmath>
 #include <iostream>
-#include <map>
+#include <unordered_map>
 #include <string>
 
 #include <assert.h>
@@ -15,6 +15,7 @@ int Distance::d2window(const string s, const string t, int k) {
         tlen = t.length();
     string shorter, longer;
     int short_len, long_len;
+    int total = 0;
 
     if (slen <= tlen) {
         shorter = s;
@@ -28,31 +29,37 @@ int Distance::d2window(const string s, const string t, int k) {
         long_len = slen;
     }
 
+    typedef unordered_map<int,int> gmap;
     // count grams in shorter
-    map<int, int> grams;  // gram count index in lexicographical order
+    gmap grams;  // gram count index in lexicographical order
     int index;
     for (int i = 0; i <= short_len-k; i++) {
         index = gram_pos(shorter.substr(i,k));
 
-        if (grams.find(index) == grams.end())
+        if (grams.find(index) == grams.end()) {
             grams.insert(pair<int,int>(index, 1));
-        else
+        }
+        else {
             grams[index]++;
+        }
     }
 
     // Amount of each substring in t
     for (int i = 0; i <= short_len-k; i++) {
         index = gram_pos(longer.substr(i,k));
 
-        if (grams.find(index) == grams.end())
+        if (grams.find(index) == grams.end()) {
             grams.insert(pair<int,int>(index, -1));
-        else
+            total += 2*grams[index]-1;
+        }
+        else {
             grams[index]--;
+        }
     }
 
     int init = 0;
     // euclidian distance between the two arrays
-    for (map<int,int>::iterator it = grams.begin(); it != grams.end(); ++it)
+    for (gmap::iterator it = grams.begin(); it != grams.end(); ++it)
         init += pow(it->second, 2);
 
     int min_dist = init; // variable containing the least distance window so far
@@ -103,8 +110,7 @@ int Distance::d2window_naive(string s, string t, int k) {
         long_len = slen;
     }
 
-
-    int cur_dist, min_dist = 999999;
+    int cur_dist, min_dist = 999999; // ugly I know
     int win_size = short_len;
     int windows = long_len - short_len;
 
@@ -125,7 +131,9 @@ int Distance::d2(const string s, const string t, int k) {
     int slen = s.length(),  // length of input strings
         tlen = t.length();
     int dist = 0;           // resulting distance
-    map<int, int> grams;    // gram count index in lexicographical order
+
+    typedef unordered_map<int,int> gmap;
+    gmap grams;    // gram count index in lexicographical order
 
     int i, index;
     // Amount of each substring in s
@@ -149,7 +157,7 @@ int Distance::d2(const string s, const string t, int k) {
     }
 
     // Euclidian distance between the two arrays
-    for (map<int,int>::iterator it = grams.begin(); it != grams.end(); ++it) {
+    for (gmap::iterator it = grams.begin(); it != grams.end(); ++it) {
         dist += pow(it->second, 2);
     }
 
