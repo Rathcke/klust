@@ -15,10 +15,11 @@ class Cluster
         int clust(std::fstream& in, std::fstream& out, int threshold, int k, int count);
 
     private:
-        bool matchCentroid(std::string s, 
-                const std::vector<std::string>& cs, int t, int k);
-        IO io;
         Distance dist;
+        IO io;
+
+        bool matchCentroid(const struct seq& s,
+                const std::vector<struct seq>& cs, int t, int k);
 };
 
 #endif
