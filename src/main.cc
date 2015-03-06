@@ -10,7 +10,7 @@
 #include "Distance.h"
 #include "Cluster.h"
 
-//using namespace std;
+using namespace std;
 
 IO io;
 Distance dist;
@@ -18,29 +18,31 @@ Cluster cluster;
 
 int main(int argc, char *argv[])
 {
-    if (argc < 5) {
-        std::cout << "Usage: " << argv[0] << " <name of .fasta file> "
+    if (argc < 6) {
+        std::cout << "Usage: " << argv[0] << " <.fasta input file> "
+                                             " <.fasta output file for centroids> "
                                              " <k in k-mers> "
                                              " <# of sequences to compare>"
-                                             " <Similarity threshold>"
+                                             " <similarity threshold>"
                                           << std::endl << std::endl;
-        std::cout << "This program will measure the d2 distance between \n"
-                     "all of the specified number of sequences from the \n"
-                     "given .fasta file and output a distance matrix.\n"
-                  << std::endl;
+        std::cout << std::endl;
         return 1;
     }
 
-    std::fstream fs0(argv[1]);
-    std::fstream fs1(argv[1]);
+    std::fstream fs0(argv[1], fstream::in);
+    std::fstream fs1(argv[1], fstream::in);
+    std::fstream fs2(argv[2],  // new file doesn't open witout trunc flag
+            fstream::in | fstream::out | fstream::trunc);
+
+    const int k = std::atoi(argv[3]);         // k in k-mer
+    const int count = std::atoi(argv[4]);     // # of sequences to measure
+    const int threshold = std::atoi(argv[5]); // Simlilarity threshold
+
+    cout << "# of clusters: " <<
+        cluster.clust(fs0, fs2, threshold, k, count) << endl;
+
 
     std::string fst, snd;
-
-    const int k = std::atoi(argv[2]);       // k in k-mer
-    const int count = std::atoi(argv[3]);   // # of sequences to measure
-    const int threshold = std::atoi(argv[4]); // Simlilarity threshold
-
-    std::cout << cluster.clust(fs0, fs1, threshold, k, count) << std::endl;
 
     int distances[count][count];
     
@@ -64,7 +66,9 @@ int main(int argc, char *argv[])
             if (distances[i][j] != -1) {
                 continue;
             }
+
             int newdist = dist.d2window(fst, snd, k);
+
             // TODO: testing equal to naive version
             //assert(newdist == dist.d2window_naive(fst, snd, k));
             distances[i][j] = newdist;
@@ -83,6 +87,7 @@ int main(int argc, char *argv[])
 
     fs0.close();
     fs1.close();
+    fs2.close();
 
     return 0;
 }
