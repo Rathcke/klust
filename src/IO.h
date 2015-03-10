@@ -4,7 +4,7 @@
 #include <string>
 #include <fstream>
 
-struct seq {
+struct Seq {
     std::string desc; // description following '>' in fasta format
     std::string data; // actual sequence data
 };
@@ -14,8 +14,8 @@ class IO
     public:
         IO() {}
 
-        bool readSequence(std::fstream& fs, std::string& s);
-        bool readSequence(std::fstream& fs, struct seq& s);
+        static bool readSequence(std::fstream& fs, std::string& s);
+        static bool readSequence(std::fstream& fs, struct Seq& s);
 
     private:
 

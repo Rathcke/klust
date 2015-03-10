@@ -12,14 +12,12 @@ class Cluster
     public:
         Cluster() {}
 
-        int clust(std::fstream& in, std::fstream& out, int threshold, int k, int count);
+        static int clust(std::fstream& in, std::fstream& out,
+                int threshold, int k, int count);
 
     private:
-        Distance dist;
-        IO io;
-
-        bool matchCentroid(const struct seq& s,
-                const std::vector<struct seq>& cs, int t, int k);
+        static bool matchCentroid(const struct Seq& s,
+                const std::vector<struct Seq>& cs, int t, int k);
 };
 
 #endif

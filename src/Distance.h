@@ -8,14 +8,14 @@ class Distance
     public:
         Distance() {}
 
-        int d2(const std::string s, const std::string t, int k);
-        int d2window(const std::string s, const std::string t, int k);
-        int d2window_naive(std::string s, std::string t, int k);
-        int levenshtein(std::string s, std::string t);
-        int lev(std::string s, std::string t);
+        static int d2(const std::string s, const std::string t, int k);
+        static int d2window(const std::string s, const std::string t, int k);
+        static int d2window_naive(std::string s, std::string t, int k);
+        static int levenshtein(std::string s, std::string t);
+        static int lev(std::string s, std::string t);
 
     private:
-        int gram_pos(std::string s);
+        static int gram_pos(std::string s);
 };
 
 #endif

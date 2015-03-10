@@ -18,11 +18,11 @@ using namespace std;
  * and return the number of centroids.
  */
 int Cluster::clust(fstream& in, fstream& out, int threshold, int k, int count) {
-    vector<struct seq> centroids;
-    struct seq s;
+    vector<struct Seq> centroids;
+    struct Seq s;
 
     int i = 0;
-    while (io.readSequence(in, s) && i < count) {
+    while (IO::readSequence(in, s) && i < count) {
         ++i;
         if (matchCentroid(s, centroids, threshold, k)) {
             continue; // continue if s is close enough to some seq in centroids
@@ -38,10 +38,10 @@ int Cluster::clust(fstream& in, fstream& out, int threshold, int k, int count) {
  * Return true if given struct seq sequence, s, is within a given threshold, t,
  * of a cluster centroid in the given vector of struct seq, cs.
  */
-bool Cluster::matchCentroid(const struct seq& s, const vector<struct seq>& cs,
+bool Cluster::matchCentroid(const struct Seq& s, const vector<struct Seq>& cs,
                             int t, int k) {
-    for (vector<struct seq>::size_type i = 0; i < cs.size(); ++i) {
-        if (dist.d2window(s.data, cs[i].data, k) <= t) {
+    for (vector<struct Seq>::size_type i = 0; i < cs.size(); ++i) {
+        if (Distance::d2window(s.data, cs[i].data, k) <= t) {
             return true;
         }
     }

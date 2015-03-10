@@ -13,7 +13,7 @@ using namespace std;
  * Read one entry of description and sequence data from FASTA format stream,
  * place in given seq struct; return true on success and false on failure.
  */
-bool IO::readSequence(fstream& fs, struct seq& s) {
+bool IO::readSequence(fstream& fs, struct Seq& s) {
     string tmp;
 
     if (fs) { // true if stream is ready; false on EOF or error

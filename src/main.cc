@@ -12,10 +12,6 @@
 
 using namespace std;
 
-IO io;
-Distance dist;
-Cluster cluster;
-
 int main(int argc, char *argv[])
 {
     if (argc < 6) {
@@ -39,8 +35,7 @@ int main(int argc, char *argv[])
     const int threshold = std::atoi(argv[5]); // Simlilarity threshold
 
     cout << "# of clusters: " <<
-        cluster.clust(fs0, fs2, threshold, k, count) << endl;
-
+        Cluster::clust(fs0, fs2, threshold, k, count) << endl;
 
     std::string fst, snd;
 
@@ -55,10 +50,10 @@ int main(int argc, char *argv[])
     }
 
     for (int i = 0; i < count; ++i) {
-        io.readSequence(fs0, fst);
+        IO::readSequence(fs0, fst);
 
         for (int j = 0; j < count; ++j) {
-            io.readSequence(fs1, snd);
+            IO::readSequence(fs1, snd);
             if (i == j) { // don't compare a sequence to itself
                 distances[i][j] = 0;
                 continue;
@@ -67,7 +62,7 @@ int main(int argc, char *argv[])
                 continue;
             }
 
-            int newdist = dist.d2window(fst, snd, k);
+            int newdist = Distance::d2window(fst, snd, k);
 
             // TODO: testing equal to naive version
             //assert(newdist == dist.d2window_naive(fst, snd, k));
