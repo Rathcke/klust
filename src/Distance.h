@@ -14,6 +14,8 @@ class Distance
         static int levenshtein(std::string s, std::string t);
         static int lev(std::string s, std::string t);
 
+        static void printDistMatrix(const std::string& filename, int k, int count);
+
     private:
         static int gram_pos(std::string s);
 };

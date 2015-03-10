@@ -17,20 +17,51 @@ using namespace std;
  * sequences. Output the centroids in FASTA format to the output file stream
  * and return the number of centroids.
  */
-int Cluster::clust(fstream& in, fstream& out, int threshold, int k, int count) {
+int Cluster::clust(fstream& fs_in, fstream& fs_centroids,
+        int threshold, int k, int count) {
     vector<struct Seq> centroids;
     struct Seq s;
 
     int i = 0;
-    while (IO::readSequence(in, s) && i < count) {
+    while (IO::readSequence(fs_in, s) && i < count) {
         ++i;
         if (matchCentroid(s, centroids, threshold, k)) {
             continue; // continue if s is close enough to some seq in centroids
         }
         centroids.push_back(s);
-        out << '>' << s.desc << endl
-            << s.data << endl;
+        fs_centroids << '>' << s.desc << endl
+                     << s.data << endl;
     }
+    return centroids.size();
+}
+
+int Cluster::clust(fstream& fs_in, fstream& fs_centroids, fstream& fs_clusters,
+        int threshold, int k, int count) {
+    vector<struct Seq> centroids; // TODO: gets big, maybe use more structure to speed up
+    struct Seq s;
+
+    int i = 0;
+    while (IO::readSequence(fs_in, s) && i < count) {
+        bool match = false;
+        ++i;
+
+        for (vector<Seq>::size_type i = 0; i < centroids.size(); ++i) {
+            if (Distance::d2window(s.data, centroids[i].data, k) <= threshold) {
+                // write s belongs to centroids[i] to fs_clusters
+                fs_clusters << s.data << " " << centroids[i].data << endl;
+                match = true; // found cluster
+                break;
+            }
+        }
+
+        if (!match) {
+            // add new centroid and write to stream in FASTA format
+            centroids.push_back(s);
+            fs_centroids << '>' << s.desc << endl
+                         << s.data << endl;
+        }
+    }
+
     return centroids.size();
 }
 

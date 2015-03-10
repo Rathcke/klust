@@ -17,72 +17,26 @@ int main(int argc, char *argv[])
     if (argc < 6) {
         std::cout << "Usage: " << argv[0] << " <.fasta input file> "
                                              " <.fasta output file for centroids> "
+                                             " <output file for clusters> "
                                              " <k in k-mers> "
-                                             " <# of sequences to compare>"
                                              " <similarity threshold>"
-                                          << std::endl << std::endl;
-        std::cout << std::endl;
+                                             " <# of sequences to compare>"
+                                          << endl << endl;
         return 1;
     }
 
-    std::fstream fs0(argv[1], fstream::in);
-    std::fstream fs1(argv[1], fstream::in);
-    std::fstream fs2(argv[2],  // new file doesn't open witout trunc flag
-            fstream::in | fstream::out | fstream::trunc);
-
-    const int k = std::atoi(argv[3]);         // k in k-mer
-    const int count = std::atoi(argv[4]);     // # of sequences to measure
-    const int threshold = std::atoi(argv[5]); // Simlilarity threshold
+    fstream fs_in(argv[1]);
+    fstream fs_cts(argv[2], fstream::out | fstream::trunc);
+    fstream fs_cls(argv[3], fstream::out | fstream::trunc);
+    const int k = std::atoi(argv[4]);         // k in k-mers
+    const int threshold = std::atoi(argv[5]); // simlilarity threshold
+    const int count = std::atoi(argv[6]);     // # of sequences to measure
 
     cout << "# of clusters: " <<
-        Cluster::clust(fs0, fs2, threshold, k, count) << endl;
+        //Cluster::clust(fs_in, fs_cts, threshold, k, count) << endl;
+        Cluster::clust(fs_in, fs_cts, fs_cls, threshold, k, count) << endl;
 
-    std::string fst, snd;
-
-    int distances[count][count];
-    
-    fs0.seekg(0, std::ios::beg);
-
-    for (int i = 0; i < count; i++) {
-        for (int j = 0; j < count; j++) {
-            distances[i][j] = -1;
-        }
-    }
-
-    for (int i = 0; i < count; ++i) {
-        IO::readSequence(fs0, fst);
-
-        for (int j = 0; j < count; ++j) {
-            IO::readSequence(fs1, snd);
-            if (i == j) { // don't compare a sequence to itself
-                distances[i][j] = 0;
-                continue;
-            }
-            if (distances[i][j] != -1) {
-                continue;
-            }
-
-            int newdist = Distance::d2window(fst, snd, k);
-
-            // TODO: testing equal to naive version
-            //assert(newdist == dist.d2window_naive(fst, snd, k));
-            distances[i][j] = newdist;
-            distances[j][i] = newdist;
-        }
-        fs1.seekg(0, std::ios::beg); // rewind fs1 to start
-    }
-
-    for (int i = 0; i < count; ++i) {
-        //std::cout << "i = " << std::setw(3) <<  i << " : ";
-        for (int j = 0; j < count; ++j) {
-            std::cout << std::setw(4) << distances[i][j];
-        }
-        std::cout << std::endl;
-    }
-
-    fs0.close();
-    fs1.close();
-    fs2.close();
+    //Distance::printDistMatrix(argv[1], k, count);
 
     return 0;
 }

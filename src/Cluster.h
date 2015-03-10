@@ -12,8 +12,11 @@ class Cluster
     public:
         Cluster() {}
 
-        static int clust(std::fstream& in, std::fstream& out,
+        static int clust(std::fstream& fs_in, std::fstream& fs_centroids,
                 int threshold, int k, int count);
+
+        static int clust(std::fstream& fs_in, std::fstream& fs_centroids,
+                std::fstream& fs_clusters, int threshold, int k, int count);
 
     private:
         static bool matchCentroid(const struct Seq& s,

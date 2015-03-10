@@ -1,12 +1,12 @@
 #include <algorithm>
 #include <cmath>
+#include <iomanip>
 #include <iostream>
-#include <unordered_map>
 #include <string>
-
-#include <assert.h>
+#include <unordered_map>
 
 #include "Distance.h"
+#include "IO.h"
 
 using namespace std;
 
@@ -228,4 +228,46 @@ int Distance::levenshtein(string s, string t) {
         }
     }
     return col[slen];
+}
+
+void Distance::printDistMatrix(const string& filename, int k, int count) {
+    fstream fs0(filename);
+    fstream fs1(filename);
+
+    string fst, snd;
+    int distances[count][count];
+
+    for (int i = 0; i < count; i++)
+        for (int j = 0; j < count; j++)
+            distances[i][j] = -1; // initialize distance matrix entries to -1
+
+    for (int i = 0; i < count; ++i) {
+        IO::readSequence(fs0, fst);
+
+        for (int j = 0; j < count; ++j) {
+            IO::readSequence(fs1, snd);
+            if (i == j) { // don't compare a sequence to itself
+                distances[i][j] = 0;
+                continue;
+            }
+            if (distances[i][j] != -1) {
+                continue;
+            }
+
+            int newdist = Distance::d2window(fst, snd, k);
+            distances[i][j] = newdist;
+            distances[j][i] = newdist;
+        }
+        fs1.seekg(0, ios::beg); // rewind fs1 to start
+    }
+
+    for (int i = 0; i < count; ++i) {
+        for (int j = 0; j < count; ++j) {
+            cout << setw(4) << distances[i][j]; // TODO: reset width?
+        }
+        cout << endl;
+    }
+
+    fs0.close();
+    fs1.close();
 }
