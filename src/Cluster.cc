@@ -17,7 +17,7 @@ using namespace std;
  * sequences. Output the centroids in FASTA format to the output file stream
  * and return the number of centroids.
  */
-int Cluster::clust(fstream& fs_in, fstream& fs_centroids,
+/*int Cluster::clust(fstream& fs_in, fstream& fs_centroids,
         int threshold, int k, int count) {
     vector<struct Seq> centroids;
     struct Seq s;
@@ -33,10 +33,10 @@ int Cluster::clust(fstream& fs_in, fstream& fs_centroids,
                      << s.data << endl;
     }
     return centroids.size();
-}
+}*/
 
 int Cluster::clust(fstream& fs_in, fstream& fs_centroids, fstream& fs_clusters,
-        int threshold, int k, int count) {
+        Distance& dist, int count) {
     vector<struct Seq> centroids; // TODO: gets big, maybe use more structure to speed up
     struct Seq s;
 
@@ -46,7 +46,8 @@ int Cluster::clust(fstream& fs_in, fstream& fs_centroids, fstream& fs_clusters,
         ++i;
 
         for (vector<Seq>::size_type i = 0; i < centroids.size(); ++i) {
-            if (Distance::d2window(s.data, centroids[i].data, k) <= threshold) {
+            if (dist.compare(s.data, centroids[i].data)) {
+            //if (Distance::d2window(s.data, centroids[i].data, 4) <= 30) {
                 // write s belongs to centroids[i] to fs_clusters
                 fs_clusters << s.data << " " << centroids[i].data << endl;
                 match = true; // found cluster
@@ -69,7 +70,7 @@ int Cluster::clust(fstream& fs_in, fstream& fs_centroids, fstream& fs_clusters,
  * Return true if given struct seq sequence, s, is within a given threshold, t,
  * of a cluster centroid in the given vector of struct seq, cs.
  */
-bool Cluster::matchCentroid(const struct Seq& s, const vector<struct Seq>& cs,
+/*bool Cluster::matchCentroid(const struct Seq& s, const vector<struct Seq>& cs,
                             int t, int k) {
     for (vector<struct Seq>::size_type i = 0; i < cs.size(); ++i) {
         if (Distance::d2window(s.data, cs[i].data, k) <= t) {
@@ -77,4 +78,4 @@ bool Cluster::matchCentroid(const struct Seq& s, const vector<struct Seq>& cs,
         }
     }
     return false;
-}
+}*/

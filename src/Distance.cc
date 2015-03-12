@@ -10,12 +10,16 @@
 
 using namespace std;
 
+Distance::Distance(int kmer, int threshold) {
+    this->k = kmer;
+    this->thrs = threshold;
+}
+
 int Distance::d2window(const string& s, const string& t, int k) {
     int slen = s.length(),
         tlen = t.length();
     string shorter, longer;
     int short_len, long_len;
-    int total = 0;
 
     if (slen <= tlen) {
         shorter = s;
@@ -42,7 +46,6 @@ int Distance::d2window(const string& s, const string& t, int k) {
         else {
             grams[index]++;
         }
-        total += 2*grams[index]-1;  // sum of squared gram counts in shorter
     }
 
     // Amount of each substring in t
@@ -92,7 +95,14 @@ int Distance::d2window(const string& s, const string& t, int k) {
     return sqrt(min_dist);
 }
 
-int Distance::d2window_naive(string s, string t, int k) {
+/**
+ * Given two strings, the int k in k-mer (word length), calculated the
+ * d2-distance between the strings based on k-grams: count the occurences of
+ * each poosible k-mer, calculate the Euclidean distance between the two k-mer
+ * occurence vectors. Return true if within threshold in some window (of size
+ * shortest string), otherwise return false.
+ */
+bool Distance::compare(const string& s, const string& t) {
     int slen = s.length(),
         tlen = t.length();
     string shorter, longer;
@@ -110,58 +120,69 @@ int Distance::d2window_naive(string s, string t, int k) {
         long_len = slen;
     }
 
-    int cur_dist, min_dist = 999999; // ugly I know
-    int win_size = short_len;
-    int windows = long_len - short_len;
-
-    for (int i = 0; i < windows; i++) {
-        cur_dist = d2(shorter, longer.substr(i, win_size), k);
-        min_dist = min(min_dist, cur_dist);
-    }
-    return min_dist;
-}
-
-
-/**
- * Given two strings and an integer k, calculated the d2-distance between the
- * strings based on k-grams: count the occurences of each poosible k-mer and
- * return the Euclidean distance between the two k-mer occurence vectors.
- */
-int Distance::d2(const string s, const string t, int k) {
-    int slen = s.length(),  // length of input strings
-        tlen = t.length();
-    int dist = 0;           // resulting distance
-
     typedef unordered_map<int,int> gmap;
-    gmap grams;    // gram count index in lexicographical order
+    // count grams in shorter
+    gmap grams;  // gram count index in lexicographical order
+    int index;
+    for (int i = 0; i <= short_len-k; i++) {
+        index = gram_pos(shorter.substr(i,k));
 
-    int i, index;
-    // Amount of each substring in s
-    for (i = 0; i <= slen-k; i++) {
-        index = gram_pos(s.substr(i,k));
-
-        if (grams.find(index) == grams.end())
+        if (grams.find(index) == grams.end()) {
             grams.insert(pair<int,int>(index, 1));
-        else
+        }
+        else {
             grams[index]++;
+        }
     }
 
     // Amount of each substring in t
-    for (i = 0; i <= tlen-k; i++) {
-        index = gram_pos(t.substr(i,k));
+    for (int i = 0; i <= short_len-k; i++) {
+        index = gram_pos(longer.substr(i,k));
 
-        if (grams.find(index) == grams.end())
+        if (grams.find(index) == grams.end()) {
             grams.insert(pair<int,int>(index, -1));
-        else
+        }
+        else {
             grams[index]--;
+        }
     }
 
-    // Euclidian distance between the two arrays
-    for (gmap::iterator it = grams.begin(); it != grams.end(); ++it) {
-        dist += pow(it->second, 2);
+    int init = 0;
+    // euclidian distance between the two arrays
+    for (gmap::iterator it = grams.begin(); it != grams.end(); ++it)
+        init += pow(it->second, 2);
+
+    int min_dist = init; // variable containing the least distance window so far
+    int cur_dist = init; // distance in current window
+
+    int win_size = short_len;
+    int windows = long_len - short_len;
+    string pre_gram, post_gram;
+    for (int i = 0; i < windows; i++) {
+        pre_gram  = longer.substr(i, k);
+        post_gram = longer.substr(i + win_size - k + 1, k);
+
+        if (pre_gram == post_gram)
+            continue;
+
+        grams[gram_pos(pre_gram)] += 1;
+
+        int post_gram_pos = gram_pos(post_gram);
+        if (grams.find(post_gram_pos) == grams.end())
+            grams.insert(pair<int,int>(post_gram_pos, -1));
+        else
+            grams[gram_pos(post_gram)] -= 1;
+
+        cur_dist = cur_dist + 2*grams[gram_pos(pre_gram)] -
+                    2*grams[gram_pos(post_gram)] - 2;
+
+        min_dist = min(min_dist, cur_dist);
+
+        if (sqrt(min_dist) <= thrs)
+            return true;
     }
 
-    return sqrt(dist);
+    return false;
 }
 
 /**
@@ -170,7 +191,7 @@ int Distance::d2(const string s, const string t, int k) {
  *   gram_pos("ag") == 2
  *   gram_pos("ca") == 4
  */
-int Distance::gram_pos(string s) {
+int Distance::gram_pos(const string& s) {
     int slen = s.length();
     int cost = 0;
     // Loop that calculates the index for a substring
@@ -201,7 +222,7 @@ int Distance::gram_pos(string s) {
     return cost;
 }
 
-int Distance::levenshtein(string s, string t) {
+/*int Distance::levenshtein(string s, string t) {
     int slen = s.length();
     int tlen = t.length();
     // Trivial cases
@@ -270,4 +291,4 @@ void Distance::printDistMatrix(const string& filename, int k, int count) {
 
     fs0.close();
     fs1.close();
-}
+}*/
