@@ -10,7 +10,7 @@
 
 using namespace std;
 
-int Distance::d2window(const string s, const string t, int k) {
+int Distance::d2window(const string& s, const string& t, int k) {
     int slen = s.length(),
         tlen = t.length();
     string shorter, longer;

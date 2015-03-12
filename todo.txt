@@ -1,0 +1,7 @@
+
+  * Order centroids by unique word count and stop search after a specific
+    number of rejects.
+
+  * Order centroids by most common kmers and counts, search for centroids with
+    the same most common kmers of query sequence.
+
