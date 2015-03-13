@@ -11,7 +11,19 @@
 
 using namespace std;
 
-bool Distance::d2window(const string s, const string t, int k, int threshold) {
+Distance::Distance(int kmer, int threshold) {
+    this->k = kmer;
+    this->thrs = threshold;
+}
+
+/**
+ * Given two strings, the int k in k-mer (word length), calculated the
+ * d2-distance between the strings based on k-grams: count the occurences of
+ * each poosible k-mer, calculate the Euclidean distance between the two k-mer
+ * occurence vectors. Return true if within threshold in some window (of size
+ * shortest string), otherwise return false.
+ */
+bool Distance::compare(const string& s, const string& t) {
     int slen = s.length(),
         tlen = t.length();
     string shorter, longer;
@@ -87,10 +99,8 @@ bool Distance::d2window(const string s, const string t, int k, int threshold) {
 
         min_dist = min(min_dist, cur_dist);
 
-        if (sqrt(min_dist) <= threshold) {
-            cout << "Hit" << endl;
-        	return true;
-        }
+        if (sqrt(min_dist) <= thrs)
+            return true;
     }
 
     return false;
@@ -130,115 +140,6 @@ vector<int> Distance::computeKey(const string& s, int k, int n) {
 }
 
 
-int Distance::d2window_naive(string s, string t, int k) {
-    int slen = s.length(),
-        tlen = t.length();
-    string shorter, longer;
-    int short_len, long_len;
-
-    if (slen <= tlen) {
-        shorter = s;
-        short_len = slen;
-        longer = t;
-        long_len = tlen;
-    } else {
-        shorter = t;
-        short_len = tlen;
-        longer = s;
-        long_len = slen;
-    }
-
-    int cur_dist, min_dist = 999999; // ugly I know
-    int win_size = short_len;
-    int windows = long_len - short_len;
-
-    for (int i = 0; i < windows; i++) {
-        cur_dist = d2(shorter, longer.substr(i, win_size), k);
-        min_dist = min(min_dist, cur_dist);
-    }
-    return min_dist;
-}
-
-
-/**
- * Given two strings and an integer k, calculated the d2-distance between the
- * strings based on k-grams: count the occurences of each poosible k-mer and
- * return the Euclidean distance between the two k-mer occurence vectors.
- */
-int Distance::d2(const string s, const string t, int k) {
-    int slen = s.length(),  // length of input strings
-        tlen = t.length();
-    int dist = 0;           // resulting distance
-
-    typedef unordered_map<int,int> gmap;
-    gmap grams;    // gram count index in lexicographical order
-
-    int i, index;
-    // Amount of each substring in s
-    for (i = 0; i <= slen-k; i++) {
-        index = gram_pos(s.substr(i,k));
-
-        if (grams.find(index) == grams.end())
-            grams.insert(pair<int,int>(index, 1));
-        else
-            grams[index]++;
-    }
-
-    // Amount of each substring in t
-    for (i = 0; i <= tlen-k; i++) {
-        index = gram_pos(t.substr(i,k));
-
-        if (grams.find(index) == grams.end())
-            grams.insert(pair<int,int>(index, -1));
-        else
-            grams[index]--;
-    }
-
-    // Euclidian distance between the two arrays
-    for (gmap::iterator it = grams.begin(); it != grams.end(); ++it) {
-        dist += pow(it->second, 2);
-    }
-
-    return sqrt(dist);
-}
-
-/**
- * Calculate (0-based) index for a given k-gram in lexicographical order and
- * based on lenght k of given input string. Example:
- *   gram_pos("ag") == 2
- *   gram_pos("ca") == 4
- */
-int Distance::gram_pos(string s) {
-    int slen = s.length();
-    int cost = 0;
-    // Loop that calculates the index for a substring
-    for (int i = slen - 1; i >= 0; i--) {
-        switch (s[i]) {
-            case 'a':
-            case 'A':
-                break;
-            case 'c':
-            case 'C':
-                cost += pow(4,slen-i-1);
-                break;
-            case 'g':
-            case 'G':
-                cost += 2*pow(4,slen-i-1);
-                break;
-            case 't':
-            case 'T':
-            case 'u':
-            case 'U':
-                cost += 3*pow(4,slen-i-1);
-                break;
-            default:
-                //cout << "Unknown char passed to gram_pos" << '\n';
-                ;
-        }
-    }
-    return cost;
-}
-
 int Distance::levenshtein(string s, string t) {
     int slen = s.length();
     int tlen = t.length();
@@ -268,7 +169,7 @@ int Distance::levenshtein(string s, string t) {
     return col[slen];
 }
 
-void Distance::printDistMatrix(const string& filename, int k, int count, int threshold) {
+/*void Distance::printDistMatrix(const string& filename, int k, int count, int threshold) {
     fstream fs0(filename);
     fstream fs1(filename);
 
@@ -308,4 +209,41 @@ void Distance::printDistMatrix(const string& filename, int k, int count, int thr
 
     fs0.close();
     fs1.close();
+}*/
+
+/**
+ * Calculate (0-based) index for a given k-gram in lexicographical order and
+ * based on lenght k of given input string. Example:
+ *   gram_pos("ag") == 2
+ *   gram_pos("ca") == 4
+ */
+int Distance::gram_pos(const string& s) {
+    int slen = s.length();
+    int cost = 0;
+    // Loop that calculates the index for a substring
+    for (int i = slen - 1; i >= 0; i--) {
+        switch (s[i]) {
+            case 'a':
+            case 'A':
+                break;
+            case 'c':
+            case 'C':
+                cost += pow(4,slen-i-1);
+                break;
+            case 'g':
+            case 'G':
+                cost += 2*pow(4,slen-i-1);
+                break;
+            case 't':
+            case 'T':
+            case 'u':
+            case 'U':
+                cost += 3*pow(4,slen-i-1);
+                break;
+            default:
+                //cout << "Unknown char passed to gram_pos" << '\n';
+                ;
+        }
+    }
+    return cost;
 }

@@ -14,29 +14,11 @@ using namespace std;
 /**
  * Given file stream, read sequences of FASTA format, compute the centroids of
  * the clustering (given threshold and k for k-mers) of the given count of
- * sequences. Output the centroids in FASTA format to the output file stream
- * and return the number of centroids.
+ * sequences. Output the centroids in FASTA format to the output file stream,
+ * output clusters to file stream and return the number of centroids.
  */
-int Cluster::clust(fstream& fs_in, fstream& fs_centroids,
-        int threshold, int k, int count) {
-    vector<struct Seq> centroids;
-    struct Seq s;
-
-    int i = 0;
-    while (IO::readSequence(fs_in, s) && i < count) {
-        ++i;
-        if (matchCentroid(s, centroids, threshold, k)) {
-            continue; // continue if s is close enough to some seq in centroids
-        }
-        centroids.push_back(s);
-        fs_centroids << '>' << s.desc << endl
-                     << s.data << endl;
-    }
-    return centroids.size();
-}
-
 int Cluster::clust(fstream& fs_in, fstream& fs_centroids, fstream& fs_clusters,
-        int threshold, int k, int count) {
+        Distance& dist, int count) {
     vector<struct Seq> centroids; // TODO: gets big, maybe use more structure to speed up
     struct Seq s;
 
@@ -46,7 +28,7 @@ int Cluster::clust(fstream& fs_in, fstream& fs_centroids, fstream& fs_clusters,
         ++i;
 
         for (vector<Seq>::size_type i = 0; i < centroids.size(); ++i) {
-            if (Distance::d2window(s.data, centroids[i].data, k, threshold)) {
+            if (dist.compare(s.data, centroids[i].data)) {
                 // write s belongs to centroids[i] to fs_clusters
                 fs_clusters << s.data << " " << centroids[i].data << endl;
                 match = true; // found cluster
@@ -63,18 +45,4 @@ int Cluster::clust(fstream& fs_in, fstream& fs_centroids, fstream& fs_clusters,
     }
 
     return centroids.size();
-}
-
-/**
- * Return true if given struct seq sequence, s, is within a given threshold, t,
- * of a cluster centroid in the given vector of struct seq, cs.
- */
-bool Cluster::matchCentroid(const struct Seq& s, const vector<struct Seq>& cs,
-                            int t, int k) {
-    for (vector<struct Seq>::size_type i = 0; i < cs.size(); ++i) {
-        if (Distance::d2window(s.data, cs[i].data, k, t)) {
-            return true;
-        }
-    }
-    return false;
 }

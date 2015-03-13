@@ -38,9 +38,11 @@ int main(int argc, char *argv[])
     const int threshold = std::atoi(argv[5]); // simlilarity threshold
     const int count = std::atoi(argv[6]);     // # of sequences to measure
 
+    Distance d2(k, threshold);
+
     cout << "# of clusters: " <<
         //Cluster::clust(fs_in, fs_cts, threshold, k, count) << endl;
-        Cluster::clust(fs_in, fs_cts, fs_cls, threshold, k, count) << endl;
+        Cluster::clust(fs_in, fs_cts, fs_cls, d2, count) << endl;
 
     //Distance::printDistMatrix(argv[1], k, count);
 
