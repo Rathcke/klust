@@ -11,7 +11,7 @@
 
 using namespace std;
 
-Distance::Distance(int kmer, int threshold) {
+Distance::Distance(int kmer, double threshold) {
     this->k = kmer;
     this->thrs = threshold;
 }
@@ -28,6 +28,7 @@ bool Distance::compare(const string& s, const string& t) {
         tlen = t.length();
     string shorter, longer;
     int short_len, long_len;
+    int total = 0;
 
     if (slen <= tlen) {
         shorter = s;
@@ -43,7 +44,8 @@ bool Distance::compare(const string& s, const string& t) {
 
     typedef unordered_map<int,int> gmap;
     // count grams in shorter
-    gmap grams;  // gram count index in lexicographical order
+    gmap grams; // gram count index in lexicographical order
+
     int index;
     for (int i = 0; i <= short_len-k; i++) {
         index = gram_pos(shorter.substr(i,k));
@@ -54,7 +56,9 @@ bool Distance::compare(const string& s, const string& t) {
         else {
             grams[index]++;
         }
+        total += 1;
     }
+
 
     // Amount of each substring in t
     for (int i = 0; i <= short_len-k; i++) {
@@ -66,18 +70,23 @@ bool Distance::compare(const string& s, const string& t) {
         else {
             grams[index]--;
         }
+        total += 1;
     }
 
     int init = 0;
     // euclidian distance between the two arrays
     for (gmap::iterator it = grams.begin(); it != grams.end(); ++it)
-        init += pow(it->second, 2);
+        init += abs(it->second);
 
     int min_dist = init; // variable containing the least distance window so far
     int cur_dist = init; // distance in current window
 
     int win_size = short_len;
     int windows = long_len - short_len;
+
+    if (windows == 0)
+        return cur_dist >= thrs;
+
     string pre_gram, post_gram;
     for (int i = 0; i < windows; i++) {
         pre_gram  = longer.substr(i, k);
@@ -85,6 +94,11 @@ bool Distance::compare(const string& s, const string& t) {
 
         if (pre_gram == post_gram)
             continue;
+
+
+        // If changed for the better, decrement cur_dist, otherwise increment it.
+        grams[gram_pos(pre_gram)] < 0 ? --cur_dist : ++cur_dist;
+        grams[gram_pos(post_gram)] > 0 ? --cur_dist : ++cur_dist;
 
         grams[gram_pos(pre_gram)] += 1;
 
@@ -94,13 +108,11 @@ bool Distance::compare(const string& s, const string& t) {
         else
             grams[gram_pos(post_gram)] -= 1;
 
-        cur_dist = cur_dist + 2*grams[gram_pos(pre_gram)] -
-                    2*grams[gram_pos(post_gram)] - 2;
-
         min_dist = min(min_dist, cur_dist);
 
-        if (sqrt(min_dist) <= thrs)
+        if ((double)(total-min_dist)/(double)total >= thrs) {
             return true;
+        }
     }
 
     return false;

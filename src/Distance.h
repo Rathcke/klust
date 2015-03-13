@@ -6,7 +6,7 @@
 class Distance
 {
     public:
-        Distance(int kmer, int threshold);
+        Distance(int kmer, double threshold);
 
         bool compare(const std::string& s, const std::string& t);
 
@@ -18,10 +18,12 @@ class Distance
                 int k, int count, int threshold);*/
 
     private:
-        int k,      // k in k-mer (word length)
-            thrs;   // threshold
+        int k;      // k in k-mer (word length)
+        double thrs;   // threshold
 
         static int gram_pos(const std::string& s);
+
+
 };
 
 #endif
