@@ -4,18 +4,18 @@
 #include <iostream>
 #include <string>
 #include <unordered_map>
+#include <vector>
 
 #include "Distance.h"
 #include "IO.h"
 
 using namespace std;
 
-int Distance::d2window(const string& s, const string& t, int k) {
+bool Distance::d2window(const string s, const string t, int k, int threshold) {
     int slen = s.length(),
         tlen = t.length();
     string shorter, longer;
     int short_len, long_len;
-    int total = 0;
 
     if (slen <= tlen) {
         shorter = s;
@@ -42,7 +42,6 @@ int Distance::d2window(const string& s, const string& t, int k) {
         else {
             grams[index]++;
         }
-        total += 2*grams[index]-1;  // sum of squared gram counts in shorter
     }
 
     // Amount of each substring in t
@@ -87,10 +86,49 @@ int Distance::d2window(const string& s, const string& t, int k) {
                     2*grams[gram_pos(post_gram)] - 2;
 
         min_dist = min(min_dist, cur_dist);
+
+        if (sqrt(min_dist) <= threshold) {
+            cout << "Hit" << endl;
+        	return true;
+        }
     }
 
-    return sqrt(min_dist);
+    return false;
 }
+
+vector<int> Distance::computeKey(const string& s, int k, int n) {
+    typedef unordered_map<int,int> gmap;
+    // count grams in shorter
+    gmap grams;  // gram count index in lexicographical order
+    int index;
+    for (unsigned int i = 0; i <= s.length()-k; i++) {
+        index = gram_pos(s.substr(i,k));
+
+        if (grams.find(index) == grams.end()) {
+            grams.insert(pair<int,int>(index, 1));
+        }
+        else {
+            grams[index]++;
+        }
+    }
+
+    vector<pair<int, int>> map_pairs;
+    vector<int> ret;
+    int i = 0;
+    for (gmap::const_iterator it = grams.begin(); it != grams.end(); ++it) {
+        map_pairs.push_back({it->first,it->second});
+    }
+    sort(map_pairs.begin(), map_pairs.end(), 
+            [](const pair<int, int>& lhs, const pair<int, int>& rhs) {
+                return lhs.second > rhs.second;
+            });
+    for (vector<pair<int, int>>::const_iterator it = map_pairs.begin(); 
+            it != map_pairs.end() && i < n; ++i,++it) {
+        ret.push_back(it->first);
+    }
+    return ret;   
+}
+
 
 int Distance::d2window_naive(string s, string t, int k) {
     int slen = s.length(),
@@ -230,7 +268,7 @@ int Distance::levenshtein(string s, string t) {
     return col[slen];
 }
 
-void Distance::printDistMatrix(const string& filename, int k, int count) {
+void Distance::printDistMatrix(const string& filename, int k, int count, int threshold) {
     fstream fs0(filename);
     fstream fs1(filename);
 
@@ -254,7 +292,7 @@ void Distance::printDistMatrix(const string& filename, int k, int count) {
                 continue;
             }
 
-            int newdist = Distance::d2window(fst, snd, k);
+            int newdist = Distance::d2window(fst, snd, k, threshold);
             distances[i][j] = newdist;
             distances[j][i] = newdist;
         }

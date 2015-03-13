@@ -46,7 +46,7 @@ int Cluster::clust(fstream& fs_in, fstream& fs_centroids, fstream& fs_clusters,
         ++i;
 
         for (vector<Seq>::size_type i = 0; i < centroids.size(); ++i) {
-            if (Distance::d2window(s.data, centroids[i].data, k) <= threshold) {
+            if (Distance::d2window(s.data, centroids[i].data, k, threshold)) {
                 // write s belongs to centroids[i] to fs_clusters
                 fs_clusters << s.data << " " << centroids[i].data << endl;
                 match = true; // found cluster
@@ -72,7 +72,7 @@ int Cluster::clust(fstream& fs_in, fstream& fs_centroids, fstream& fs_clusters,
 bool Cluster::matchCentroid(const struct Seq& s, const vector<struct Seq>& cs,
                             int t, int k) {
     for (vector<struct Seq>::size_type i = 0; i < cs.size(); ++i) {
-        if (Distance::d2window(s.data, cs[i].data, k) <= t) {
+        if (Distance::d2window(s.data, cs[i].data, k, t)) {
             return true;
         }
     }
