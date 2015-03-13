@@ -86,8 +86,10 @@ bool Distance::compare(const string& s, const string& t) {
         if (pre_gram == post_gram)
             continue;
 
+        grams[gram_pos(pre_gram)] < 0 ? --cur_dist : ++cur_dist;
         grams[gram_pos(pre_gram)] += 1;
 
+        grams[gram_pos(post_gram)] > 0 ? --cur_dist : ++cur_dist;
         int post_gram_pos = gram_pos(post_gram);
         if (grams.find(post_gram_pos) == grams.end())
             grams.insert(pair<int,int>(post_gram_pos, -1));
