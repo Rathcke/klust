@@ -35,7 +35,7 @@ int main(int argc, char *argv[])
     fstream fs_cts(argv[2], fstream::out | fstream::trunc);
     fstream fs_cls(argv[3], fstream::out | fstream::trunc);
     const int k = std::atoi(argv[4]);         // k in k-mers
-    const int threshold = std::atoi(argv[5]); // simlilarity threshold
+    const double threshold = stod(argv[5]); // simlilarity threshold
     const int count = std::atoi(argv[6]);     // # of sequences to measure
 
     Distance d2(k, threshold);
