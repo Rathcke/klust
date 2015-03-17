@@ -13,7 +13,7 @@ using namespace std;
  * Read one entry of description and sequence data from FASTA format stream,
  * place in given seq struct; return true on success and false on failure.
  */
-bool IO::readSequence(fstream& fs, struct Seq& s) {
+bool IO::read_sequence(fstream& fs, struct Seq& s) {
     string tmp;
 
     if (fs) { // true if stream is ready; false on EOF or error
@@ -40,7 +40,7 @@ bool IO::readSequence(fstream& fs, struct Seq& s) {
  * Read [DR]NA sequence from given filestream in given string.
  * Return true on success and false if there's no more to read.
  */
-bool IO::readSequence(fstream& fs, string& s) {
+bool IO::read_sequence(fstream& fs, string& s) {
     string tmp;
     s.clear();
 
@@ -54,4 +54,26 @@ bool IO::readSequence(fstream& fs, string& s) {
         getline(fs, tmp);
     }
     return true;
+}
+
+/**
+ * Read seqeunces from input stream, sort in increasing (non-decreasing) order
+ * and output to output stream. Sorts everything in-place in memory.
+ */
+void sort_incr_len(fstream& fs_in, fstream& fs_out) {
+    Seq s;
+    vector<Seq> seqs;
+    while (IO::read_sequence(fs_in, s)) {
+        seqs.push_back(s);
+    }
+
+    sort(seqs.begin(), seqs.end(),
+            [](Seq s1, Seq s2) {
+                return s1.data.length() < s2.data.length();
+            });
+
+    for(vector<Seq>::const_iterator it = seqs.begin(); it != seqs.end(); ++it) {
+        fs_out << '>' << (*it).desc << endl
+               << (*it).data << endl;
+    }
 }

@@ -5,17 +5,11 @@
 #include <iostream>
 #include <string>
 
-#include <assert.h>
-
 #include "IO.h"
 #include "Distance.h"
 #include "Cluster.h"
 
 using namespace std;
-
-bool cmpSeq(Seq s1, Seq s2) {
-    return s1.data.length() < s2.data.length();
-}
 
 int main(int argc, char *argv[])
 {
@@ -46,26 +40,10 @@ int main(int argc, char *argv[])
 
     //Distance::printDistMatrix(argv[1], k, count);
 
-    /* SORTING BY INCREASING LENGTH:
-    fstream fs_in(argv[1]);
-    fstream fs_out(argv[2], fstream::out | fstream::trunc);
-
-    Seq s;
-    vector<Seq> seqs;
-    while (IO::readSequence(fs_in, s)) {
-        seqs.push_back(s);
-    }
-    
-    sort(seqs.begin(), seqs.end(), cmpSeq);
-
-
-    for(vector<Seq>::const_iterator it = seqs.begin(); it != seqs.end(); ++it) {
-        fs_out << '>' << (*it).desc << endl
-               << (*it).data << endl;
-    }
-
     fs_in.close();
-    fs_out.close();*/
+    fs_out.close();
+    fs_cts.close();
+    fs_cls.close();
 
     return 0;
 }

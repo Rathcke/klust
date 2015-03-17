@@ -23,7 +23,7 @@ int Cluster::clust(fstream& fs_in, fstream& fs_centroids, fstream& fs_clusters,
     struct Seq s;
 
     int i = 0;
-    while (IO::readSequence(fs_in, s) && i < count) {
+    while (IO::read_sequence(fs_in, s) && i < count) {
         bool match = false;
         ++i;
 

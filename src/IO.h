@@ -14,8 +14,10 @@ class IO
     public:
         IO() {}
 
-        static bool readSequence(std::fstream& fs, std::string& s);
-        static bool readSequence(std::fstream& fs, struct Seq& s);
+        static bool read_sequence(std::fstream& fs, std::string& s);
+        static bool read_sequence(std::fstream& fs, struct Seq& s);
+
+        static void sort_incr_len(std::fstream& fs_in, std::fstream& fs_out);
 
     private:
 

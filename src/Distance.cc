@@ -192,10 +192,10 @@ int Distance::levenshtein(string s, string t) {
             distances[i][j] = -1; // initialize distance matrix entries to -1
 
     for (int i = 0; i < count; ++i) {
-        IO::readSequence(fs0, fst);
+        IO::read_sequence(fs0, fst);
 
         for (int j = 0; j < count; ++j) {
-            IO::readSequence(fs1, snd);
+            IO::read_sequence(fs1, snd);
             if (i == j) { // don't compare a sequence to itself
                 distances[i][j] = 0;
                 continue;
