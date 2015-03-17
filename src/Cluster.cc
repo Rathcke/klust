@@ -45,7 +45,7 @@ int Cluster::clust(fstream& fs_in, fstream& fs_centroids, fstream& fs_clusters,
                     it != lst.end(); ++it) {
                 if (dist.compare(s.data, centroids[it->first].data)) {
                     // write s belongs to centroids[i] to fs_clusters
-                    fs_clusters << s.data << " " << centroids[it->first].data << endl;
+                    fs_clusters << it->first << ": " << s.data << endl;
                     match = true; // found cluster
                     break;
                 }
@@ -63,13 +63,16 @@ int Cluster::clust(fstream& fs_in, fstream& fs_centroids, fstream& fs_clusters,
                     it != vec.end(); ++it) {
                 int index = centroids.size();
                 if (key_map.find(it->first) == key_map.end()) {
-                    list<pair<id, int>> initlst;
+                    list<pair<id, int>> initlst(1,{index,it->second});
                     key_map.insert({it->first, initlst});
+                } else {
+                    list<pair<id,int>> elem;
+                    elem.push_back({index, it->second});
+                    (key_map.find(it->first)->second).merge(elem,
+                        [](const pair<id, int>& lhs, const pair<id, int>& rhs) {
+                            return lhs.second > rhs.second;
+                        });
                 }
-                list<pair<id,int>> ls = key_map.find(it->first)->second;
-                list<pair<id,int>> elem;
-                elem.push_back({index, it->second});
-                ls.merge(elem); // TODO: Merges in increasing order - should be decreasing.
             }
             centroids.push_back(s);
             fs_centroids << '>' << s.desc << endl
@@ -82,7 +85,7 @@ int Cluster::clust(fstream& fs_in, fstream& fs_centroids, fstream& fs_clusters,
         cout << "key: " << a << "  list: ";
         for (list<pair<id,int>>::const_iterator it2 = (it->second).begin();
                 it2 != (it->second).end(); ++it2) {
-            cout << it2->first << " ";
+            cout << "(" << it2->first << ", " << it2->second << ") ";
         }
         cout << endl;
     }
