@@ -79,7 +79,7 @@ int Cluster::clust(fstream& fs_in, fstream& fs_centroids, fstream& fs_clusters,
                          << s.data << endl;
         }
     }
-    for (map<key,list<pair<id,int>>>::const_iterator it = key_map.begin();
+/*    for (map<key,list<pair<id,int>>>::const_iterator it = key_map.begin();
             it != key_map.end(); ++it) {
         int a = it->first;
         cout << "key: " << a << "  list: ";
@@ -88,6 +88,6 @@ int Cluster::clust(fstream& fs_in, fstream& fs_centroids, fstream& fs_clusters,
             cout << "(" << it2->first << ", " << it2->second << ") ";
         }
         cout << endl;
-    }
+    }*/
     return centroids.size();
 }
