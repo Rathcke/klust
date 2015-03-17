@@ -10,7 +10,7 @@ class Distance
 
         bool compare(const std::string& s, const std::string& t);
 
-        std::vector<int> compute_key(const std::string& s, int n);
+        std::vector<std::pair<int,int>> compute_key(const std::string& s, unsigned int n);
 
         static int levenshtein(std::string s, std::string t);
 
