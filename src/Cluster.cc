@@ -32,6 +32,7 @@ int Cluster::clust(fstream& fs_in, fstream& fs_centroids, fstream& fs_clusters,
         bool match = false;
         ++i;
         vector<pair<key,int>> s_keys = dist.compute_key(s.data, max_rejects);
+        int rejects = 0;
         for (vector<pair<key,int>>::const_iterator it = s_keys.begin(); 
                 it != s_keys.end(); ++it) {
             if (match) {
@@ -42,7 +43,7 @@ int Cluster::clust(fstream& fs_in, fstream& fs_centroids, fstream& fs_clusters,
             }
             list<pair<id,int>> lst = key_map.find(it->first)->second;
             for (list<pair<id,int>>::const_iterator it = lst.begin();
-                    it != lst.end(); ++it) {
+                    it != lst.end() && rejects < max_rejects; ++it, ++rejects) {
                 if (dist.compare(s.data, centroids[it->first].data)) {
                     // write s belongs to centroids[i] to fs_clusters
                     fs_clusters << it->first << ": " << s.data << endl;
