@@ -13,13 +13,14 @@ using namespace std;
 
 int main(int argc, char *argv[])
 {
-    if (argc < 7) {
+    if (argc < 8) {
         std::cout << "Usage: " << argv[0] << " <.fasta input file> "
                                              " <.fasta output file for centroids> "
                                              " <output file for clusters> "
                                              " <k in k-mers> "
                                              " <similarity threshold>"
                                              " <# of sequences to compare>"
+                                             " <max_rejects>"
                                           << endl << endl;
         return 1;
     }
@@ -31,12 +32,13 @@ int main(int argc, char *argv[])
     const int k = std::atoi(argv[4]);         // k in k-mers
     const double threshold = stod(argv[5]); // simlilarity threshold
     const int count = std::atoi(argv[6]);     // # of sequences to measure
+    const int max_rejects = std::atoi(argv[7]);
 
     Distance d2(k, threshold);
 
     cout << "# of clusters: " <<
         //Cluster::clust(fs_in, fs_cts, threshold, k, count) << endl;
-        Cluster::clust(fs_in, fs_cts, fs_cls, d2, count) << endl;
+        Cluster::clust(fs_in, fs_cts, fs_cls, d2, count, max_rejects) << endl;
 
     //Distance::printDistMatrix(argv[1], k, count);
 

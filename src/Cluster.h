@@ -13,7 +13,8 @@ class Cluster
         Cluster() {}
 
         static int clust(std::fstream& fs_in, std::fstream& fs_centroids,
-                std::fstream& fs_clusters, Distance& dist, int count);
+                std::fstream& fs_clusters, Distance& dist, int count, 
+                int max_rejects);
 
     private:
 };
