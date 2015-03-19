@@ -109,20 +109,28 @@ Let $s$ and $t$ be sequences.
 \subsection{Distance metrics}
 
 \subsubsection{Edit distance}
-One type of \emph{edit distance} is the \emph{Levenshtein} distance, which is a string metric for determining the similarity between two sequences. It is defined to be the minimum number of edits to turn the first sequence into the other. \\
-The edit operations consists of \emph{insertions}, \emph{deletions} and \emph{substitutions}. These operations are, respectively, inserting a letter, removing a letter and changing one letter for another. \\
+One type of \emph{edit distance} is the \emph{Levenshtein} distance, which is a
+string metric for determining the similarity between two sequences. It is
+defined to be the minimum number of edits to turn the first sequence into the
+other. \\
+The edit operations consists of \emph{insertions}, \emph{deletions} and
+\emph{substitutions}. These operations are, respectively, inserting a letter,
+removing a letter and changing one letter for another. \\
 For example, the two sequences
 \begin{center}
 \texttt{ACGT} \\
 \texttt{ACGGC}
 \end{center}
 would have a distance of 2 (substituting T for G and inserting a C). \\
-However, there are some cases where the relevance of the distance is arguable. Consider the sequences
+However, there are some cases where the relevance of the distance is arguable.
+Consider the sequences
 \begin{center}
 \texttt{AACC} \\
 \texttt{CCAA}
 \end{center}
-with a distance of 4. The two sequences actually have the maximal distance possible even though they have a close resemblance to each other.
+with a distance of 4. The two sequences actually have the maximal distance
+possible even though they have a close resemblance to each other.
+
 
 \subsubsection{Feature based distance}
 A $k$-mer, or $k$-gram or simply a \emph{word}, is a sequence of length
@@ -178,8 +186,13 @@ have zero distance.
 
 
 \subsubsection{Sequence alignment}
-\emph{Sequence alignment} is used in bioinformatics to identify regions of similarity by arranging two or more sequences in a certain manner. Besides shifting a sequence to a side, gaps can be inserted between objects as well. We represent the gap with '-' and it indicates a insertion in the sequence or a deletion from another sequence.\\
-We call a column that includes - for an indel. If it does not and all object in the column are same, then we have a match. Otherwise, it is a mismatch.\\
+\emph{Sequence alignment} is used in bioinformatics to identify regions of
+similarity by arranging two or more sequences in a certain manner. Besides
+shifting a sequence to a side, gaps can be inserted between objects as well. We
+represent the gap with '-' and it indicates a insertion in the sequence or a
+deletion from another sequence.\\
+We call a column that includes - for an indel. If it does not and all object in
+the column are same, then we have a match. Otherwise, it is a mismatch.\\
 \begin{figure}[h!]
   \centering
   	  \begin{align*}
@@ -189,8 +202,13 @@ We call a column that includes - for an indel. If it does not and all object in 
   \caption{Sequence alignment of the sequences 'ATGCA' and 'TGCG'}
   \label{fig:seqAlignment}
 \end{figure}
-Figure \ref{fig:seqAlignment} displays an alignment of two sequences. Column 1 is an indel, column 2-4 are matches and column 5 is a mismatch. The amount of each type can then be used in a formula to calculate the similarity between the sequences. Note that more than two sequences can be aligned in a \emph{multiple sequence alignment}. \\
-There are many alignments. Among those is an optimal one which is what is strived to be found.
+Figure \ref{fig:seqAlignment} displays an alignment of two sequences. Column 1
+is an indel, column 2-4 are matches and column 5 is a mismatch. The amount of
+each type can then be used in a formula to calculate the similarity between the
+sequences. Note that more than two sequences can be aligned in a \emph{multiple
+sequence alignment}. \\
+There are many alignments. Among those is an optimal one which is what is
+strived to be found.
 
 
 \begin{thebibliography}{9}
