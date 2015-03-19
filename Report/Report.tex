@@ -81,6 +81,30 @@
 d2 - Remembering/reading kmers somehow instead of recomputing each time?
 
 
+\section{Introduction}
+Clustering is the task of grouping objects so that, based on a given similarity
+threshold, each object belongs to only one cluster and the
+objects within a cluster are more similar to each other than to objects 
+in other clusters.
+
+The main motivation for this project comes from a need for efficient tools for
+clustering of sequence data, and related techniques, in the microbiology
+department at the University of Copenhagen. In particular, the idea for this
+project comes from a collaboration between the supervisor of this project,
+Rasmus Fonseca, and Martin Asser Hansen, who is a bioinformatician in the
+Molecular Microbial Ecology
+Group\footnote{\url{http://www2.bio.ku.dk/microbiology/}}.
+
+Clustering huge amounts of DNA/RNA-sequences (up to 500
+million strings of 500-1500 characters each) is computationally hard and there are not many available algorithms and tools for efficient clustering of
+sequencing data. The one tool
+\texttt{UCLUST}\footnote{\url{http://drive5.com/usearch/}} that does the job is
+closed-source and considered too expensive.
+
+The goal of this project is to research the possibilities of creating an open source tool that can match the performance of the proprietary version of
+\texttt{UCLUST}.
+
+
 \section{Terminology}
 This section describes some basic terminology and notation of this text.
 
@@ -210,6 +234,19 @@ sequence alignment}. \\
 There are many alignments. Among those is an optimal one which is what is
 strived to be found.
 
+\subsection{Cluster analysis algorithms}
+
+\subsubsection{Hierarchical clustering}
+(agglomerative and divisive)
+
+\subsubsection{Graph based clustering}
+
+
+\subsubsection{Greedy algorithm like in \texttt{UCLUST}} 
+
+
+\subsubsection{Greedy algorithm with recalculation of centroids}
+
 
 \begin{thebibliography}{9}
   \bibitem[Hazelhurst2003]{hazelhurst2003}
@@ -219,5 +256,7 @@ strived to be found.
       September 2003,
       \url{http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.9.4289&rep=rep1&type=pdf}.
 \end{thebibliography}
+
+
 
 \end{document}
