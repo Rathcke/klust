@@ -81,6 +81,29 @@
 d2 - Remembering/reading kmers somehow instead of recomputing each time?
 
 
+\section{Terminology}
+This section describes some basic terminology and notation of this text.
+
+The words \emph{sequence} and \emph{string} will be used to denote the same
+concepts, i.e. a possibly infinite, ordered list of objects, where an object
+will most often be a text character.
+
+In this text, the notion of a subsequence is different from that of a
+substring: a substring $S'$ of a sequence $S$ is a consecutive, ordered list of
+objects, that occurs in $S$, while a subsequence $S''$ of $S$ is a sequence
+that can be obtained from $S$ by deleting some objects from the sequence
+without changing the order of the objects.
+
+% Defintion of subsequence, what's a sequence, what's an alphabet, notation...
+
+\subsection{Notation}
+Let $s$ and $t$ be sequences.
+\begin{itemize}
+  \item $|s|$ denotes the length of $s$
+  \item $s \sqsubseteq t$ denotes that $s$ is a substring of $t$
+\end{itemize}
+
+
 \section{Background}
 
 \subsection{Distance metrics}
@@ -88,6 +111,55 @@ d2 - Remembering/reading kmers somehow instead of recomputing each time?
 \subsubsection{Edit distance}
 
 \subsubsection{Feature based distance}
+A $k$-mer, or $k$-gram or simply a \emph{word}, is a sequence of length
+$k \geq 0$ over some alphabet $\mathcal{A}$ of a sequence. $k$-mers are a type
+of sequence \emph{feature}. An interesting feature of a sequence is the
+$k$-mers that occur in that sequence.
+
+$d2$ is a feature based distance metric, using $k$-mers as the feature. The
+distance is calculated by counting the $k$-mers occurring in two sequences,
+representing these occurrences as two vectors and finally taking the Euclidean
+distance between these two vectors.
+
+Let $c_x(w)$ be the number of times that a $k$-mer $w$ occurs in the sequence
+$x$. Then the $d2$ distance can be defined as follows:
+\begin{equation}
+  d2_k(x,y) = \sqrt{\sum_{|w|=k} (c_x(w) - c_y(w))^2}
+\end{equation}
+
+As an example, the two $2$-mer frequency vectors of the sequences
+\begin{align*}
+  S_1 &= AGACTG \\
+  S_2 &= ACAGAT
+\end{align*}
+over the alphabet $\mathcal{A} = \{A,C,T,G\}$, can be illustrated as follows:
+
+\begin{table}[!h]
+\centering
+\scalebox{0.7}{
+\begin{tabular}{c | c c c c c c c c c c c c c c c c}
+        & AA & AC & AG & AT & CA & CC & CG & CT & GA & GC & GG & GT & TA & TC & TG & TT \\
+  \hline
+  $S_1$ &    &  1 &  1 &    &    &    &    &  1 &  1 &    &    &    &    &    &  1 &    \\
+  \hline
+  $S_1$ &    &  1 &  1 &  1 &  1 &    &    &    &  1 &    &    &    &    &    &    &    \\
+\end{tabular}}
+\end{table}
+
+The Euclidean distance would then be calculated as
+\begin{align*}
+  d2_2(S_1, S_2)
+    &= \sqrt{(1-1)^2 + (1-1)^2 + (-1)^2 + (-1)^2 + (1)^2 + (1-1)^2 + (1)^2} \\
+    &= 2
+\end{align*}
+
+To better support distance between two sequences of different length, but
+similar subsequences, the concept of a \emph{window} can be used to split the
+distance calculation into comparison of substrings of length of the window
+and then use the window with the least distance as the resulting distance. In
+this way two sequences, where one is a prefix or postfix of the other, will
+have zero distance.
+
 
 
 
