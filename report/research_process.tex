@@ -1,0 +1,38 @@
+\section{Research process}
+\subsection{Starting out: Levenshtein with dynamic programming}
+For a start, a naive version of the Levenshtein distance metric was
+implemented, but as expected, this is absolutely useless in any practical
+setting, since it does not reuse already calculated results. Therefore, this
+was quickly transformed into a dynamic programming solution, which solves
+subproblems just once, stores and reuses the intermediate results.
+
+\subsection{$d2$ distance}
+After learning that the basic Levenshtein algorithm is far too slow for the
+problem domain of this project, we turned our attention to the $d2$ distance
+metric. The first edition of the $d2$ distance metric algorithm is shown in
+figure \ref{alg:d2}. This algorithm maintains a single frequence vector, as a
+map structure to allow for large $k$ which results in a large number of
+possible different $k$-mers. The map is indexed using the lexicographical
+position of the $k$-mer and when iterating through the first sequence, $k$-mer
+counts are incremented and when iterating through the second sequence, they are
+decremented. Finally all the frequensies are squared and the square root of the
+sum is returned.
+
+\begin{figure}[!h]
+  \centering
+  \begin{verbatim}
+    d2(s,t, k):
+      initialize freq_veq[i] to 0 for all i;
+
+      for (int i = 0; i <= length(s) - k; i++)
+        freq_vec[index_of_kmer(s.substr(i,k))]++;
+
+      for (int i = 0; i <= length(t) - k; i++)
+        freq_vec[index_of_kmer(s.substr(i,k))]--;
+
+      map (^2) freq_vec;
+      return sqrt (sum freq_vec);
+  \end{verbatim}
+  \caption{Initial $d2$ distance metric algorithm.}
+  \label{alg:d2}
+\end{figure}

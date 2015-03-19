@@ -1,0 +1,121 @@
+\section{Background}
+
+\subsection{Distance metrics}
+
+\subsubsection{Edit distance}
+One type of \emph{edit distance} is the \emph{Levenshtein} distance, which is a
+string metric for determining the similarity between two sequences. It is
+defined to be the minimum number of edits to turn the first sequence into the
+other. \\
+The edit operations consists of \emph{insertions}, \emph{deletions} and
+\emph{substitutions}. These operations are, respectively, inserting a letter,
+removing a letter and changing one letter for another. \\
+For example, the two sequences
+\begin{center}
+\texttt{ACGT} \\
+\texttt{ACGGC}
+\end{center}
+would have a distance of 2 (substituting T for G and inserting a C). \\
+However, there are some cases where the relevance of the distance is arguable.
+Consider the sequences
+\begin{center}
+\texttt{AACC} \\
+\texttt{CCAA}
+\end{center}
+with a distance of 4. The two sequences actually have the maximal distance
+possible even though they have a close resemblance to each other.
+
+
+\subsubsection{Feature based distance}
+A $k$-mer, or $k$-gram or simply a \emph{word}, is a sequence of length
+$k \geq 0$ over some alphabet $\mathcal{A}$ of a sequence. $k$-mers are a type
+of sequence \emph{feature}. An interesting feature of a sequence is the
+$k$-mers that occur in that sequence.
+
+$d2$ is a feature based distance metric, using $k$-mers as the feature. The
+distance is calculated by counting the $k$-mers occurring in two sequences,
+representing these occurrences as two vectors and finally taking the Euclidean
+distance between these two vectors.
+
+Let $c_x(w)$ be the number of times that a $k$-mer $w$ occurs in the sequence
+$x$. Then the $d2$ distance can be defined as follows:
+\begin{equation}
+  d2_k(x,y) = \sqrt{\sum_{|w|=k} (c_x(w) - c_y(w))^2}
+\end{equation}
+
+As an example, the two $2$-mer frequency vectors of the sequences
+\begin{align*}
+  S_1 &= AGACTG \\
+  S_2 &= ACAGAT
+\end{align*}
+over the alphabet $\mathcal{A} = \{A,C,T,G\}$, can be illustrated as follows:
+
+\begin{table}[!h]
+\centering
+\scalebox{0.7}{
+\begin{tabular}{c | c c c c c c c c c c c c c c c c}
+        & AA & AC & AG & AT & CA & CC & CG & CT & GA & GC & GG & GT & TA & TC & TG & TT \\
+  \hline
+  $S_1$ &    &  1 &  1 &    &    &    &    &  1 &  1 &    &    &    &    &    &  1 &    \\
+  \hline
+  $S_1$ &    &  1 &  1 &  1 &  1 &    &    &    &  1 &    &    &    &    &    &    &    \\
+\end{tabular}}
+\end{table}
+
+The Euclidean distance would then be calculated as
+\begin{align*}
+  d2_2(S_1, S_2)
+    &= \sqrt{(1-1)^2 + (1-1)^2 + (-1)^2 + (-1)^2 + (1)^2 + (1-1)^2 + (1)^2} \\
+    &= 2
+\end{align*}
+
+To better support distance between two sequences of different length, but
+similar subsequences, the concept of a \emph{window} can be used to split the
+distance calculation into comparison of substrings of length of the window
+and then use the window with the least distance as the resulting distance. In
+this way two sequences, where one is a prefix or postfix of the other, will
+have zero distance.
+
+
+
+
+\subsubsection{Sequence alignment}
+\emph{Sequence alignment} is used in bioinformatics to identify regions of
+similarity by arranging two or more sequences in a certain manner. Besides
+shifting a sequence to a side, gaps can be inserted between objects as well. We
+represent the gap with '-' and it indicates a insertion in the sequence or a
+deletion from another sequence.\\
+We call a column that includes - for an indel. If it does not and all object in
+the column are same, then we have a match. Otherwise, it is a mismatch.\\
+\begin{figure}[h!]
+  \centering
+  	  \begin{align*}
+  	  	\mbox{\texttt{ATGCA}} \\
+      	\mbox{\texttt{-TGCG}}
+  	  \end{align*}
+  \caption{Sequence alignment of the sequences 'ATGCA' and 'TGCG'}
+  \label{fig:seqAlignment}
+\end{figure}
+Figure \ref{fig:seqAlignment} displays an alignment of two sequences. Column 1
+is an indel, column 2-4 are matches and column 5 is a mismatch. The amount of
+each type can then be used in a formula to calculate the similarity between the
+sequences. Note that more than two sequences can be aligned in a \emph{multiple
+sequence alignment}. \\
+There are many alignments. Among those is an optimal one which is what is
+strived to be found.
+
+\subsection{Cluster analysis algorithms}
+
+\subsubsection{Hierarchical clustering}
+
+
+(agglomerative and divisive).
+
+\subsubsection{Graph based clustering}
+
+
+\subsubsection{Greedy algorithm like in \texttt{UCLUST}} 
+
+
+\subsubsection{Greedy algorithm with recalculation of centroids}
+
