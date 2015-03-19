@@ -29,12 +29,22 @@
 
 \begin{document}
 \maketitle
-\thispagestyle{fancy}
+\thispagestyle{empty}
+\newpage
 
 \begin{abstract}
   This will eventually contain a beautiful abstract...
 \end{abstract}
+\thispagestyle{plain}
+\pagenumbering{roman}
+\newpage
 
+\tableofcontents
+\thispagestyle{plain}
+\newpage
+
+\thispagestyle{fancy}
+\pagenumbering{arabic}
 \section{What should be in report?}
 
 \begin{itemize}
@@ -211,6 +221,19 @@ There are many alignments. Among those is an optimal one which is what is
 strived to be found.
 
 
+\section{Research process}
+\subsection{Starting out: Levenshtein with dynamic programming}
+For a start, a naive version of the Levenshtein distance metric was
+implemented, but as expected, this is absolutely useless in any practical
+setting, since it does not reuse already calculated results. Therefore, this
+was quickly transformed into a dynamic programming solution, which solves
+subproblems just once, stores and reuses the intermediate results.
+
+\subsection{$d2$ distance}
+After learning that the basic Levenshtein algorithm is too slow, 
+
+
+
 \begin{thebibliography}{9}
   \bibitem[Hazelhurst2003]{hazelhurst2003}
     Scott Hazelhurst,
@@ -218,6 +241,10 @@ strived to be found.
       sequences: The wcd $d^2$ EST clustering algorithm},
       September 2003,
       \url{http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.9.4289&rep=rep1&type=pdf}.
+
+    \bibitem[Dong2007]{dong2007}
+      Guozhu Dong, Jian Pei, \emph{Sequence Data Mining},
+      Springer, 2007.
 \end{thebibliography}
 
 \end{document}
