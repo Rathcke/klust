@@ -119,7 +119,7 @@ bool Distance::compare(const string& s, const string& t) {
 
 /* Returns a sorted vector by decreasing order and returns the n most 
    frequent kmers if they exist */
-vector<pair<int,int>> Distance::compute_key(const string& s, unsigned int n) {
+vector<int> Distance::compute_key(const string& s, int n) {
     typedef unordered_map<int,int> gmap;
     // count grams in shorter
     gmap grams;  // gram count index in lexicographical order
@@ -136,7 +136,8 @@ vector<pair<int,int>> Distance::compute_key(const string& s, unsigned int n) {
     }
 
     vector<pair<int, int>> map_pairs;
-    //vector<int> ret;
+    vector<int> ret;
+    int i = 0;
     for (gmap::const_iterator it = grams.begin(); it != grams.end(); ++it) {
         map_pairs.push_back({it->first,it->second});
     }
@@ -144,15 +145,11 @@ vector<pair<int,int>> Distance::compute_key(const string& s, unsigned int n) {
             [](const pair<int, int>& lhs, const pair<int, int>& rhs) {
                 return lhs.second > rhs.second;
             });
-    if (map_pairs.size() >= n)
-        map_pairs.resize(n);
-    return map_pairs;
-
-/*    for (vector<pair<int, int>>::const_iterator it = map_pairs.begin(); 
+    for (vector<pair<int, int>>::const_iterator it = map_pairs.begin(); 
             it != map_pairs.end() && i < n; ++i,++it) {
-        ret.push_back(it->first, it->second);
+        ret.push_back(it->first);
     }
-    return ret;*/
+    return ret;
 }
 
 
