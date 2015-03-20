@@ -13,10 +13,20 @@ metric. The first edition of the $d2$ distance metric algorithm is shown in
 figure \ref{alg:d2}. This algorithm maintains a single frequence vector, as a
 map structure to allow for large $k$ which results in a large number of
 possible different $k$-mers. The map is indexed using the lexicographical
-position of the $k$-mer and when iterating through the first sequence, $k$-mer
+position of the $k$-mer. When iterating through the first sequence, $k$-mer
 counts are incremented and when iterating through the second sequence, they are
 decremented. Finally all the frequensies are squared and the square root of the
 sum is returned.
+
+
+\begin{algorithm}
+  \caption{My algorithm}\label{alg:d2}
+  \begin{algorithmic}[1]
+    \Function{d2}{$s, t, n$}
+      \Let{$map$}{initialize map}
+   \EndFunction
+  \end{algorithmic}
+\end{algorithm}
 
 \begin{figure}[!h]
   \centering
