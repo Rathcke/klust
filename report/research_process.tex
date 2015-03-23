@@ -10,8 +10,8 @@ subproblems just once, stores and reuses the intermediate results.
 After learning that the basic Levenshtein algorithm is far too slow for the
 problem domain of this project, we turned our attention to the $d2$ distance
 metric. The first edition of the $d2$ distance metric algorithm is shown in
-figure \ref{alg:d2}. This algorithm maintains a single frequence vector, as a
-map structure to allow for large $k$ which results in a large number of
+figure \ref{alg:d2_naive}. This algorithm maintains a single frequence vector,
+as a map structure to allow for large $k$ which results in a large number of
 possible different $k$-mers. The map is indexed using the lexicographical
 position of the $k$-mer. When iterating through the first sequence, $k$-mer
 counts are incremented and when iterating through the second sequence, they are
@@ -20,29 +20,24 @@ sum is returned.
 
 
 \begin{algorithm}
-  \caption{My algorithm}\label{alg:d2}
+  \caption{Naive \textsc{d2} distance metric}
+  \label{alg:d2_naive}
   \begin{algorithmic}[1]
-    \Function{d2}{$s, t, n$}
-      \Let{$map$}{initialize map}
-   \EndFunction
+    \Require{$s$ and $t$ are DNA or RNA sequences and $k \in \mathbb{Z}^+$}
+    \Statex
+    \Function{d2}{$s, t, k$}
+      \State initialize \texttt{freq\_map}
+      \For{$i \gets 0$ to $length(s) - k$}
+        \State freq\_map[index\_of\_kmer(s.substring(i, k)]\texttt{++}
+      \EndFor
+      \For{$i \gets 0$ to $length(t) - k$}
+        \State freq\_map[index\_of\_kmer(t.substring(i, k)]\texttt{--}
+      \EndFor
+      \State $total \gets 0$
+      \ForAll{$e \in$ freq\_map}
+        \State $total \gets e.value^2$  \Comment{calculate the Euclidean distance}
+      \EndFor
+      \State \Return $\sqrt{total}$
+    \EndFunction
   \end{algorithmic}
 \end{algorithm}
-
-\begin{figure}[!h]
-  \centering
-  \begin{verbatim}
-    d2(s,t, k):
-      initialize freq_veq[i] to 0 for all i;
-
-      for (int i = 0; i <= length(s) - k; i++)
-        freq_vec[index_of_kmer(s.substr(i,k))]++;
-
-      for (int i = 0; i <= length(t) - k; i++)
-        freq_vec[index_of_kmer(s.substr(i,k))]--;
-
-      map (^2) freq_vec;
-      return sqrt (sum freq_vec);
-  \end{verbatim}
-  \caption{Initial $d2$ distance metric algorithm.}
-  \label{alg:d2}
-\end{figure}

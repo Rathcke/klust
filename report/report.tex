@@ -14,9 +14,13 @@
 \usepackage{url}
 \usepackage{float}
 \usepackage[bottom]{footmisc}
-\usepackage{algorithmicx}
-\usepackage{algorithm}
-\usepackage{algpseudocode}
+
+% algorithms
+\usepackage{algorithm}              % algorithm float environment
+\usepackage[noend]{algpseudocode}   % from algorithmicx; no "end" on functions
+\newcommand*\Let[2]{\State #1 $\gets$ #2}
+\algrenewcommand\algorithmicrequire{\textbf{Precondition:}}
+%\algrenewcommand\alglinenumber[1]{\\footnotesize{\color{gray}#1}}
 
 % headers and footers
 \usepackage{fancyhdr, lastpage}
