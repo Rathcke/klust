@@ -42,7 +42,7 @@ int Cluster::clust(fstream& fs_in, fstream& fs_centroids, fstream& fs_clusters,
         // keys for k-mers) in s:
         for (vector<pair<key,int>>::const_iterator it = s_keys.begin(); 
                 it != s_keys.end(); ++it) {
-            if (match && rejects < max_rejects) {    // we already found a matching centroid
+            if (match || rejects >= max_rejects) {    // we already found a matching centroid
                 break;
             }
             if (key_map.find(it->first) == key_map.end()) {

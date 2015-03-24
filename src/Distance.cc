@@ -110,6 +110,7 @@ bool Distance::compare(const string& s, const string& t) {
         min_dist = min(min_dist, cur_dist);
 
         if ((double)(total-min_dist)/(double)total >= thrs) {
+            // cout << (double)(total-min_dist)/(double)total << endl;
             return true;
         }
     }
