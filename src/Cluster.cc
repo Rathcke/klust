@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 #include <stdexcept>
+#include <set>
 
 #include "Cluster.h"
 #include "Distance.h"
@@ -20,15 +21,46 @@ using namespace std;
  */
 int Cluster::clust(fstream& fs_in, fstream& fs_centroids, fstream& fs_clusters,
         Distance& dist, int count, int max_rejects) {
-    map<int, struct Seq> centroids; // TODO: gets big, maybe use more structure to speed up
+    map<string, set<string>> centroids;
     struct Seq s;
 
     int i = 0;
     while (IO::read_sequence(fs_in, s) && i < count) {
+
         bool match = false;
         ++i;
-        vector<int> s_keys = dist.compute_key(s.data, max_rejects);
+        
+        set<string> query_kmers = dist.kmers(s);
+        for (set<string>::const_iterator it = query_kmers.begin();
+            it != query_kmers.end(); ++it) {
+            cout << *it << endl;
+        }
 
+        set<string> kmer_intersect;
+
+        for (map<string, set<string>>::const_iterator it = centroids.begin();
+                it != centroids.end(); ++it) {
+
+           set_intersection(query_kmers.begin(), query_kmers.end(), 
+            (it->second).begin(), (it->second).end(), kmer_intersect.begin());
+        }
+
+
+        if (!match) {
+            // add new centroid and write to stream in FASTA format
+            centroids.insert(pair<string, set<string>>(s.data, dist.kmers(s)));
+
+            fs_centroids << '>' << s.desc << endl
+                         << s.data << endl;
+        }
+    }
+    return centroids.size();
+}
+
+
+
+
+/*
         for (vector<int>::const_iterator it = s_keys.begin(); 
                 it != s_keys.end(); ++it) {
             if (centroids.find(*it) == centroids.end()) {
@@ -40,20 +72,4 @@ int Cluster::clust(fstream& fs_in, fstream& fs_centroids, fstream& fs_clusters,
                 match = true; // found cluster
                 break;
             }
-        }
-
-        if (!match) {
-            // add new centroid and write to stream in FASTA format
-            vector<int> vec = dist.compute_key(s.data, 1);
-            if (vec.empty()) {
-              throw logic_error("Calling compute_key on " 
-                            + s.data + " returns an empty vector" );  
-            }
-            centroids.insert({vec[0], s});
-            fs_centroids << '>' << s.desc << endl
-                         << s.data << endl;
-        }
-    }
-
-    return centroids.size();
-}
+        }*/

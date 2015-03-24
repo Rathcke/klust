@@ -4,6 +4,7 @@
 #include <iostream>
 #include <string>
 #include <unordered_map>
+#include <set>
 #include <vector>
 
 #include "Distance.h"
@@ -259,4 +260,12 @@ int Distance::gram_pos(const string& s) {
         }
     }
     return cost;
+}
+
+set<string> Distance::kmers(Seq s) {
+    set<string> kmers;
+    for (unsigned int i = 0; i <= s.data.length()-k; i++) {
+        kmers.insert(s.data.substr(i,k));
+    }
+    return kmers;
 }

@@ -2,6 +2,8 @@
 #define DISTANCE_H
 
 #include <string>
+#include <set>
+#include "IO.h"
 
 class Distance
 {
@@ -13,6 +15,8 @@ class Distance
         std::vector<int> compute_key(const std::string& s, int n);
 
         static int levenshtein(std::string s, std::string t);
+
+        std::set<std::string> kmers(Seq s);
 
         /*static void printDistMatrix(const std::string& filename,
                 int k, int count, int threshold);*/
