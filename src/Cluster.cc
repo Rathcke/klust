@@ -6,6 +6,7 @@
 #include <vector>
 #include <stdexcept>
 #include <list>
+#include <sys/time.h>
 
 #include "Cluster.h"
 #include "Distance.h"
@@ -62,7 +63,7 @@ int Cluster::clust(fstream& fs_in, fstream& fs_centroids, fstream& fs_clusters,
                 }
 
             }
-        }
+        }              
 
         if (!match) {
             // add new centroid and write to stream in FASTA format
@@ -87,6 +88,7 @@ int Cluster::clust(fstream& fs_in, fstream& fs_centroids, fstream& fs_clusters,
                          << s.data << endl;
         }
     }
+
 /*    for (map<key,list<pair<id,int>>>::const_iterator it = key_map.begin();
             it != key_map.end(); ++it) {
         int a = it->first;
