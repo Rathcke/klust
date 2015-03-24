@@ -28,7 +28,6 @@ bool Distance::compare(const string& s, const string& t) {
         tlen = t.length();
     string shorter, longer;
     int short_len, long_len;
-    int total = 0;
 
     if (slen <= tlen) {
         shorter = s;
@@ -56,7 +55,6 @@ bool Distance::compare(const string& s, const string& t) {
         else {
             grams[index]++;
         }
-        total += 1;
     }
 
 
@@ -70,7 +68,6 @@ bool Distance::compare(const string& s, const string& t) {
         else {
             grams[index]--;
         }
-        total += 1;
     }
 
     int init = 0;
@@ -108,6 +105,8 @@ bool Distance::compare(const string& s, const string& t) {
             grams[gram_pos(post_gram)] -= 1;
 
         min_dist = min(min_dist, cur_dist);
+
+        int total = 2*(short_len-k+1);
 
         if ((double)(total-min_dist)/(double)total >= thrs) {
             // cout << (double)(total-min_dist)/(double)total << endl;
