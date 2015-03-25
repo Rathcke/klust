@@ -69,8 +69,8 @@ int Cluster::clust(fstream& fs_in, fstream& fs_centroids, fstream& fs_clusters,
             }
         }
 
-        if (!match) { // add new centroid and write to stream in FASTA format
-
+        if (!match) {
+            // add new centroid and write to stream in FASTA format
             Centroid new_centroid = {s, dist.kmers(s)};
             centroids.push_back(new_centroid);
 
@@ -81,27 +81,3 @@ int Cluster::clust(fstream& fs_in, fstream& fs_centroids, fstream& fs_clusters,
 
     return centroids.size();
 }
-
-    /*map<string, set<string>> centroids;
-    struct Seq s;
-
-    int i = 0;
-    while (IO::read_sequence(fs_in, s) && i < count) {
-
-        bool match = false;
-        ++i;
-        
-        set<string> query_kmers = dist.kmers(s);
-        for (set<string>::const_iterator it = query_kmers.begin();
-            it != query_kmers.end(); ++it) {
-            cout << *it << endl;
-        }
-        for (map<string, set<string>>::const_iterator it = centroids.begin();
-                it != centroids.end(); ++it) {
-           set_intersection(query_kmers.begin(), query_kmers.end(), 
-            (it->second).begin(), (it->second).end(), kmer_intersect.begin());
-        }
-
-
-
-    }*/
