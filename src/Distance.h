@@ -16,7 +16,7 @@ class Distance
 
         static int levenshtein(std::string s, std::string t);
 
-        std::set<std::string> kmers(Seq s);
+        std::set<std::string> kmers(const Seq& s);
 
         /*static void printDistMatrix(const std::string& filename,
                 int k, int count, int threshold);*/
