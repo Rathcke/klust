@@ -4,6 +4,7 @@
 #include <iostream>
 #include <string>
 #include <unordered_map>
+#include <set>
 #include <vector>
 
 #include "Distance.h"
@@ -11,9 +12,10 @@
 
 using namespace std;
 
-Distance::Distance(int kmer, double threshold) {
+Distance::Distance(int kmer, double threshold, int step_size) {
     this->k = kmer;
     this->thrs = threshold;
+    this->step = step_size;
 }
 
 /**
@@ -42,35 +44,32 @@ bool Distance::compare(const string& s, const string& t) {
         long_len = slen;
     }
 
-    typedef unordered_map<int,int> gmap;
+    typedef unordered_map<string,int> gmap;
     // count grams in shorter
     gmap grams; // gram count index in lexicographical order
 
-    int index;
-    for (int i = 0; i <= short_len-k; i++) {
-        index = gram_pos(shorter.substr(i,k));
+    string index;
+    for (int i = 0; i <= short_len-k; i += step) {
+        index = shorter.substr(i,k);
 
         if (grams.find(index) == grams.end()) {
-            grams.insert(pair<int,int>(index, 1));
+            grams.insert({index, 1});
         }
         else {
             grams[index]++;
         }
-        total += 1;
     }
 
-
     // Amount of each substring in t
-    for (int i = 0; i <= short_len-k; i++) {
-        index = gram_pos(longer.substr(i,k));
+    for (int i = 0; i <= short_len-k; i += step) {
+        index = longer.substr(i,k);
 
         if (grams.find(index) == grams.end()) {
-            grams.insert(pair<int,int>(index, -1));
+            grams.insert({index, -1});
         }
         else {
             grams[index]--;
         }
-        total += 1;
     }
 
     int init = 0;
@@ -96,20 +95,22 @@ bool Distance::compare(const string& s, const string& t) {
             continue;
 
         // If changed for the better, decrement cur_dist, otherwise increment it.
-        grams[gram_pos(pre_gram)] < 0 ? --cur_dist : ++cur_dist;
-        grams[gram_pos(post_gram)] > 0 ? --cur_dist : ++cur_dist;
+        grams[pre_gram] < 0 ? --cur_dist : ++cur_dist;
+        grams[post_gram] > 0 ? --cur_dist : ++cur_dist;
 
-        grams[gram_pos(pre_gram)] += 1;
+        grams[pre_gram] += 1;
 
-        int post_gram_pos = gram_pos(post_gram);
+        string post_gram_pos = post_gram;
         if (grams.find(post_gram_pos) == grams.end())
-            grams.insert(pair<int,int>(post_gram_pos, -1));
+            grams.insert({post_gram_pos, -1});
         else
-            grams[gram_pos(post_gram)] -= 1;
+            grams[post_gram] -= 1;
 
         min_dist = min(min_dist, cur_dist);
 
-        if ((double)(total-min_dist)/(double)total >= thrs) {
+        total = 2*(short_len-k+1);
+
+        if ((double)(total-min_dist) / total >= thrs) {
             return true;
         }
     }
@@ -156,6 +157,7 @@ vector<int> Distance::compute_key(const string& s, int n) {
 int Distance::levenshtein(string s, string t) {
     int slen = s.length();
     int tlen = t.length();
+
     // Trivial cases
     if (slen == 0) {
         return tlen;
@@ -169,9 +171,9 @@ int Distance::levenshtein(string s, string t) {
         pcol[i] = i;
     }
     // Dynamic approach to calculate the distance between two strings
-    for (int i = 0; i < tlen; i++) {
+    for (int i = 0; i < slen; i++) {
         col[0] = i+1;
-        for (int j = 0; j < slen; j++) {
+        for (int j = 0; j < tlen; j++) {
             int cost = !(s[j] == t[i]);
             col[j+1] = min(col[j] + 1, min(pcol[j+1] + 1, pcol[j] + cost));
         }
@@ -180,6 +182,40 @@ int Distance::levenshtein(string s, string t) {
         }
     }
     return col[slen];
+}
+
+double Distance::levenshtein_window(string s, string t) {
+    int slen = s.length();
+    int tlen = t.length();
+    
+    string shorter, longer;
+    int short_len, long_len, cur_dist;
+    int min_dist = 9999;
+
+    if (slen <= tlen) {
+        shorter = s;
+        short_len = slen;
+        longer = t;
+        long_len = tlen;
+    } else {
+        shorter = t;
+        short_len = tlen;
+        longer = s;
+        long_len = slen;
+    }
+
+    int win_size = short_len;
+    int windows = long_len - short_len;
+
+    if (windows == 0)
+        return (double)(win_size - levenshtein(s, t)) / (double)win_size;
+
+    for (int i = 0; i < windows; i++) {
+        cur_dist = levenshtein(shorter, longer.substr(i, win_size));
+        min_dist = min(min_dist, cur_dist);
+    }
+    
+    return (double)(win_size - min_dist) / (double)win_size;
 }
 
 /*void Distance::printDistMatrix(const string& filename, int k, int count, int threshold) {
@@ -224,6 +260,7 @@ int Distance::levenshtein(string s, string t) {
     fs1.close();
 }*/
 
+
 /**
  * Calculate (0-based) index for a given k-gram in lexicographical order and
  * based on lenght k of given input string. Example:
@@ -233,6 +270,9 @@ int Distance::levenshtein(string s, string t) {
 int Distance::gram_pos(const string& s) {
     int slen = s.length();
     int cost = 0;
+
+    if (gram_index.find(s) != gram_index.end())
+        return gram_index[s];
     // Loop that calculates the index for a substring
     for (int i = slen - 1; i >= 0; i--) {
         switch (s[i]) {
@@ -258,5 +298,14 @@ int Distance::gram_pos(const string& s) {
                 ;
         }
     }
+    gram_index.insert({s, cost});
     return cost;
+}
+
+set<string> Distance::kmers(const Seq& s) {
+    set<string> kmers;
+    for (unsigned int i = 0; i <= s.data.length()-k; i++) {
+        kmers.insert(s.data.substr(i,k));
+    }
+    return kmers;
 }

@@ -13,7 +13,7 @@ using namespace std;
 
 int main(int argc, char *argv[])
 {
-    if (argc < 8) {
+    if (argc < 9) {
         std::cout << "Usage: " << argv[0] << " <.fasta input file> "
                                              " <.fasta output file for centroids> "
                                              " <output file for clusters> "
@@ -21,6 +21,7 @@ int main(int argc, char *argv[])
                                              " <similarity threshold>"
                                              " <# of sequences to compare>"
                                              " <max_rejects>"
+                                             " <step_size>"
                                           << endl << endl;
         return 1;
     }
@@ -33,8 +34,9 @@ int main(int argc, char *argv[])
     const double threshold = stod(argv[5]); // simlilarity threshold
     const int count = std::atoi(argv[6]);     // # of sequences to measure
     const int max_rejects = std::atoi(argv[7]);
+    const int step_size = std::atoi(argv[8]);
 
-    Distance d2(k, threshold);
+    Distance d2(k, threshold, step_size);
 
     cout << "# of clusters: " <<
         //Cluster::clust(fs_in, fs_cts, threshold, k, count) << endl;

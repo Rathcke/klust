@@ -24,6 +24,8 @@ int Cluster::clust(fstream& fs_in, fstream& fs_centroids, fstream& fs_clusters,
     struct Seq s;
 
     int i = 0;
+    int centroid_count = 0;
+
     while (IO::read_sequence(fs_in, s) && i < count) {
         bool match = false;
         ++i;
@@ -50,10 +52,11 @@ int Cluster::clust(fstream& fs_in, fstream& fs_centroids, fstream& fs_clusters,
                             + s.data + " returns an empty vector" );  
             }
             centroids.insert({vec[0], s});
+            ++centroid_count;
             fs_centroids << '>' << s.desc << endl
                          << s.data << endl;
         }
     }
 
-    return centroids.size();
+    return centroid_count;
 }
