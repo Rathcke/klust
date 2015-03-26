@@ -232,6 +232,11 @@ int Distance::levenshtein(string s, string t) {
  *   gram_pos("ca") == 4
  */
 int Distance::gram_pos(const string& s) {
+
+    if (gram_index.find(s) != gram_index.end()) {
+        return gram_index[s];
+    }
+
     int slen = s.length();
     int cost = 0;
     // Loop that calculates the index for a substring
@@ -259,6 +264,7 @@ int Distance::gram_pos(const string& s) {
                 ;
         }
     }
+    gram_index.insert({s, cost});
     return cost;
 }
 

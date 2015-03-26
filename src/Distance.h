@@ -3,6 +3,7 @@
 
 #include <string>
 #include <set>
+#include <unordered_map>
 #include "IO.h"
 
 class Distance
@@ -25,7 +26,9 @@ class Distance
         int k;      // k in k-mer (word length)
         double thrs;   // threshold
 
-        static int gram_pos(const std::string& s);
+        std::unordered_map<std::string, int> gram_index;
+
+        int gram_pos(const std::string& s);
 
 
 };
