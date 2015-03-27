@@ -40,7 +40,7 @@ int main(int argc, char *argv[])
 
     cout << "# of clusters: " <<
         //Cluster::clust(fs_in, fs_cts, threshold, k, count) << endl;
-        Cluster::clust(fs_in, fs_cts, fs_cls, d2, count, max_rejects) << endl;
+        Cluster::simple_clust(fs_in, fs_cts, fs_cls, d2, count, max_rejects) << endl;
 
     //Distance::printDistMatrix(argv[1], k, count);
 
