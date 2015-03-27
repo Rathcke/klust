@@ -9,7 +9,7 @@
 class Distance
 {
     public:
-        Distance(int kmer, double threshold);
+        Distance(int kmer, double threshold, int step_size);
 
         bool compare(const std::string& s, const std::string& t);
 
@@ -25,12 +25,11 @@ class Distance
     private:
         int k;      // k in k-mer (word length)
         double thrs;   // threshold
-
+        int step;
+        
         std::unordered_map<std::string, int> gram_index;
 
         int gram_pos(const std::string& s);
-
-
 };
 
 #endif

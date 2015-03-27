@@ -12,9 +12,10 @@
 
 using namespace std;
 
-Distance::Distance(int kmer, double threshold) {
+Distance::Distance(int kmer, double threshold, int step_size) {
     this->k = kmer;
     this->thrs = threshold;
+    this->step = step_size;
 }
 
 /**
@@ -43,35 +44,32 @@ bool Distance::compare(const string& s, const string& t) {
         long_len = slen;
     }
 
-    typedef unordered_map<int,int> gmap;
+    typedef unordered_map<string,int> gmap;
     // count grams in shorter
     gmap grams; // gram count index in lexicographical order
 
-    int index;
-    for (int i = 0; i <= short_len-k; i++) {
-        index = gram_pos(shorter.substr(i,k));
+    string index;
+    for (int i = 0; i <= short_len-k; i += step) {
+        index = shorter.substr(i,k);
 
         if (grams.find(index) == grams.end()) {
-            grams.insert(pair<int,int>(index, 1));
+            grams.insert({index, 1});
         }
         else {
             grams[index]++;
         }
-        total += 1;
     }
 
-
     // Amount of each substring in t
-    for (int i = 0; i <= short_len-k; i++) {
-        index = gram_pos(longer.substr(i,k));
+    for (int i = 0; i <= short_len-k; i += step) {
+        index = longer.substr(i,k);
 
         if (grams.find(index) == grams.end()) {
-            grams.insert(pair<int,int>(index, -1));
+            grams.insert({index, -1});
         }
         else {
             grams[index]--;
         }
-        total += 1;
     }
 
     int init = 0;
@@ -97,20 +95,22 @@ bool Distance::compare(const string& s, const string& t) {
             continue;
 
         // If changed for the better, decrement cur_dist, otherwise increment it.
-        grams[gram_pos(pre_gram)] < 0 ? --cur_dist : ++cur_dist;
-        grams[gram_pos(post_gram)] > 0 ? --cur_dist : ++cur_dist;
+        grams[pre_gram] < 0 ? --cur_dist : ++cur_dist;
+        grams[post_gram] > 0 ? --cur_dist : ++cur_dist;
 
-        grams[gram_pos(pre_gram)] += 1;
+        grams[pre_gram] += 1;
 
-        int post_gram_pos = gram_pos(post_gram);
+        string post_gram_pos = post_gram;
         if (grams.find(post_gram_pos) == grams.end())
-            grams.insert(pair<int,int>(post_gram_pos, -1));
+            grams.insert({post_gram_pos, -1});
         else
-            grams[gram_pos(post_gram)] -= 1;
+            grams[post_gram] -= 1;
 
         min_dist = min(min_dist, cur_dist);
 
-        if ((double)(total-min_dist)/(double)total >= thrs) {
+        total = 2*(short_len-k+1);
+
+        if ((double)(total-min_dist) / total >= thrs) {
             return true;
         }
     }
@@ -225,6 +225,7 @@ int Distance::levenshtein(string s, string t) {
     fs1.close();
 }*/
 
+
 /**
  * Calculate (0-based) index for a given k-gram in lexicographical order and
  * based on lenght k of given input string. Example:
@@ -239,6 +240,9 @@ int Distance::gram_pos(const string& s) {
 
     int slen = s.length();
     int cost = 0;
+
+    if (gram_index.find(s) != gram_index.end())
+        return gram_index[s];
     // Loop that calculates the index for a substring
     for (int i = slen - 1; i >= 0; i--) {
         switch (s[i]) {
