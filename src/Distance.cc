@@ -10,6 +10,7 @@
 
 #include "Distance.h"
 #include "IO.h"
+#define ARR_SIZE 65536
 
 using namespace std;
 
@@ -45,13 +46,15 @@ bool Distance::compare(const string& s, const string& t) {
     }
 
     int total = 2*(short_len-k+1);
-    typedef unordered_map<bitstring,int> gmap;
+    //typedef unordered_map<bitstring,int> gmap;
+    array<int, ARR_SIZE> kmer;
+
     // count grams in shorter
-    gmap grams; // gram count index in lexicographical order
-    bitstring pos;
+    //gmap grams; // gram count index in lexicographical order
+    unsigned long pos;
 
     string index;
-    for (int i = 0; i <= short_len-k; i += step) {
+/*    for (int i = 0; i <= short_len-k; i += step) {
         index = shorter.substr(i,k);
         pos = gram_pos(index);
 
@@ -72,12 +75,24 @@ bool Distance::compare(const string& s, const string& t) {
         } else {
             grams[pos]--;
         }
+    }*/
+    for (int i = 0; i <= short_len-k; i += step) {
+        index = shorter.substr(i,k);
+        pos = gram_pos(index).to_ulong();
+
+        ++kmer[pos];
+    }
+    for (int i = 0; i <= short_len-k; i += step) {
+        index = longer.substr(i,k);
+        pos = gram_pos(index).to_ulong();
+
+        --kmer[pos];
     }
 
-    int init = 0;
-    // euclidian distance between the two arrays
-    for (gmap::iterator it = grams.begin(); it != grams.end(); ++it)
-        init += abs(it->second);
+/*    int init = 0;
+    // Manhattan distance between two strings.
+    for (auto it = kmer.begin(); it != kmer.end(); ++it)
+        init += abs(*it);
 
     int min_dist = init; // variable containing the least distance window so far
     int cur_dist = init; // distance in current window
@@ -112,7 +127,7 @@ bool Distance::compare(const string& s, const string& t) {
         if ((double)(total-min_dist) / total >= thrs) {
             return true;
         }
-    }
+    }*/
 
     return false;
 }

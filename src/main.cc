@@ -38,6 +38,24 @@ int main(int argc, char *argv[])
 
     Distance d2(k, threshold, step_size);
 
+    Seq s;
+    vector<Seq> seqs;
+    for (int i = 0; i < count; ++i) {
+        IO::read_sequence(fs_in, s);
+        seqs.push_back(s);
+    }
+
+    clock_t start = clock();
+    for (int i = 0; i < count; ++i) {
+        for (int j = 0; j < count; ++j) {
+            d2.compare(seqs[i].data, seqs[j].data);
+        }
+    }
+    double a = (clock()-start) / (double)(CLOCKS_PER_SEC);
+    cout << "Time: " << a << endl;
+    cout << "Comparisons/sec: " << pow(count,2)/a << endl;
+    return 0;
+
     cout << "# of clusters: " <<
         //Cluster::clust(fs_in, fs_cts, threshold, k, count) << endl;
         Cluster::intersect_clust(fs_in, fs_cts, fs_cls, d2, count, max_rejects) << endl;
