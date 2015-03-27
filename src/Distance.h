@@ -32,8 +32,6 @@ class Distance
         std::unordered_map<std::string, int> gram_index;
 
         int gram_pos(const std::string& s);
-
-
 };
 
 #endif
