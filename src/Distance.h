@@ -3,6 +3,7 @@
 
 #include <string>
 #include <set>
+#include <bitset>
 #include <unordered_map>
 #include "IO.h"
 
@@ -28,10 +29,9 @@ class Distance
         int k;      // k in k-mer (word length)
         double thrs;   // threshold
         int step;
-        
-        std::unordered_map<std::string, int> gram_index;
+        typedef std::bitset<32> bitstring;
 
-        int gram_pos(const std::string& s);
+        bitstring gram_pos(const std::string& s);
 };
 
 #endif

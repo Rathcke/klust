@@ -89,7 +89,7 @@ int Cluster::intersect_clust(fstream& fs_in, fstream& fs_centroids, fstream& fs_
  * sequences. Output the centroids in FASTA format to the output file stream,
  * output clusters to file stream and return the number of centroids.
  */
-int Cluster::simple_clust(fstream& fs_in, fstream& fs_centroids, fstream& fs_clusters,
+/*int Cluster::simple_clust(fstream& fs_in, fstream& fs_centroids, fstream& fs_clusters,
         Distance& dist, int count, int max_rejects) {
     map<int, struct Seq> centroids; // TODO: gets big, maybe use more structure to speed up
     struct Seq s;
@@ -130,4 +130,4 @@ int Cluster::simple_clust(fstream& fs_in, fstream& fs_centroids, fstream& fs_clu
     }
 
     return centroid_count;
-}
+}*/

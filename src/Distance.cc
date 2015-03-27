@@ -6,6 +6,7 @@
 #include <unordered_map>
 #include <set>
 #include <vector>
+#include <bitset>
 
 #include "Distance.h"
 #include "IO.h"
@@ -30,7 +31,6 @@ bool Distance::compare(const string& s, const string& t) {
         tlen = t.length();
     string shorter, longer;
     int short_len, long_len;
-    int total = 0;
 
     if (slen <= tlen) {
         shorter = s;
@@ -44,31 +44,33 @@ bool Distance::compare(const string& s, const string& t) {
         long_len = slen;
     }
 
-    typedef unordered_map<string,int> gmap;
+    int total = 2*(short_len-k+1);
+    typedef unordered_map<bitstring,int> gmap;
     // count grams in shorter
     gmap grams; // gram count index in lexicographical order
+    bitstring pos;
 
     string index;
     for (int i = 0; i <= short_len-k; i += step) {
         index = shorter.substr(i,k);
+        pos = gram_pos(index);
 
-        if (grams.find(index) == grams.end()) {
-            grams.insert({index, 1});
-        }
-        else {
-            grams[index]++;
+        if (grams.find(pos) == grams.end()) {
+            grams.insert({pos, 1});
+        } else {
+            grams[pos]++;
         }
     }
 
     // Amount of each substring in t
     for (int i = 0; i <= short_len-k; i += step) {
         index = longer.substr(i,k);
+        pos = gram_pos(index);
 
-        if (grams.find(index) == grams.end()) {
-            grams.insert({index, -1});
-        }
-        else {
-            grams[index]--;
+        if (grams.find(pos) == grams.end()) {
+            grams.insert({pos, -1});
+        } else {
+            grams[pos]--;
         }
     }
 
@@ -86,10 +88,10 @@ bool Distance::compare(const string& s, const string& t) {
     if (windows == 0)
         return cur_dist >= thrs;
 
-    string pre_gram, post_gram;
+    bitstring pre_gram, post_gram;
     for (int i = 0; i < windows; i++) {
-        pre_gram  = longer.substr(i, k);
-        post_gram = longer.substr(i + win_size - k + 1, k);
+        pre_gram  = gram_pos(longer.substr(i, k));
+        post_gram = gram_pos(longer.substr(i + win_size - k + 1, k));
 
         if (pre_gram == post_gram)
             continue;
@@ -100,15 +102,12 @@ bool Distance::compare(const string& s, const string& t) {
 
         grams[pre_gram] += 1;
 
-        string post_gram_pos = post_gram;
-        if (grams.find(post_gram_pos) == grams.end())
-            grams.insert({post_gram_pos, -1});
+        if (grams.find(post_gram) == grams.end())
+            grams.insert({post_gram, -1});
         else
             grams[post_gram] -= 1;
 
         min_dist = min(min_dist, cur_dist);
-
-        total = 2*(short_len-k+1);
 
         if ((double)(total-min_dist) / total >= thrs) {
             return true;
@@ -120,7 +119,7 @@ bool Distance::compare(const string& s, const string& t) {
 
 /* Returns a sorted vector by decreasing order and returns the n most 
    frequent kmers if they exist */
-vector<int> Distance::compute_key(const string& s, int n) {
+/*vector<int> Distance::compute_key(const string& s, int n) {
     typedef unordered_map<int,int> gmap;
     // count grams in shorter
     gmap grams;  // gram count index in lexicographical order
@@ -151,7 +150,7 @@ vector<int> Distance::compute_key(const string& s, int n) {
         ret.push_back(it->first);
     }
     return ret;
-}
+}*/
 
 
 int Distance::levenshtein(string s, string t) {
@@ -267,44 +266,37 @@ double Distance::levenshtein_window(string s, string t) {
  *   gram_pos("ag") == 2
  *   gram_pos("ca") == 4
  */
-int Distance::gram_pos(const string& s) {
-
-    if (gram_index.find(s) != gram_index.end()) {
-        return gram_index[s];
-    }
+bitset<32> Distance::gram_pos(const string& s) {
 
     int slen = s.length();
-    int cost = 0;
-
-    if (gram_index.find(s) != gram_index.end())
-        return gram_index[s];
-    // Loop that calculates the index for a substring
-    for (int i = slen - 1; i >= 0; i--) {
+    bitstring index;
+    for (int i = 0, j = 0; i < slen; ++i, j+=2) {
         switch (s[i]) {
             case 'a':
             case 'A':
                 break;
             case 'c':
             case 'C':
-                cost += pow(4,slen-i-1);
+                index.set(j);
                 break;
             case 'g':
             case 'G':
-                cost += 2*pow(4,slen-i-1);
+                index.set(j+1);
                 break;
             case 't':
             case 'T':
             case 'u':
             case 'U':
-                cost += 3*pow(4,slen-i-1);
+                index.set(j);
+                index.set(j+1);
                 break;
             default:
                 //cout << "Unknown char passed to gram_pos" << '\n';
                 ;
         }
     }
-    gram_index.insert({s, cost});
-    return cost;
+
+    return index;
 }
 
 set<string> Distance::kmers(const Seq& s) {
