@@ -29,9 +29,9 @@ class Distance
         int k;      // k in k-mer (word length)
         double thrs;   // threshold
         int step;
-        typedef std::bitset<32> bitstring;
+        /*typedef std::bitset<32> bitstring;
 
-        bitstring gram_pos(const std::string& s);
+        bitstring gram_pos(const std::string& s);*/
 };
 
 #endif

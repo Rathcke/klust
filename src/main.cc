@@ -53,7 +53,7 @@ int main(int argc, char *argv[])
     }
     double a = (clock()-start) / (double)(CLOCKS_PER_SEC);
     cout << "Time: " << a << endl;
-    cout << "Comparisons/sec: " << pow(count,2)/a << endl;
+    cout << "Comparisons/sec: " << pow(count, 2) / a << endl;
     return 0;
 
     cout << "# of clusters: " <<

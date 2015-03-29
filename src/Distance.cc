@@ -21,9 +21,35 @@ Distance::Distance(int kmer, double threshold, int step_size) {
 }
 
 /**
+ * Given a string, return an int representation of the string,
+ * e.g. gram_pos("acgt") == 0b11100100. 'a' == 0b00, 'c' == 0b01 etc.
+ */
+inline unsigned int gram_pos(const string& s) {
+    int slen = s.length();
+    unsigned int res = 0;
+
+    for (int i = 0; i < slen; ++i) {
+        switch (s[i]) {
+            case 'c': case 'C':
+                res |= 1 << (i*2);  // 0b01
+                break;
+            case 'g': case 'G':
+                res |= 2 << (i*2);  // 0b10
+                break;
+            case 't': case 'T': case 'u': case 'U':
+                res |= 3 << (i*2);  // 0b11
+                break;
+            default:
+                break;
+        }
+    }
+    return res;
+}
+
+/**
  * Given two strings, the int k in k-mer (word length), calculated the
- * d2-distance between the strings based on k-grams: count the occurences of
- * each poosible k-mer, calculate the Euclidean distance between the two k-mer
+ * d2-distance between the strings based on k-mers: count the occurences of
+ * each poosible k-mer, calculate the Manhattan distance between the two k-mer
  * occurence vectors. Return true if within threshold in some window (of size
  * shortest string), otherwise return false.
  */
@@ -45,92 +71,68 @@ bool Distance::compare(const string& s, const string& t) {
         long_len = slen;
     }
 
-    int total = 2*(short_len-k+1);
-    //typedef unordered_map<bitstring,int> gmap;
-    array<int, ARR_SIZE> kmer;
+    // allocate array of length equal to the number of different kmers
+    int kmer_count = pow(4, k);
+    int *kmers = new int[kmer_count](); // zero initialized due to ()
 
-    // count grams in shorter
-    //gmap grams; // gram count index in lexicographical order
-    unsigned long pos;
-
-    string index;
-/*    for (int i = 0; i <= short_len-k; i += step) {
-        index = shorter.substr(i,k);
-        pos = gram_pos(index);
-
-        if (grams.find(pos) == grams.end()) {
-            grams.insert({pos, 1});
-        } else {
-            grams[pos]++;
-        }
+    // count kmers in the shorter and the longer string, respectively
+    for (int i = 0; i <= short_len-k; ++i) {
+        ++kmers[gram_pos(shorter.substr(i,k))];
+        --kmers[gram_pos(longer.substr(i,k))];
     }
 
-    // Amount of each substring in t
-    for (int i = 0; i <= short_len-k; i += step) {
-        index = longer.substr(i,k);
-        pos = gram_pos(index);
+    // Manhattan distance between the two strings
+    int cur_dist = 0;
+    for (int i = 0; i < kmer_count; ++i)
+        cur_dist += abs(kmers[i]);
 
-        if (grams.find(pos) == grams.end()) {
-            grams.insert({pos, -1});
-        } else {
-            grams[pos]--;
-        }
-    }*/
-    for (int i = 0; i <= short_len-k; i += step) {
-        index = shorter.substr(i,k);
-        pos = gram_pos(index).to_ulong();
-
-        ++kmer[pos];
-    }
-    for (int i = 0; i <= short_len-k; i += step) {
-        index = longer.substr(i,k);
-        pos = gram_pos(index).to_ulong();
-
-        --kmer[pos];
-    }
-
-/*    int init = 0;
-    // Manhattan distance between two strings.
-    for (auto it = kmer.begin(); it != kmer.end(); ++it)
-        init += abs(*it);
-
-    int min_dist = init; // variable containing the least distance window so far
-    int cur_dist = init; // distance in current window
-
+    int min_dist = cur_dist;    // the least distance window so far
     int win_size = short_len;
     int windows = long_len - short_len;
+    int total = 2 * (short_len - k + 1);
 
-    if (windows == 0)
+    if (windows == 0) {
+        delete[] kmers;
         return cur_dist >= thrs;
+    }
 
-    bitstring pre_gram, post_gram;
-    for (int i = 0; i < windows; i++) {
+    /* 
+     * pre_gram:  kmer moving out of window
+     * post_gram: kmer moving into window
+     *
+     * actgactgactg
+     * actgactgactgactgactg
+     * ^^^^     ^^^^
+     * pre      post
+     */
+    unsigned int pre_gram, post_gram;
+    for (int i = 0; i < windows; ++i) {
         pre_gram  = gram_pos(longer.substr(i, k));
         post_gram = gram_pos(longer.substr(i + win_size - k + 1, k));
 
         if (pre_gram == post_gram)
-            continue;
+            continue;   // same kmers, so no need to calculate new distance
 
-        // If changed for the better, decrement cur_dist, otherwise increment it.
-        grams[pre_gram] < 0 ? --cur_dist : ++cur_dist;
-        grams[post_gram] > 0 ? --cur_dist : ++cur_dist;
+        // if changed for the better, decrement cur_dist, otherwise increment
+        kmers[pre_gram]  < 0 ? --cur_dist : ++cur_dist;
+        kmers[post_gram] > 0 ? --cur_dist : ++cur_dist;
+    
+        // adjust kmer count from change
+        ++kmers[pre_gram];
+        --kmers[post_gram];
 
-        grams[pre_gram] += 1;
+        min_dist = min(cur_dist, min_dist);
 
-        if (grams.find(post_gram) == grams.end())
-            grams.insert({post_gram, -1});
-        else
-            grams[post_gram] -= 1;
-
-        min_dist = min(min_dist, cur_dist);
-
-        if ((double)(total-min_dist) / total >= thrs) {
+        if (((double) (total - min_dist) / (double) total) >= thrs) {
+            delete[] kmers;
             return true;
         }
-    }*/
+    }
 
+    delete[] kmers;
     return false;
 }
+
 
 /* Returns a sorted vector by decreasing order and returns the n most 
    frequent kmers if they exist */
@@ -281,8 +283,7 @@ double Distance::levenshtein_window(string s, string t) {
  *   gram_pos("ag") == 2
  *   gram_pos("ca") == 4
  */
-bitset<32> Distance::gram_pos(const string& s) {
-
+/*inline bitset<32> Distance::gram_pos(const string& s) {
     int slen = s.length();
     bitstring index;
     for (int i = 0, j = 0; i < slen; ++i, j+=2) {
@@ -310,9 +311,8 @@ bitset<32> Distance::gram_pos(const string& s) {
                 ;
         }
     }
-
     return index;
-}
+}*/
 
 set<string> Distance::kmers(const Seq& s) {
     set<string> kmers;

@@ -9,6 +9,7 @@
 
 using namespace std;
 
+
 /**
  * Read one entry of description and sequence data from FASTA format stream,
  * place in given seq struct; return true on success and false on failure.
