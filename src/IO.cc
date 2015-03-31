@@ -46,8 +46,11 @@ int IO::read_seqs(fstream& fs, vector<vector<bitset<2>>>& seqs, int count) {
 
     while(fs.good() && i++ < count) {
         fs.ignore(256, '\n');   // discard first 256 chars or until newline
-        fs.getline(buf, '>'); // read until '>', i.e. the sequence data
+        fs.getline(buf, 16*1024, '>'); // read until '>', i.e. the sequence data
 
+        //cout << buf << endl;
+        /*for (int i = 0; i < 16*1024; ++i) {
+        }*/
 
         /*for (string::const_iterator it = s.begin(); it != s.end(); ++it) {
             if (*it == '\n')
