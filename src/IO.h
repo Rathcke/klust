@@ -1,6 +1,7 @@
 #ifndef IO_H
 #define IO_H
 
+#include <bitset>
 #include <string>
 #include <fstream>
 
@@ -13,6 +14,9 @@ class IO
 {
     public:
         IO() {}
+
+        static int read_seqs(std::fstream& fs,
+                std::vector<std::vector<std::bitset<2>>>& seqs, int count);
 
         static bool read_sequence(std::fstream& fs, std::string& s);
         static bool read_sequence(std::fstream& fs, struct Seq& s);

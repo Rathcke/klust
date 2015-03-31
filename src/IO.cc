@@ -9,6 +9,68 @@
 
 using namespace std;
 
+/**
+ * Given a char, return a bitset representation of the char.
+ */
+inline bitset<2> gram_to_bitset(const char c) {
+    switch(c) {
+        case 'a': case 'A':
+            return bitset<2>();  // 0b00
+            break;
+        case 'c': case 'C':
+            return bitset<2>(1); // 0b01
+            break;
+        case 'g': case 'G':
+            return bitset<2>(2); // 0b10
+            break;
+        case 't': case 'T': case 'u': case 'U':
+            return bitset<2>(3); // 0b11
+            break;
+        default:
+            //cout << "unknown char passed to gram_to_bitset: " << c << endl;
+            return bitset<2>();  // 0b00
+            break;
+    }
+}
+
+/**
+ * Read specified number of sequences from filestream and load into given
+ * vector. Discard the '>' lines. Return the number of sequences read.
+ */
+int IO::read_seqs(fstream& fs, vector<vector<bitset<2>>>& seqs, int count) {
+
+    char* buf = new char[16*1024];
+    //string s;
+    int i = 0;
+    vector<bitset<2>> v;
+
+    while(fs.good() && i++ < count) {
+        fs.ignore(256, '\n');   // discard first 256 chars or until newline
+        fs.getline(buf, '>'); // read until '>', i.e. the sequence data
+
+
+        /*for (string::const_iterator it = s.begin(); it != s.end(); ++it) {
+            if (*it == '\n')
+                continue;
+            v.push_back(gram_to_bitset(*it));
+        }*/
+        for (char *p = buf; *p != '\0'; ++p) {
+            if (*p == '\n')
+                continue;
+            v.push_back(gram_to_bitset(*p));
+        }
+
+
+        //transform(s.begin(), s.end(), v.begin(), gram_to_bitset);
+
+        seqs.push_back(v);
+        //s.clear();
+        v.clear();
+    }
+
+    delete[] buf;
+    return seqs.size();
+}
 
 /**
  * Read one entry of description and sequence data from FASTA format stream,

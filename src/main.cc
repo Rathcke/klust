@@ -27,7 +27,7 @@ int main(int argc, char *argv[])
     }
 
     fstream fs_in(argv[1]);
-    fstream fs_out(argv[2], fstream::out | fstream::trunc);
+    /*fstream fs_out(argv[2], fstream::out | fstream::trunc);
     fstream fs_cts(argv[2], fstream::out | fstream::trunc);
     fstream fs_cls(argv[3], fstream::out | fstream::trunc);
     const int k = std::atoi(argv[4]);         // k in k-mers
@@ -36,9 +36,26 @@ int main(int argc, char *argv[])
     const int max_rejects = std::atoi(argv[7]);
     const int step_size = std::atoi(argv[8]);
 
-    Distance d2(k, threshold, step_size);
+    Distance d2(k, threshold, step_size);*/
 
-    Seq s;
+
+    int count = 1;
+    vector<vector<bitset<2>>> seqs;
+    clock_t start = clock();
+    IO::read_seqs(fs_in, seqs, count);
+    double a = (clock()-start) / (double)(CLOCKS_PER_SEC);
+
+    for (unsigned int i = 0; i < seqs.size(); ++i) {
+        for (unsigned int j = 0; j < seqs[i].size(); ++j) {
+            cout << seqs[i][j] << " ";
+        }
+        cout << endl;
+    }
+
+    cout << "Time: " << a << endl;
+    cout << "Seqs/sec: " << count / a << endl;
+
+    /*Seq s;
     vector<Seq> seqs;
     for (int i = 0; i < count; ++i) {
         IO::read_sequence(fs_in, s);
@@ -65,7 +82,7 @@ int main(int argc, char *argv[])
     fs_in.close();
     fs_out.close();
     fs_cts.close();
-    fs_cls.close();
+    fs_cls.close();*/
 
     return 0;
 }
