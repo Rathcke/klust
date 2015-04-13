@@ -427,10 +427,10 @@ double Distance::levenshtein_window(string s, string t) {
     return index;
 }*/
 
-set<string> Distance::kmers(const Seq& s) {
+/*set<string> Distance::kmers(const Seq& s) {
     set<string> kmers;
     for (unsigned int i = 0; i <= s.data.length()-k; i++) {
         kmers.insert(s.data.substr(i,k));
     }
     return kmers;
-}
+}*/

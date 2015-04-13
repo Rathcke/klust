@@ -1,13 +1,131 @@
 #include <algorithm>
 #include <cmath>
+#include <cstring>
+#include <fstream>
 #include <iostream>
 #include <map>
 #include <string>
-#include <fstream>
 
 #include "IO.h"
 
 using namespace std;
+
+Seq::Seq(const char *seq_str, size_t len) {
+    seq_len = len;
+
+    // calculate bytes necessary to store sequence as 2 bit characters in an
+    // array of 8 bit unsigned ints, memset to 0 and allocate space on the heap
+    bytes = len / 4 + (len % 4 != 0);
+    seq_data = new uint8_t[bytes];
+    memset(seq_data, 0, bytes);
+
+    for (size_t i = 0; i < len; ++i) {
+        int shift = 6 - 2 * (i % 4);
+        
+        switch (seq_str[i]) {
+            case 'c': case 'C':
+                seq_data[i/4] |= 1 << shift; //0b01
+                break;
+            case 'g': case 'G':
+                seq_data[i/4] |= 2 << shift; //0b10
+                break;
+            case 't': case 'T': case 'u': case 'U':
+                seq_data[i/4] |= 3 << shift; //0b11
+                break;
+            default:
+                // TODO: handle more gracefully
+                break;
+        }
+    }
+    //cout << bitset<8>(seq_data[0]) << endl;;
+}
+
+Seq::Seq(const Seq& seq) {
+    //cout << "copy cons called" << endl; TODO
+    seq_data = new uint8_t[seq.bytes];
+    memcpy(seq_data, seq.seq_data, seq.bytes);
+    seq_len = seq.seq_len;
+    bytes = seq.bytes;
+}
+
+Seq::~Seq() {
+    delete[] seq_data;
+}
+
+Seq& Seq::operator= (const Seq& seq){
+    cout << "op= called" << endl;
+    if (this != &seq) {
+        delete[] seq_data;
+        seq_data = new uint8_t[seq.bytes];
+        memcpy(seq_data, seq.seq_data, seq.bytes);
+        seq_len = seq.seq_len;
+        bytes = seq.bytes;
+    }
+    return *this;
+}
+
+string Seq::to_string() const {
+    string s;
+    s.resize(seq_len);
+
+    for (size_t i = 0; i < seq_len; ++i) {
+        int shift = 6 - 2 * (i % 4);
+        uint8_t mask = 3 << shift;
+        uint8_t bit = (seq_data[i/4] & mask) >> shift;
+
+        switch (bit) {
+            case 0:
+                s[i] = 'A';
+                break;
+            case 1:
+                s[i] = 'C';
+                break;
+            case 2:
+                s[i] = 'G';
+                break;
+            case 3:
+                s[i] = 'T';
+                break;
+            default:
+                throw invalid_argument("invalid bit representation "
+                                       "in compressed sequence");
+                break;
+        }
+    }
+    return s;
+}
+
+
+void IO::read_seqs(ifstream &fs, vector<Seq>& seqs, int count) {
+    const size_t data_size = 16 * 1024;
+    char *data = new char[data_size];
+    char *p = data;
+    size_t seq_len = 0;
+
+    const size_t buf_size = 1024;
+    char *buf = new char[buf_size];
+
+    streamsize bytes_read;
+
+    int i = 0;
+    while (fs.getline(buf, buf_size) && i < count) {
+        if (buf[0] == '>') {
+            if (p != data) {
+                seqs.emplace_back(data, seq_len);
+                p = data;
+                seq_len = 0;
+                i++;
+            }
+            continue;
+        }
+
+        bytes_read = fs.gcount() - 1; // gcount() counts discarded \n as well
+        memcpy(p, buf, bytes_read);
+        p += bytes_read;
+        seq_len += bytes_read;
+    }
+}
+
 
 /**
  * Given a char, return a bitset representation of the char.
@@ -71,7 +189,7 @@ int IO::read_seqs(ifstream& fs, vector<vector<bitset<2>>>& seqs, int count) {
  * Read one entry of description and sequence data from FASTA format stream,
  * place in given seq struct; return true on success and false on failure.
  */
-bool IO::read_sequence(fstream& fs, struct Seq& s) {
+/*bool IO::read_sequence(fstream& fs, struct Seq& s) {
     string tmp;
 
     if (fs) { // true if stream is ready; false on EOF or error
@@ -91,7 +209,7 @@ bool IO::read_sequence(fstream& fs, struct Seq& s) {
         return true;
     }
     return false;
-}
+}*/
 
 
 /**
@@ -118,7 +236,7 @@ bool IO::read_sequence(fstream& fs, string& s) {
  * Read seqeunces from input stream, sort in increasing (non-decreasing) order
  * and output to output stream. Sorts everything in-place in memory.
  */
-void sort_incr_len(fstream& fs_in, fstream& fs_out) {
+/*void sort_incr_len(fstream& fs_in, fstream& fs_out) {
     Seq s;
     vector<Seq> seqs;
     while (IO::read_sequence(fs_in, s)) {
@@ -134,4 +252,4 @@ void sort_incr_len(fstream& fs_in, fstream& fs_out) {
         fs_out << '>' << (*it).desc << endl
                << (*it).data << endl;
     }
-}
+}*/

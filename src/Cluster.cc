@@ -20,7 +20,7 @@ using namespace std;
  * sequences. Output the centroids in FASTA format to the output file stream,
  * output clusters to file stream and return the number of centroids.
  */
-int Cluster::intersect_clust(fstream& fs_in, fstream& fs_centroids, fstream& fs_clusters,
+/*int Cluster::intersect_clust(fstream& fs_in, fstream& fs_centroids, fstream& fs_clusters,
         Distance& dist, int count, int max_rejects) {
 
     struct Centroid {
@@ -80,7 +80,7 @@ int Cluster::intersect_clust(fstream& fs_in, fstream& fs_centroids, fstream& fs_
     }
 
     return centroids.size();
-}
+}*/
 
 
 /**
