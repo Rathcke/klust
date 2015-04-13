@@ -53,6 +53,119 @@ inline unsigned int gram_pos(const string& s) {
  * occurence vectors. Return true if within threshold in some window (of size
  * shortest string), otherwise return false.
  */
+bool Distance::compare(const vector<bitset<2>>& s, const vector<bitset<2>>& t) {
+    int slen = s.size(),
+        tlen = t.size();
+
+    int long_len, short_len;
+    if (slen >= tlen) {
+        long_len = slen;
+        short_len = tlen;
+    } else {
+        long_len = tlen;
+        short_len = slen;
+    }
+
+    const vector<bitset<2>>& longer = slen >= tlen ? s : t;
+
+    // allocate array of length equal to the number of different kmers
+    const int kmer_count = pow(4, k);
+    int *kmers = new int[kmer_count](); // zero initialized due to ()
+
+    // count kmers in the shorter and the longer string, respectively
+    auto it_s = s.cbegin(), it_t = t.cbegin();
+    while (it_s != s.cend() && it_t != t.cend()) {
+        unsigned long pos_s = (*it_s).to_ulong();
+        unsigned long pos_t = (*it_t).to_ulong();
+        for (int i = 0; i < k; ++i) {
+            pos_s <<= 2;
+            pos_s |= (*(it_s+i)).to_ulong();
+            pos_t <<= 2;
+            pos_t |= (*(it_t+i)).to_ulong();
+        }
+        ++kmers[pos_s];
+        --kmers[pos_t];
+        ++it_s;
+        ++it_t;
+    }
+
+    // count kmers in the shorter and the longer string, respectively
+    /*for (int i = 0; i <= short_len-k; ++i) {
+        ++kmers[gram_pos(shorter.substr(i,k))];
+        --kmers[gram_pos(longer.substr(i,k))];
+    }*/
+
+    // Manhattan distance between the two strings
+    int cur_dist = 0;
+    for (int i = 0; i < kmer_count; ++i)
+        cur_dist += abs(kmers[i]);
+
+    int min_dist = cur_dist;    // the least distance window so far
+    int win_size = short_len;
+    int windows = long_len - short_len;
+    int total = 2 * (short_len - k + 1);
+
+    if (windows == 0) {
+        delete[] kmers;
+        return cur_dist >= thrs;
+    }
+
+    /* 
+     * pre_gram:  kmer moving out of window
+     * post_gram: kmer moving into window
+     *
+     * actgactgactg
+     * actgactgactgactgactg
+     * ^^^^     ^^^^
+     * pre      post
+     */
+    unsigned int post_pos;
+    unsigned long pre_gram, post_gram;
+    for (int i = 0; i < windows; ++i) {
+        post_pos = i + win_size - k + 1;
+        pre_gram = longer[i].to_ulong();
+        post_gram = longer[post_pos].to_ulong();
+        for (int j = 0; j < k; ++j) {
+            pre_gram <<= 2;
+            pre_gram |= longer[i+j].to_ulong();
+            post_gram <<= 2;
+            post_gram |= longer[post_pos+j].to_ulong();
+        }
+
+        /*pre_gram  = gram_pos(longer.substr(i, k));
+        post_gram = gram_pos(longer.substr(i + win_size - k + 1, k));*/
+
+        if (pre_gram == post_gram)
+            continue;   // same kmers, so no need to calculate new distance
+
+        // if changed for the better, decrement cur_dist, otherwise increment
+        kmers[pre_gram]  < 0 ? --cur_dist : ++cur_dist;
+        kmers[post_gram] > 0 ? --cur_dist : ++cur_dist;
+    
+        // adjust kmer count from change
+        ++kmers[pre_gram];
+        --kmers[post_gram];
+
+        min_dist = min(cur_dist, min_dist);
+
+        if (((double) (total - min_dist) / (double) total) >= thrs) {
+            delete[] kmers;
+            return true;
+        }
+    }
+
+    delete[] kmers;
+    return false;
+}
+
+
+/**
+ * Given two strings, the int k in k-mer (word length), calculated the
+ * d2-distance between the strings based on k-mers: count the occurences of
+ * each poosible k-mer, calculate the Manhattan distance between the two k-mer
+ * occurence vectors. Return true if within threshold in some window (of size
+ * shortest string), otherwise return false.
+ */
 bool Distance::compare(const string& s, const string& t) {
     int slen = s.length(),
         tlen = t.length();

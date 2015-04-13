@@ -15,7 +15,7 @@ class IO
     public:
         IO() {}
 
-        static int read_seqs(std::fstream& fs,
+        static int read_seqs(std::ifstream& fs,
                 std::vector<std::vector<std::bitset<2>>>& seqs, int count);
 
         static bool read_sequence(std::fstream& fs, std::string& s);

@@ -13,7 +13,7 @@ using namespace std;
 
 int main(int argc, char *argv[])
 {
-    if (argc < 9) {
+    /*if (argc < 9) {
         std::cout << "Usage: " << argv[0] << " <.fasta input file> "
                                              " <.fasta output file for centroids> "
                                              " <output file for clusters> "
@@ -24,9 +24,17 @@ int main(int argc, char *argv[])
                                              " <step_size>"
                                           << endl << endl;
         return 1;
+    }*/
+
+
+    ios_base::sync_with_stdio(false); // don't share buffers with C style IO
+
+    ifstream fs_in(argv[1]);
+    if (!fs_in) {
+        cerr << "error opening file: " << argv[1] << endl;
+        return 1;
     }
 
-    fstream fs_in(argv[1]);
     /*fstream fs_out(argv[2], fstream::out | fstream::trunc);
     fstream fs_cts(argv[2], fstream::out | fstream::trunc);
     fstream fs_cls(argv[3], fstream::out | fstream::trunc);
@@ -38,51 +46,51 @@ int main(int argc, char *argv[])
 
     Distance d2(k, threshold, step_size);*/
 
-
-    int count = 1000;
+    /*
+     * Reading sequences
+     */
+    int count = 500;
     vector<vector<bitset<2>>> seqs;
-    clock_t start = clock();
+
+    cout << "Reading " << count << " sequences...\n" << endl;
+    clock_t read_clock = clock();
     IO::read_seqs(fs_in, seqs, count);
-    double a = (clock()-start) / (double)(CLOCKS_PER_SEC);
+    double read_secs = (clock() - read_clock) / (double) CLOCKS_PER_SEC;
 
-    /*for (unsigned int i = 0; i < seqs.size(); ++i) {
-        for (unsigned int j = 0; j < seqs[i].size(); ++j) {
-            cout << seqs[i][j] << " ";
-        }
-        cout << endl;
-    }*/
+    cout << "Finished reading:\n"
+         << "Time: "     << read_secs << " sec.\n"
+         << "Seqs/sec: " << count / read_secs << "\n" << endl;
 
-    cout << "Time: " << a << endl;
-    cout << "Seqs/sec: " << count / a << endl;
 
-    /*Seq s;
-    vector<Seq> seqs;
-    for (int i = 0; i < count; ++i) {
-        IO::read_sequence(fs_in, s);
-        seqs.push_back(s);
-    }
+    /*
+     * Comparing sequences
+     */
+    Distance d2(8, 0, 0);
 
-    clock_t start = clock();
-    for (int i = 0; i < count; ++i) {
-        for (int j = 0; j < count; ++j) {
-            d2.compare(seqs[i].data, seqs[j].data);
-        }
-    }
-    double a = (clock()-start) / (double)(CLOCKS_PER_SEC);
-    cout << "Time: " << a << endl;
-    cout << "Comparisons/sec: " << pow(count, 2) / a << endl;
-    return 0;
+    cout << "Comparing all read sequences...\n" << endl;
+    clock_t comp_clock = clock();
+    for (int i = 0; i < count; ++i)
+        for (int j = 0; j < count; ++j)
+            d2.compare(seqs[i], seqs[j]);
+    double comp_secs = (clock() - comp_clock) / (double) CLOCKS_PER_SEC;
 
-    cout << "# of clusters: " <<
+    cout << "Finished comparing:\n"
+         << "Time: "            << comp_secs << " sec.\n"
+         << "Comparisons/sec: " << pow(count, 2) / comp_secs << "\n"
+         << "# of compares: "   << count * count << endl;
+
+
+    /*cout << "# of clusters: " <<
         //Cluster::clust(fs_in, fs_cts, threshold, k, count) << endl;
         Cluster::intersect_clust(fs_in, fs_cts, fs_cls, d2, count, max_rejects) << endl;
 
     //Distance::printDistMatrix(argv[1], k, count);
 
-    fs_in.close();
     fs_out.close();
     fs_cts.close();
     fs_cls.close();*/
+
+    fs_in.close();
 
     return 0;
 }

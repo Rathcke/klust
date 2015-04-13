@@ -37,43 +37,35 @@ inline bitset<2> gram_to_bitset(const char c) {
  * Read specified number of sequences from filestream and load into given
  * vector. Discard the '>' lines. Return the number of sequences read.
  */
-int IO::read_seqs(fstream& fs, vector<vector<bitset<2>>>& seqs, int count) {
+int IO::read_seqs(ifstream& fs, vector<vector<bitset<2>>>& seqs, int count) {
+    const unsigned int buf_size = 16 * 1024;
+    char* buf = new char[buf_size];
 
-    char* buf = new char[16*1024];
-    //string s;
-    int i = 0;
     vector<bitset<2>> v;
+    seqs.resize(count); // segfault without for some reason
 
+    int i = 0;
     while(fs.good() && i++ < count) {
         fs.ignore(256, '\n');   // discard first 256 chars or until newline
-        fs.getline(buf, 16*1024, '>'); // read until '>', i.e. the sequence data
+        // read until '>', i.e. the sequence data; note this also reads \n chars
+        if (!fs.getline(buf, buf_size, '>'))
+            break;
 
-        //cout << buf << endl;
-        /*for (int i = 0; i < 16*1024; ++i) {
-        }*/
-
-        /*for (string::const_iterator it = s.begin(); it != s.end(); ++it) {
-            if (*it == '\n')
-                continue;
-            v.push_back(gram_to_bitset(*it));
-        }*/
-        for (char *p = buf; *p != '\0'; ++p) {
+        for (char *p = buf; *p != '\0'; ++p) {  // use transform?
             if (*p == '\n')
                 continue;
             v.push_back(gram_to_bitset(*p));
         }
 
-
-        //transform(s.begin(), s.end(), v.begin(), gram_to_bitset);
-
         seqs.push_back(v);
-        //s.clear();
         v.clear();
     }
 
     delete[] buf;
+
     return seqs.size();
 }
+
 
 /**
  * Read one entry of description and sequence data from FASTA format stream,

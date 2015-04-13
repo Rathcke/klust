@@ -12,6 +12,9 @@ class Distance
     public:
         Distance(int kmer, double threshold, int step_size);
 
+        bool compare(const std::vector<std::bitset<2>>& s,
+                const std::vector<std::bitset<2>>& t);
+
         bool compare(const std::string& s, const std::string& t);
 
         std::vector<int> compute_key(const std::string& s, int n);
