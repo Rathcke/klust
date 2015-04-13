@@ -97,6 +97,8 @@ string Seq::to_string() const {
 
 
 void IO::read_seqs(ifstream &fs, vector<Seq>& seqs, int count) {
+    seqs.reserve(count);
+
     const size_t data_size = 16 * 1024;
     char *data = new char[data_size];
     char *p = data;
@@ -160,7 +162,7 @@ int IO::read_seqs(ifstream& fs, vector<vector<bitset<2>>>& seqs, int count) {
     char* buf = new char[buf_size];
 
     vector<bitset<2>> v;
-    seqs.resize(count); // segfault without for some reason
+    seqs.resize(count); // segfault without for some reason (even segfaults with reserve)
 
     int i = 0;
     while(fs.good() && i++ < count) {

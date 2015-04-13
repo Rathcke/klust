@@ -33,7 +33,7 @@ class IO
     public:
         IO() {}
 
-        void read_seqs(std::ifstream &fs, std::vector<Seq>& seqs, int count);
+        static void read_seqs(std::ifstream &fs, std::vector<Seq>& seqs, int count);
 
         static int read_seqs(std::ifstream& fs,
                 std::vector<std::vector<std::bitset<2>>>& seqs, int count);

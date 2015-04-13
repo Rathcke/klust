@@ -10,7 +10,6 @@
 
 #include "Distance.h"
 #include "IO.h"
-#define ARR_SIZE 65536
 
 using namespace std;
 
@@ -18,6 +17,70 @@ Distance::Distance(int kmer, double threshold, int step_size) {
     this->k = kmer;
     this->thrs = threshold;
     this->step = step_size;
+}
+
+bool Distance::compare(const Seq& s, const Seq& t) {
+    size_t slen = s.length(),
+           tlen = t.length();
+
+    //size_t long_len, short_len;
+    size_t short_len;
+    if (slen >= tlen) {
+        //long_len = slen;
+        short_len = tlen;
+    } else {
+        //long_len = tlen;
+        short_len = slen;
+    }
+
+    uint8_t *longer  = slen >= tlen ? s.data() : t.data();
+    uint8_t *shorter = slen >= tlen ? t.data() : s.data();
+
+    // allocate array of length equal to the number of different kmers
+    const int kmer_count = pow(4, k);
+    int *kmers = new int[kmer_count](); // zero initialized due to ()
+    //unordered_map<uint32_t, int> kmers;
+    /*vector<int> kmers = new vector<int>;
+    kmers.resize(pow(4,k));*/
+
+    // count kmers in the shorter and the longer string, respectively
+    for (size_t i = 0; i <= short_len - k; ++i) {
+        uint32_t kmer_l = 0; // binary repr. of kmer in longer sequence
+        uint32_t kmer_s = 0;
+
+        for (int j = 0; j < k; ++j) {
+            int shift = 6 - 2 * ((i + j) % 4);
+            //cout << "shift: " << shift << endl;
+            if (j / 4) {
+                kmer_l <<= 8;
+                kmer_s <<= 8;
+            }
+            kmer_l |= ((*(longer  + i/4) & (3 << shift)) >> shift) << (6 - 2 * (j % 4));
+            kmer_s |= ((*(shorter + i/4) & (3 << shift)) >> shift) << (6 - 2 * (j % 4));
+        }
+
+        //cout << bitset<16>(kmer_l) << endl;
+        ++kmers[kmer_l];
+        --kmers[kmer_s];
+    }
+
+    // Manhattan distance between the two strings
+    /*int cur_dist = 0;
+    for (auto it = kmers.cbegin(); it != kmers.cend(); ++it)
+        cur_dist += abs(it->second);
+        //cur_dist += abs(*it);*/
+    int cur_dist = 0;
+    for (int i = 0; i < kmer_count; ++i)
+        cur_dist += abs(kmers[i]);
+
+    int total = 2 * (short_len - k + 1);
+    if (((double) (total - cur_dist) / (double) total) >= thrs) {
+        delete[] kmers;
+        return true;
+    }
+
+    delete[] kmers;
+    return false;
 }
 
 /**
