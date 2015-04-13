@@ -49,9 +49,9 @@ int main(int argc, char *argv[])
     /*
      * Reading sequences
      */
-    int count = 100;
-    //vector<vector<bitset<2>>> seqs;
-    vector<Seq> seqs;
+    int count = 500;
+    vector<vector<bitset<2>>> seqs;
+    //vector<Seq> seqs;
 
     cout << "Reading " << count << " sequences...\n" << endl;
     clock_t read_clock = clock();
