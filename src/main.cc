@@ -66,7 +66,7 @@ int main(int argc, char *argv[])
     /*
      * Comparing sequences
      */
-    Distance d2(4, 0, 0);
+    Distance d2(8, 0, 0);
 
     cout << "Comparing all read sequences...\n" << endl;
     clock_t comp_clock = clock();
