@@ -5,9 +5,9 @@
 #include <iostream>
 #include <string>
 
-#include "IO.h"
-#include "Distance.h"
 #include "Cluster.h"
+#include "Distance.h"
+#include "IO.h"
 
 using namespace std;
 
@@ -26,7 +26,6 @@ int main(int argc, char *argv[])
         return 1;
     }*/
 
-
     ios_base::sync_with_stdio(false); // don't share buffers with C style IO
 
     ifstream fs_in(argv[1]);
@@ -34,6 +33,13 @@ int main(int argc, char *argv[])
         cerr << "error opening file: " << argv[1] << endl;
         return 1;
     }
+
+    // replacing internal buffer with a larger one, might speed things up
+    //const unsigned int in_buf_size = 1024 * 1024;
+    //char *in_buf = new char[in_buf_size];
+    //fs_in.rdbuf()->pubsetbuf(in_buf, in_buf_size);
+    // (...)
+    //delete[] in_buf;
 
     /*fstream fs_out(argv[2], fstream::out | fstream::trunc);
     fstream fs_cts(argv[2], fstream::out | fstream::trunc);
