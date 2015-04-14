@@ -48,7 +48,19 @@ bool Distance::compare(const Seq& s, const Seq& t) {
         uint32_t kmer_l = 0; // binary repr. of kmer in longer sequence
         uint32_t kmer_s = 0;
 
+        //kmer_l |= (*longer  & (3 << shift) >> shift;
+        //kmer_s |= (*shorter & (3 << shift) >> shift;
         for (int j = 0; j < k; ++j) {
+            int shift = 6 - 2 * ((i + j) % 4);
+            kmer_l |= (*(longer  + i/4) & (3 << shift)) >> shift;
+            kmer_s |= (*(shorter + i/4) & (3 << shift)) >> shift;
+            if (j == k-1)
+                break;
+            kmer_l <<= 2;
+            kmer_s <<= 2;
+        }
+
+        /*for (int j = 0; j < k; ++j) {
             int shift = 6 - 2 * ((i + j) % 4);
             //cout << "shift: " << shift << endl;
             if (j / 4) {
@@ -57,7 +69,7 @@ bool Distance::compare(const Seq& s, const Seq& t) {
             }
             kmer_l |= ((*(longer  + i/4) & (3 << shift)) >> shift) << (6 - 2 * (j % 4));
             kmer_s |= ((*(shorter + i/4) & (3 << shift)) >> shift) << (6 - 2 * (j % 4));
-        }
+        }*/
 
         //cout << bitset<16>(kmer_l) << endl;
         ++kmers[kmer_l];
