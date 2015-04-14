@@ -19,6 +19,11 @@ Distance::Distance(int kmer, double threshold, int step_size) {
     this->step = step_size;
 }
 
+inline uint8_t nth_left_2bits(uint8_t b, const int& n) {
+    int shift = 6 - 2 * (n % 4);
+    return b & (3 << shift) >> shift;
+}
+
 bool Distance::compare(const Seq& s, const Seq& t) {
     size_t slen = s.length(),
            tlen = t.length();
@@ -52,26 +57,14 @@ bool Distance::compare(const Seq& s, const Seq& t) {
         //kmer_s |= (*shorter & (3 << shift) >> shift;
         for (int j = 0; j < k; ++j) {
             int shift = 6 - 2 * ((i + j) % 4);
-            kmer_l |= (*(longer  + i/4) & (3 << shift)) >> shift;
-            kmer_s |= (*(shorter + i/4) & (3 << shift)) >> shift;
+            kmer_l |= (*(longer  + (i+j)/4) & (3 << shift)) >> shift;
+            kmer_s |= (*(shorter + (i+j)/4) & (3 << shift)) >> shift;
             if (j == k-1)
                 break;
             kmer_l <<= 2;
             kmer_s <<= 2;
         }
 
-        /*for (int j = 0; j < k; ++j) {
-            int shift = 6 - 2 * ((i + j) % 4);
-            //cout << "shift: " << shift << endl;
-            if (j / 4) {
-                kmer_l <<= 8;
-                kmer_s <<= 8;
-            }
-            kmer_l |= ((*(longer  + i/4) & (3 << shift)) >> shift) << (6 - 2 * (j % 4));
-            kmer_s |= ((*(shorter + i/4) & (3 << shift)) >> shift) << (6 - 2 * (j % 4));
-        }*/
-
-        //cout << bitset<16>(kmer_l) << endl;
         ++kmers[kmer_l];
         --kmers[kmer_s];
     }
