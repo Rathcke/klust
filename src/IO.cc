@@ -104,7 +104,7 @@ void IO::read_seqs(ifstream &fs, vector<Seq>& seqs, int count) {
     char *p = data;
     size_t seq_len = 0;
 
-    const size_t buf_size = 1024;
+    const size_t buf_size = 16 * 1024;
     char *buf = new char[buf_size];
 
     streamsize bytes_read;

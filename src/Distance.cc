@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <cmath>
+#include <cstring>
 #include <iomanip>
 #include <iostream>
 #include <string>
@@ -47,14 +48,27 @@ bool Distance::compare(const Seq& s, const Seq& t) {
     /*vector<int> kmers = new vector<int>;
     kmers.resize(pow(4,k));*/
 
+    static const uint32_t k2 = 2 * k;
+    static const uint32_t mask = pow(2, k2) - 1;
+    cout << bitset<32>(mask) << endl;
+
     // count kmers in the shorter and the longer string, respectively
     for (size_t i = 0; i <= short_len - k; ++i) {
         uint32_t kmer_l = 0; // binary repr. of kmer in longer sequence
         uint32_t kmer_s = 0;
 
+        memcpy(&kmer_l, (longer + (i/4)), 4);
+        kmer_l >>= (32 - 2*(i % 4) - k2);
+        kmer_l &= mask;
+
+        memcpy(&kmer_s, (shorter + (i/4)), 4);
+        kmer_s >>= (32 - 2*(i % 4) - k2);
+        kmer_s &= mask;
+
+
         //kmer_l |= (*longer  & (3 << shift) >> shift;
         //kmer_s |= (*shorter & (3 << shift) >> shift;
-        for (int j = 0; j < k; ++j) {
+        /*for (int j = 0; j < k; ++j) {
             int shift = 6 - 2 * ((i + j) % 4);
             kmer_l |= (*(longer  + (i+j)/4) & (3 << shift)) >> shift;
             kmer_s |= (*(shorter + (i+j)/4) & (3 << shift)) >> shift;
@@ -62,7 +76,9 @@ bool Distance::compare(const Seq& s, const Seq& t) {
                 break;
             kmer_l <<= 2;
             kmer_s <<= 2;
-        }
+        }*/
+
+        //cout << bitset<32>(kmer_l) << endl;
 
         ++kmers[kmer_l];
         --kmers[kmer_s];
