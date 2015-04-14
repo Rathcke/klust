@@ -149,10 +149,10 @@ bool Distance::compare(const vector<bitset<2>>& s, const vector<bitset<2>>& t) {
 
     // count kmers in the shorter and the longer string, respectively
     auto it_s = s.cbegin(), it_t = t.cbegin();
-    while (it_s != s.cend() && it_t != t.cend()) {
+    for (int i = 0; i <= short_len-k; ++i) {
         unsigned long pos_s = (*it_s).to_ulong();
         unsigned long pos_t = (*it_t).to_ulong();
-        for (int i = 0; i < k; ++i) {
+        for (int i = 0; i < k-1; ++i) {
             pos_s <<= 2;
             pos_s |= (*(it_s+i)).to_ulong();
             pos_t <<= 2;
@@ -200,7 +200,7 @@ bool Distance::compare(const vector<bitset<2>>& s, const vector<bitset<2>>& t) {
         post_pos = i + win_size - k + 1;
         pre_gram = longer[i].to_ulong();
         post_gram = longer[post_pos].to_ulong();
-        for (int j = 0; j < k; ++j) {
+        for (int j = 0; j < k-1; ++j) {
             pre_gram <<= 2;
             pre_gram |= longer[i+j].to_ulong();
             post_gram <<= 2;
@@ -216,7 +216,7 @@ bool Distance::compare(const vector<bitset<2>>& s, const vector<bitset<2>>& t) {
         // if changed for the better, decrement cur_dist, otherwise increment
         kmers[pre_gram]  < 0 ? --cur_dist : ++cur_dist;
         kmers[post_gram] > 0 ? --cur_dist : ++cur_dist;
-    
+
         // adjust kmer count from change
         ++kmers[pre_gram];
         --kmers[post_gram];

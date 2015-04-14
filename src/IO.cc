@@ -162,7 +162,6 @@ int IO::read_seqs(ifstream& fs, vector<vector<bitset<2>>>& seqs, int count) {
     char* buf = new char[buf_size];
 
     vector<bitset<2>> v;
-    seqs.resize(count); // segfault without for some reason (even segfaults with reserve)
 
     int i = 0;
     while(fs.good() && i++ < count) {
@@ -180,9 +179,9 @@ int IO::read_seqs(ifstream& fs, vector<vector<bitset<2>>>& seqs, int count) {
         seqs.push_back(v);
         v.clear();
     }
-
+    
     delete[] buf;
-
+    
     return seqs.size();
 }
 

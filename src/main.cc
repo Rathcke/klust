@@ -55,7 +55,7 @@ int main(int argc, char *argv[])
     /*
      * Reading sequences
      */
-    int count = 500;
+    int count = 10;
     vector<vector<bitset<2>>> seqs;
     //vector<Seq> seqs;
 
@@ -72,20 +72,23 @@ int main(int argc, char *argv[])
     /*
      * Comparing sequences
      */
-    Distance d2(8, 0, 0);
+    Distance d2(8, 0.7, 0);
 
+    int tot = 0;
     cout << "Comparing all read sequences...\n" << endl;
     clock_t comp_clock = clock();
     for (int i = 0; i < count; ++i)
-        for (int j = 0; j < count; ++j)
-            d2.compare(seqs[i], seqs[j]);
+        for (int j = 0; j < count; ++j) {
+            if (d2.compare(seqs[i], seqs[j]))
+            	++tot;
+        }    	
     double comp_secs = (clock() - comp_clock) / (double) CLOCKS_PER_SEC;
 
     cout << "Finished comparing:\n"
          << "Time: "            << comp_secs << " sec.\n"
          << "Comparisons/sec: " << pow(count, 2) / comp_secs << "\n"
          << "# of compares: "   << count * count << endl;
-
+    cout << tot << endl;
 
     /*cout << "# of clusters: " <<
         //Cluster::clust(fs_in, fs_cts, threshold, k, count) << endl;
