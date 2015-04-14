@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <cstdlib>
+#include <cstring>
 #include <fstream>
 #include <iomanip>
 #include <iostream>
@@ -26,6 +27,9 @@ int main(int argc, char *argv[])
                                           << endl << endl;
         return 1;
     }*/
+
+    /*cout << sizeof(bitset<65>) << endl;
+    return 0;*/
 
     ios_base::sync_with_stdio(false); // don't share buffers with C style IO
 
@@ -54,6 +58,14 @@ int main(int argc, char *argv[])
     Distance d2(k, threshold, step_size);*/
     Distance d2(8, 0.9, 0);
 
+
+    /*char a[] = "acatgatgcagt";
+    Seq s(a, strlen(a));
+    Seq t(a, strlen(a));
+    d2.compare(s, t);
+    return 0;*/
+
+
     /*
      * Reading sequences
      */
@@ -74,7 +86,6 @@ int main(int argc, char *argv[])
     /*
      * Comparing sequences
      */
-
     int tot = 0;
     cout << "Comparing all read sequences...\n" << endl;
     clock_t comp_clock = clock();

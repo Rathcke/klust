@@ -19,6 +19,11 @@ Distance::Distance(int kmer, double threshold, int step_size) {
     this->step = step_size;
 }
 
+inline uint8_t nth_left_2bits(uint8_t b, const int& n) {
+    int shift = 6 - 2 * (n % 4);
+    return b & (3 << shift) >> shift;
+}
+
 bool Distance::compare(const Seq& s, const Seq& t) {
     size_t slen = s.length(),
            tlen = t.length();
