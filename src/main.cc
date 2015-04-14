@@ -4,6 +4,7 @@
 #include <iomanip>
 #include <iostream>
 #include <string>
+#include <cstring>
 
 #include "Cluster.h"
 #include "Distance.h"
@@ -51,13 +52,14 @@ int main(int argc, char *argv[])
     const int step_size = std::atoi(argv[8]);
 
     Distance d2(k, threshold, step_size);*/
+    Distance d2(4, 0.8, 0);
 
     /*
      * Reading sequences
      */
-    int count = 10;
-    vector<vector<bitset<2>>> seqs;
-    //vector<Seq> seqs;
+    int count = 2;
+    //vector<vector<bitset<2>>> seqs;
+    vector<Seq> seqs;
 
     cout << "Reading " << count << " sequences...\n" << endl;
     clock_t read_clock = clock();
@@ -72,7 +74,6 @@ int main(int argc, char *argv[])
     /*
      * Comparing sequences
      */
-    Distance d2(8, 0.7, 0);
 
     int tot = 0;
     cout << "Comparing all read sequences...\n" << endl;
