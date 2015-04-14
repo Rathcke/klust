@@ -115,15 +115,14 @@ bool Distance::compare(const Seq& s, const Seq& t) {
             continue;   // same kmers, so no need to calculate new distance
 
         // if changed for the better, decrement cur_dist, otherwise increment
-        kmers[pre_gram]  < 0 ? --cur_dist : ++cur_dist;
-        kmers[post_gram] > 0 ? --cur_dist : ++cur_dist;
+        kmers[pre_gram]  > 0 ? --cur_dist : ++cur_dist;
+        kmers[post_gram] < 0 ? --cur_dist : ++cur_dist;
     
         // adjust kmer count from change
-        ++kmers[pre_gram];
-        --kmers[post_gram];
+        --kmers[pre_gram];
+        ++kmers[post_gram];
 
         min_dist = min(cur_dist, min_dist);
-        cout << cur_dist << endl;
 
         if (((double) (total - min_dist) / (double) total) >= thrs) {
             delete[] kmers;

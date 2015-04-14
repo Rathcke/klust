@@ -58,18 +58,18 @@ int main(int argc, char *argv[])
     Distance d2(k, threshold, step_size);*/
     Distance d2(8, 0.9, 0);
 
-
-    /*char a[] = "acatgatgcagt";
+/*
+    char a[] = "aaactgg";
+    char b[] = "ggctaaact";
     Seq s(a, strlen(a));
-    Seq t(a, strlen(a));
+    Seq t(b, strlen(b));
     d2.compare(s, t);
     return 0;*/
-
 
     /*
      * Reading sequences
      */
-    int count = 5;
+    int count = 500;
     //vector<vector<bitset<2>>> seqs;
     vector<Seq> seqs;
 
@@ -91,7 +91,7 @@ int main(int argc, char *argv[])
     clock_t comp_clock = clock();
     for (int i = 0; i < count; ++i)
         for (int j = 0; j < count; ++j) {
-            if (d2.compare(seqs[0], seqs[1]))
+            if (d2.compare(seqs[i], seqs[j]))
             	++tot;
         }    	
     double comp_secs = (clock() - comp_clock) / (double) CLOCKS_PER_SEC;
