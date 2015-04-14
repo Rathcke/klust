@@ -52,12 +52,12 @@ int main(int argc, char *argv[])
     const int step_size = std::atoi(argv[8]);
 
     Distance d2(k, threshold, step_size);*/
-    Distance d2(4, 0.8, 0);
+    Distance d2(8, 0.9, 0);
 
     /*
      * Reading sequences
      */
-    int count = 2;
+    int count = 5;
     //vector<vector<bitset<2>>> seqs;
     vector<Seq> seqs;
 
@@ -80,7 +80,7 @@ int main(int argc, char *argv[])
     clock_t comp_clock = clock();
     for (int i = 0; i < count; ++i)
         for (int j = 0; j < count; ++j) {
-            if (d2.compare(seqs[i], seqs[j]))
+            if (d2.compare(seqs[0], seqs[1]))
             	++tot;
         }    	
     double comp_secs = (clock() - comp_clock) / (double) CLOCKS_PER_SEC;

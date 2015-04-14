@@ -23,13 +23,12 @@ bool Distance::compare(const Seq& s, const Seq& t) {
     size_t slen = s.length(),
            tlen = t.length();
 
-    //size_t long_len, short_len;
-    size_t short_len;
+    size_t long_len, short_len;
     if (slen >= tlen) {
-        //long_len = slen;
+        long_len = slen;
         short_len = tlen;
     } else {
-        //long_len = tlen;
+        long_len = tlen;
         short_len = slen;
     }
 
@@ -73,10 +72,58 @@ bool Distance::compare(const Seq& s, const Seq& t) {
     for (int i = 0; i < kmer_count; ++i)
         cur_dist += abs(kmers[i]);
 
+    int min_dist = cur_dist;    // the least distance window so far
+    int win_size = short_len;
+    int windows = long_len - short_len;
     int total = 2 * (short_len - k + 1);
-    if (((double) (total - cur_dist) / (double) total) >= thrs) {
+
+    if (windows == 0) {
         delete[] kmers;
-        return true;
+        return ((double) (total - cur_dist) / (double) total) >= thrs;
+    }
+
+    /* 
+     * pre_gram:  kmer moving out of window
+     * post_gram: kmer moving into window
+     *
+     * actgactgactg
+     * actgactgactgactgactg
+     * ^^^^     ^^^^
+     * pre      post
+     */
+    for (int i = 0; i < windows; ++i) {
+        uint32_t pre_gram = 0;
+        uint32_t post_gram = 0;
+        for (int j = 0; j < k; ++j) {
+            int shift = 6 - 2 * ((i + j) % 4);
+            int post_i = i + win_size - k + 1;
+            int post_shift = 6 - 2 * ((post_i + j) % 4);
+            pre_gram |= (*(longer + (i+j)/4) & (3 << shift)) >> shift;
+            post_gram |= (*(longer + (post_i+j)/4) & (3 << post_shift)) >> post_shift;
+            if (j == k-1)
+                break;
+            pre_gram <<= 2;            
+            post_gram <<= 2;
+        }
+
+        if (pre_gram == post_gram)
+            continue;   // same kmers, so no need to calculate new distance
+
+        // if changed for the better, decrement cur_dist, otherwise increment
+        kmers[pre_gram]  < 0 ? --cur_dist : ++cur_dist;
+        kmers[post_gram] > 0 ? --cur_dist : ++cur_dist;
+    
+        // adjust kmer count from change
+        ++kmers[pre_gram];
+        --kmers[post_gram];
+
+        min_dist = min(cur_dist, min_dist);
+        cout << cur_dist << endl;
+
+        if (((double) (total - min_dist) / (double) total) >= thrs) {
+            delete[] kmers;
+            return true;
+        }
     }
 
     delete[] kmers;
