@@ -5,6 +5,7 @@
 #include <iomanip>
 #include <iostream>
 #include <string>
+#include <cstring>
 
 #include "Cluster.h"
 #include "Distance.h"
@@ -55,23 +56,21 @@ int main(int argc, char *argv[])
     const int step_size = std::atoi(argv[8]);
 
     Distance d2(k, threshold, step_size);*/
+    Distance d2(8, 0.8, 0);
 
-    Distance d2(4, 0.7, 0);
-
-    char a[] = "acatgatgcagt";
+    /*char a[] = "acatgatgcagt";
     Seq s(a, strlen(a));
     Seq t(a, strlen(a));
     d2.compare(s, t);
-
-    return 0;
+    return 0;*/
 
 
     /*
      * Reading sequences
      */
     int count = 500;
-    //vector<vector<bitset<2>>> seqs;
-    vector<Seq> seqs;
+    vector<vector<bitset<2>>> seqs;
+    //vector<Seq> seqs;
 
     cout << "Reading " << count << " sequences...\n" << endl;
     clock_t read_clock = clock();
