@@ -25,6 +25,13 @@ inline uint8_t nth_left_2bits(uint8_t b, const int& n) {
     return b & (3 << shift) >> shift;
 }
 
+static inline uint32_t stream2int(const uint8_t *stream) {
+    return (((uint32_t) stream[0]) << 24 |
+            ((uint32_t) stream[1]) << 16 |
+            ((uint32_t) stream[2]) <<  8 |
+            ((uint32_t) stream[3]) <<  0);
+}
+
 bool Distance::compare(const Seq& s, const Seq& t) {
     size_t slen = s.length(),
            tlen = t.length();
@@ -50,21 +57,22 @@ bool Distance::compare(const Seq& s, const Seq& t) {
 
     static const uint32_t k2 = 2 * k;
     static const uint32_t mask = pow(2, k2) - 1;
-    cout << bitset<32>(mask) << endl;
+    //cout << bitset<32>(mask) << endl;
 
     // count kmers in the shorter and the longer string, respectively
     for (size_t i = 0; i <= short_len - k; ++i) {
         uint32_t kmer_l = 0; // binary repr. of kmer in longer sequence
         uint32_t kmer_s = 0;
 
-        memcpy(&kmer_l, (longer + (i/4)), 4);
+        //memcpy(&kmer_l, (longer + (i/4)), 4);
+        kmer_l = stream2int(longer + (i/4));
         kmer_l >>= (32 - 2*(i % 4) - k2);
         kmer_l &= mask;
 
-        memcpy(&kmer_s, (shorter + (i/4)), 4);
+        //memcpy(&kmer_s, (shorter + (i/4)), 4);
+        kmer_s = stream2int(shorter + (i/4));
         kmer_s >>= (32 - 2*(i % 4) - k2);
         kmer_s &= mask;
-
 
         //kmer_l |= (*longer  & (3 << shift) >> shift;
         //kmer_s |= (*shorter & (3 << shift) >> shift;
