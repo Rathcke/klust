@@ -33,6 +33,10 @@ static inline uint32_t stream2int(const uint8_t *stream) {
 }
 
 bool Distance::compare(const Seq& s, const Seq& t) {
+    return distance(s, t) >= thrs;
+}
+
+double Distance::distance(const Seq& s, const Seq& t) {
     size_t slen = s.length(),
            tlen = t.length();
 
@@ -51,9 +55,6 @@ bool Distance::compare(const Seq& s, const Seq& t) {
     // allocate array of length equal to the number of different kmers
     const int kmer_count = pow(4, k);
     int *kmers = new int[kmer_count](); // zero initialized due to ()
-    //unordered_map<uint32_t, int> kmers;
-    /*vector<int> kmers = new vector<int>;
-    kmers.resize(pow(4,k));*/
 
     static const uint32_t k2 = 2 * k;
     static const uint32_t mask = pow(2, k2) - 1;    // 0b001111 (2*k 1's)
@@ -77,10 +78,6 @@ bool Distance::compare(const Seq& s, const Seq& t) {
     }
 
     // Manhattan distance between the two strings
-    /*int cur_dist = 0;
-    for (auto it = kmers.cbegin(); it != kmers.cend(); ++it)
-        cur_dist += abs(it->second);
-        //cur_dist += abs(*it);*/
     int cur_dist = 0;
     for (int i = 0; i < kmer_count; ++i)
         cur_dist += abs(kmers[i]);
@@ -90,9 +87,11 @@ bool Distance::compare(const Seq& s, const Seq& t) {
     int windows = long_len - short_len;
     int total = 2 * (short_len - k + 1);
 
+    double jaccard_dist = 0;
+
     if (windows == 0) {
         delete[] kmers;
-        return ((double) (total - cur_dist) / (double) total) >= thrs;
+        return (double) (total - cur_dist) / (double) total;
     }
 
     /* 
@@ -130,14 +129,15 @@ bool Distance::compare(const Seq& s, const Seq& t) {
 
         min_dist = min(cur_dist, min_dist);
 
-        if (((double) (total - min_dist) / (double) total) >= thrs) {
+        jaccard_dist = (double) (total - min_dist) / (double) total;
+        if (jaccard_dist >= thrs) {
             delete[] kmers;
-            return true;
+            return jaccard_dist;
         }
     }
 
     delete[] kmers;
-    return false;
+    return jaccard_dist;
 }
 
 /* Returns a sorted vector by decreasing order and returns the n most 
@@ -285,6 +285,45 @@ void Distance::printDistMatrix(const char* filename, int count) {
 
     fs0.close();
     fs1.close();
+}
+
+void Distance::jac_printDistMatrix(const char* filename, int count) {
+    ifstream fs0(filename);
+
+    double distances[count][count];
+    vector<Seq> seqs;
+
+    IO::read_seqs(fs0, seqs, count);
+
+    for (int i = 0; i < count; i++)
+        for (int j = 0; j < count; j++)
+            distances[i][j] = -1; // initialize distance matrix entries to -1
+
+    for (int i = 0; i < count; ++i) {
+
+        for (int j = 0; j < count; ++j) {
+            if (i == j) { // don't compare a sequence to itself
+                distances[i][j] = 0;
+                continue;
+            }
+            if (distances[i][j] != -1) {
+                continue;
+            }
+
+            double newdist = distance(seqs[i], seqs[j]);
+            distances[i][j] = newdist;
+            distances[j][i] = newdist;
+        }
+    }
+
+    for (int i = 0; i < count; ++i) {
+        for (int j = 0; j < count; ++j) {
+            cout << " " << distances[i][j]; // TODO: reset width?
+        }
+        cout << '\n';
+    }
+
+    fs0.close();
 }
 
 /*set<string> Distance::kmers(const Seq& s) {

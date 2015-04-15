@@ -15,7 +15,7 @@ using namespace std;
 
 int main(int argc, char *argv[])
 {
-	Distance d2(8, 0.9, 0);
+	Distance d2(7, 0.9, 0);
     /*if (argc < 9) {
         std::cout << "Usage: " << argv[0] << " <.fasta input file> "
                                              " <.fasta output file for centroids> "
@@ -28,9 +28,12 @@ int main(int argc, char *argv[])
                                           << endl << endl;
         return 1;
     }*/
-    d2.printDistMatrix(argv[1], 100);
-    //cout << d2.levenshtein("tt","ttttt") << endl;
+
+    d2.jac_printDistMatrix(argv[1], 100);
     return 0;
+
+    //cout << d2.levenshtein("tt","ttttt") << endl;
+    //return 0;
 
 
     ios_base::sync_with_stdio(false); // don't share buffers with C style IO
@@ -82,7 +85,7 @@ int main(int argc, char *argv[])
     /*
      * Reading sequences
      */
-    int count = 5;
+    int count = 500;
     //vector<vector<bitset<2>>> seqs;
     vector<Seq> seqs;
 

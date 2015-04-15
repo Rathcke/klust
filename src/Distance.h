@@ -12,6 +12,7 @@ class Distance
         Distance(int kmer, double threshold, int step_size);
 
         bool compare(const Seq& s, const Seq& t);
+        double distance(const Seq& s, const Seq& t);
 
         bool compare(const std::vector<std::bitset<2>>& s,
                 const std::vector<std::bitset<2>>& t);
@@ -27,6 +28,8 @@ class Distance
         std::set<std::string> kmers(const Seq& s);
 
         void printDistMatrix(const char* filename, int count);
+
+        void jac_printDistMatrix(const char* filename, int count);
 
     private:
         int k;          // k in k-mer (word length)
