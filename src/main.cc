@@ -56,7 +56,7 @@ int main(int argc, char *argv[])
     const int step_size = std::atoi(argv[8]);
 
     Distance d2(k, threshold, step_size);*/
-    Distance d2(8, 0.9, 0);
+    Distance d2(2, 0.9, 0);
 
 
     /*char a[] = "aaactgg";

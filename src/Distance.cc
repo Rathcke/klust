@@ -56,8 +56,7 @@ bool Distance::compare(const Seq& s, const Seq& t) {
     kmers.resize(pow(4,k));*/
 
     static const uint32_t k2 = 2 * k;
-    static const uint32_t mask = pow(2, k2) - 1;
-    //cout << bitset<32>(mask) << endl;
+    static const uint32_t mask = pow(2, k2) - 1;    // 0b001111 (2*k 1's)
 
     // count kmers in the shorter and the longer string, respectively
     for (size_t i = 0; i <= short_len - k; ++i) {
@@ -69,24 +68,9 @@ bool Distance::compare(const Seq& s, const Seq& t) {
         kmer_l >>= (32 - 2*(i % 4) - k2);
         kmer_l &= mask;
 
-        //memcpy(&kmer_s, (shorter + (i/4)), 4);
         kmer_s = stream2int(shorter + (i/4));
         kmer_s >>= (32 - 2*(i % 4) - k2);
         kmer_s &= mask;
-
-        //kmer_l |= (*longer  & (3 << shift) >> shift;
-        //kmer_s |= (*shorter & (3 << shift) >> shift;
-        /*for (int j = 0; j < k; ++j) {
-            int shift = 6 - 2 * ((i + j) % 4);
-            kmer_l |= (*(longer  + (i+j)/4) & (3 << shift)) >> shift;
-            kmer_s |= (*(shorter + (i+j)/4) & (3 << shift)) >> shift;
-            if (j == k-1)
-                break;
-            kmer_l <<= 2;
-            kmer_s <<= 2;
-        }*/
-
-        //cout << bitset<32>(kmer_l) << endl;
 
         ++kmers[kmer_l];
         --kmers[kmer_s];
@@ -123,17 +107,15 @@ bool Distance::compare(const Seq& s, const Seq& t) {
     for (int i = 0; i < windows; ++i) {
         uint32_t pre_gram = 0;
         uint32_t post_gram = 0;
-        for (int j = 0; j < k; ++j) {
-            int shift = 6 - 2 * ((i + j) % 4);
-            int post_i = i + win_size - k + 1;
-            int post_shift = 6 - 2 * ((post_i + j) % 4);
-            pre_gram |= (*(longer + (i+j)/4) & (3 << shift)) >> shift;
-            post_gram |= (*(longer + (post_i+j)/4) & (3 << post_shift)) >> post_shift;
-            if (j == k-1)
-                break;
-            pre_gram <<= 2;            
-            post_gram <<= 2;
-        }
+        int post_i = i + win_size - k + 1;
+
+        pre_gram = stream2int(longer + i/4);
+        pre_gram >>= (32 - 2*(i % 4) - k2);
+        pre_gram &= mask;
+
+        post_gram = stream2int(longer + post_i/4);
+        post_gram >>= (32 - 2*(post_i % 4) - k2);
+        post_gram &= mask;
 
         if (pre_gram == post_gram)
             continue;   // same kmers, so no need to calculate new distance
