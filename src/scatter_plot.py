@@ -8,7 +8,7 @@ from sklearn.metrics import euclidean_distances
 from sklearn.decomposition import PCA
 
 # read data
-kmer = np.matrix(np.loadtxt('data/k6_distmat'))
+kmer = np.matrix(np.loadtxt('data/k4_distmat'))
 lev = np.matrix(np.loadtxt('data/lev_distmat'))
 
 # transform into array of upper tringle of matrix
