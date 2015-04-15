@@ -27,8 +27,7 @@ class Distance
 
         std::set<std::string> kmers(const Seq& s);
 
-        /*static void printDistMatrix(const std::string& filename,
-                int k, int count, int threshold);*/
+        void printDistMatrix(const char* filename, int count);
 
     private:
         int k;      // k in k-mer (word length)

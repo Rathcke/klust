@@ -15,6 +15,7 @@ using namespace std;
 
 int main(int argc, char *argv[])
 {
+	Distance d2(7, 0.9, 0);
     /*if (argc < 9) {
         std::cout << "Usage: " << argv[0] << " <.fasta input file> "
                                              " <.fasta output file for centroids> "
@@ -27,9 +28,9 @@ int main(int argc, char *argv[])
                                           << endl << endl;
         return 1;
     }*/
-
-    /*cout << sizeof(bitset<65>) << endl;
-    return 0;*/
+    //d2.printDistMatrix(argv[1], 10);
+     cout << d2.levenshtein("tt","ttttt") << endl;
+    return 0;
 
     ios_base::sync_with_stdio(false); // don't share buffers with C style IO
 
@@ -56,7 +57,6 @@ int main(int argc, char *argv[])
     const int step_size = std::atoi(argv[8]);
 
     Distance d2(k, threshold, step_size);*/
-    Distance d2(2, 0.9, 0);
 
 /*
     char a[] = "actgg";

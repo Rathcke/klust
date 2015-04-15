@@ -217,7 +217,7 @@ int IO::read_seqs(ifstream& fs, vector<vector<bitset<2>>>& seqs, int count) {
  * Read [DR]NA sequence from given filestream in given string.
  * Return true on success and false if there's no more to read.
  */
-bool IO::read_sequence(fstream& fs, string& s) {
+bool IO::read_sequence(ifstream& fs, string& s) {
     string tmp;
     s.clear();
 
