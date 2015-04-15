@@ -21,9 +21,9 @@ class Distance
 
         std::vector<int> compute_key(const std::string& s, int n);
 
-        int levenshtein(std::string s, std::string t);
+        double levenshtein(const std::string& s, const std::string& t);
 
-        double levenshtein_window(std::string s, std::string t);
+        double levenshtein_window(const std::string& s, const std::string& t);
 
         std::set<std::string> kmers(const Seq& s);
 
