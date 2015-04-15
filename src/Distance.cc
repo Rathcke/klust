@@ -20,6 +20,11 @@ Distance::Distance(int kmer, double threshold, int step_size) {
     this->step = step_size;
 }
 
+inline uint8_t nth_left_2bits(uint8_t b, const int& n) {
+    int shift = 6 - 2 * (n % 4);
+    return b & (3 << shift) >> shift;
+}
+
 static inline uint32_t stream2int(const uint8_t *stream) {
     return (((uint32_t) stream[0]) << 24 |
             ((uint32_t) stream[1]) << 16 |
@@ -46,6 +51,9 @@ bool Distance::compare(const Seq& s, const Seq& t) {
     // allocate array of length equal to the number of different kmers
     const int kmer_count = pow(4, k);
     int *kmers = new int[kmer_count](); // zero initialized due to ()
+    //unordered_map<uint32_t, int> kmers;
+    /*vector<int> kmers = new vector<int>;
+    kmers.resize(pow(4,k));*/
 
     static const uint32_t k2 = 2 * k;
     static const uint32_t mask = pow(2, k2) - 1;    // 0b001111 (2*k 1's)
@@ -69,6 +77,10 @@ bool Distance::compare(const Seq& s, const Seq& t) {
     }
 
     // Manhattan distance between the two strings
+    /*int cur_dist = 0;
+    for (auto it = kmers.cbegin(); it != kmers.cend(); ++it)
+        cur_dist += abs(it->second);
+        //cur_dist += abs(*it);*/
     int cur_dist = 0;
     for (int i = 0; i < kmer_count; ++i)
         cur_dist += abs(kmers[i]);
@@ -168,9 +180,12 @@ double Distance::levenshtein(const string& s, const string& t) {
     int tlen = t.length();
 
     // Trivial cases
-    if (slen == 0) return tlen;
-    if (tlen == 0) return slen;
-
+    if (slen == 0) {
+        return tlen;
+    }
+    if (tlen == 0) {
+        return slen;
+    }
     int col[slen + 1];
     int pcol[slen + 1];
     for (int i = 0; i < slen; i++) {
@@ -180,7 +195,7 @@ double Distance::levenshtein(const string& s, const string& t) {
     for (int i = 0; i < tlen; i++) {
         col[0] = i+1;
         for (int j = 0; j < slen; j++) {
-            int cost = (s[j] == t[i]) ? 0 : 1;
+            int cost = (tolower(s[j]) == tolower(t[i])) ? 0 : 1;
             col[j+1] = min(col[j] + 1, min(pcol[j+1] + 1, pcol[j] + cost));
         }
         for (int j = 0; j < slen + 1; j++) {

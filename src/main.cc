@@ -15,7 +15,7 @@ using namespace std;
 
 int main(int argc, char *argv[])
 {
-	Distance d2(7, 0.9, 0);
+	Distance d2(8, 0.9, 0);
     /*if (argc < 9) {
         std::cout << "Usage: " << argv[0] << " <.fasta input file> "
                                              " <.fasta output file for centroids> "
@@ -28,7 +28,7 @@ int main(int argc, char *argv[])
                                           << endl << endl;
         return 1;
     }*/
-    d2.printDistMatrix(argv[1], 10);
+    d2.printDistMatrix(argv[1], 500);
     //cout << d2.levenshtein("tt","ttttt") << endl;
     return 0;
 
