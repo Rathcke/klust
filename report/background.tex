@@ -117,6 +117,28 @@ The agglomerative hierarchical algorithm is based on merging clusters in a botto
 \EndFunction
 \end{algorithmic}
 \end{algorithm}
+\begin{algorithm}
+  \caption{Naive \textsc{d2} distance metric}
+  \label{alg:d2_naive}
+  \begin{algorithmic}[1]
+    \Require{$s$ and $t$ are DNA or RNA sequences and $k \in \mathbb{Z}^+$}
+    \Statex
+    \Function{d2}{$s, t, k$}
+      \State initialize \texttt{freq\_map}
+      \For{$i \gets 0$ to $length(s) - k$}
+        \State freq\_map[index\_of\_kmer(s.substring(i, k)]\texttt{++}
+      \EndFor
+      \For{$i \gets 0$ to $length(t) - k$}
+        \State freq\_map[index\_of\_kmer(t.substring(i, k)]\texttt{--}
+      \EndFor
+      \State $total \gets 0$
+      \ForAll{$e \in$ freq\_map}
+        \State $total \gets e.value^2$  \Comment{calculate the Euclidean distance}
+      \EndFor
+      \State \Return $\sqrt{total}$
+    \EndFunction
+  \end{algorithmic}
+\end{algorithm}
 
 
 (agglomerative and divisive).
