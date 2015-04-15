@@ -20,11 +20,6 @@ Distance::Distance(int kmer, double threshold, int step_size) {
     this->step = step_size;
 }
 
-inline uint8_t nth_left_2bits(uint8_t b, const int& n) {
-    int shift = 6 - 2 * (n % 4);
-    return b & (3 << shift) >> shift;
-}
-
 static inline uint32_t stream2int(const uint8_t *stream) {
     return (((uint32_t) stream[0]) << 24 |
             ((uint32_t) stream[1]) << 16 |
