@@ -51,9 +51,6 @@ bool Distance::compare(const Seq& s, const Seq& t) {
     // allocate array of length equal to the number of different kmers
     const int kmer_count = pow(4, k);
     int *kmers = new int[kmer_count](); // zero initialized due to ()
-    //unordered_map<uint32_t, int> kmers;
-    /*vector<int> kmers = new vector<int>;
-    kmers.resize(pow(4,k));*/
 
     static const uint32_t k2 = 2 * k;
     static const uint32_t mask = pow(2, k2) - 1;    // 0b001111 (2*k 1's)
@@ -77,10 +74,6 @@ bool Distance::compare(const Seq& s, const Seq& t) {
     }
 
     // Manhattan distance between the two strings
-    /*int cur_dist = 0;
-    for (auto it = kmers.cbegin(); it != kmers.cend(); ++it)
-        cur_dist += abs(it->second);
-        //cur_dist += abs(*it);*/
     int cur_dist = 0;
     for (int i = 0; i < kmer_count; ++i)
         cur_dist += abs(kmers[i]);
