@@ -32,6 +32,7 @@ int main(int argc, char *argv[])
     //cout << d2.levenshtein("tt","ttttt") << endl;
     return 0;
 
+
     ios_base::sync_with_stdio(false); // don't share buffers with C style IO
 
     ifstream fs_in(argv[1]);
@@ -81,7 +82,7 @@ int main(int argc, char *argv[])
     /*
      * Reading sequences
      */
-    int count = 500;
+    int count = 5;
     //vector<vector<bitset<2>>> seqs;
     vector<Seq> seqs;
 

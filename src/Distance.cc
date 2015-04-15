@@ -163,7 +163,7 @@ bool Distance::compare(const Seq& s, const Seq& t) {
     return ret;
 }*/
 
-int Distance::levenshtein(const string& s, const string& t) {
+double Distance::levenshtein(const string& s, const string& t) {
     int slen = s.length();
     int tlen = t.length();
 
@@ -173,24 +173,27 @@ int Distance::levenshtein(const string& s, const string& t) {
 
     int col[slen + 1];
     int pcol[slen + 1];
-    for (int i = 0; i <= slen; i++) {
+    for (int i = 0; i < slen; i++) {
         pcol[i] = i;
     }
     // Dynamic approach to calculate the distance between two strings
-    for (int i = 0; i < slen; i++) {
+    for (int i = 0; i < tlen; i++) {
         col[0] = i+1;
-        for (int j = 0; j < tlen; j++) {
-            int cost = !(s[j] == t[i]);
+        for (int j = 0; j < slen; j++) {
+            int cost = (s[j] == t[i]) ? 0 : 1;
             col[j+1] = min(col[j] + 1, min(pcol[j+1] + 1, pcol[j] + cost));
         }
         for (int j = 0; j < slen + 1; j++) {
             pcol[j] = col[j];
         }
     }
-    return col[slen];
+    if (tlen > slen)
+        return (double)(tlen - col[slen]) / (double)tlen;
+    else
+        return (double)(slen - col[slen]) / (double)slen; 
 }
 
-double Distance::levenshtein_window(string s, string t) {
+double Distance::levenshtein_window(const string& s, const string& t) {
     int slen = s.length();
     int tlen = t.length();
     
@@ -213,14 +216,15 @@ double Distance::levenshtein_window(string s, string t) {
     int win_size = short_len;
     int windows = long_len - short_len;
 
-    if (windows == 0)
+    if (windows == 0) {
         return (double)(win_size - levenshtein(s, t)) / (double)win_size;
+    }
 
     for (int i = 0; i < windows; i++) {
         cur_dist = levenshtein(shorter, longer.substr(i, win_size));
         min_dist = min(min_dist, cur_dist);
     }
-    
+
     return (double)(win_size - min_dist) / (double)win_size;
 }
 
@@ -229,7 +233,7 @@ void Distance::printDistMatrix(const char* filename, int count) {
     ifstream fs1(filename);
 
     string fst, snd;
-    int distances[count][count];
+    double distances[count][count];
 
     for (int i = 0; i < count; i++)
         for (int j = 0; j < count; j++)
@@ -248,7 +252,7 @@ void Distance::printDistMatrix(const char* filename, int count) {
                 continue;
             }
 
-            int newdist = levenshtein(fst, snd);
+            double newdist = levenshtein(fst, snd);
             distances[i][j] = newdist;
             distances[j][i] = newdist;
         }
@@ -257,9 +261,9 @@ void Distance::printDistMatrix(const char* filename, int count) {
 
     for (int i = 0; i < count; ++i) {
         for (int j = 0; j < count; ++j) {
-            cout << setw(4) << distances[i][j]; // TODO: reset width?
+            cout << " " << distances[i][j]; // TODO: reset width?
         }
-        cout << endl;
+        cout << '\n';
     }
 
     fs0.close();

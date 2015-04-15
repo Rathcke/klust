@@ -4,7 +4,6 @@
 #include <string>
 #include <set>
 #include <bitset>
-#include <unordered_map>
 #include "IO.h"
 
 class Distance
@@ -21,21 +20,18 @@ class Distance
 
         std::vector<int> compute_key(const std::string& s, int n);
 
-        int levenshtein(const std::string& s, const std::string& t);
+        double levenshtein(const std::string& s, const std::string& t);
 
-        double levenshtein_window(std::string s, std::string t);
+        double levenshtein_window(const std::string& s, const std::string& t);
 
         std::set<std::string> kmers(const Seq& s);
 
         void printDistMatrix(const char* filename, int count);
 
     private:
-        int k;      // k in k-mer (word length)
-        double thrs;   // threshold
+        int k;          // k in k-mer (word length)
+        double thrs;    // threshold
         int step;
-        /*typedef std::bitset<32> bitstring;
-
-        bitstring gram_pos(const std::string& s);*/
 };
 
 #endif
