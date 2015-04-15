@@ -21,7 +21,7 @@ class Distance
 
         std::vector<int> compute_key(const std::string& s, int n);
 
-        int levenshtein(std::string s, std::string t);
+        int levenshtein(const std::string& s, const std::string& t);
 
         double levenshtein_window(std::string s, std::string t);
 

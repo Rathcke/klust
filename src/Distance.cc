@@ -163,17 +163,14 @@ bool Distance::compare(const Seq& s, const Seq& t) {
     return ret;
 }*/
 
-int Distance::levenshtein(string s, string t) {
+int Distance::levenshtein(const string& s, const string& t) {
     int slen = s.length();
     int tlen = t.length();
 
     // Trivial cases
-    if (slen == 0) {
-        return tlen;
-    }
-    if (tlen == 0) {
-        return slen;
-    }
+    if (slen == 0) return tlen;
+    if (tlen == 0) return slen;
+
     int col[slen + 1];
     int pcol[slen + 1];
     for (int i = 0; i <= slen; i++) {
