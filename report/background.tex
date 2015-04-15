@@ -9,7 +9,7 @@ defined to be the minimum number of edits to turn the first sequence into the
 other. \\
 The edit operations consists of \emph{insertions}, \emph{deletions} and
 \emph{substitutions}. These operations are, respectively, inserting a letter,
-removing a letter and changing one letter for another. \\
+removing a letter and changing one letter to another. \\
 For example, the two sequences
 \begin{center}
 \texttt{ACGT} \\
@@ -27,18 +27,20 @@ possible even though they have a close resemblance to each other.
 
 
 \subsubsection{Feature based distance}
-A $k$-mer, or $k$-gram or simply a \emph{word}, is a sequence of length
-$k \geq 0$ over some alphabet $\mathcal{A}$ of a sequence. $k$-mers are a type
-of sequence \emph{feature}. An interesting feature of a sequence is the
-$k$-mers that occur in that sequence.
+A $k$-mer, or $k$-gram or simply a \emph{word}, is a sequence of length $k > 0$
+over some alphabet $\mathcal{A}$ of a sequence. $k$-mers are a type of sequence
+\emph{feature}. An interesting feature of a sequence is the $k$-mers that occur
+in that sequence.
 
 $d2$ is a feature based distance metric, using $k$-mers as the feature. The
 distance is calculated by counting the $k$-mers occurring in two sequences,
 representing these occurrences as two vectors and finally taking the Euclidean
-distance between these two vectors.
+distance between these two vectors. % TODO: reference
 
 Let $c_x(w)$ be the number of times that a $k$-mer $w$ occurs in the sequence
-$x$. Then the $d2$ distance can be defined as follows:
+$x$. Then the $d2$ distance between $x$ and $y$, $d2_k(x,y)$, for some fixed
+$k$, can be defined as
+follows:
 \begin{equation}
   d2_k(x,y) \eqdef \sqrt{\sum_{|w|=k} (c_x(w) - c_y(w))^2}
 \end{equation}
@@ -71,10 +73,10 @@ The Euclidean distance would then be calculated as
 
 To better support distance between two sequences of different length, but
 similar subsequences, the concept of a \emph{window} can be used to split the
-distance calculation into comparison of substrings of length of the window
-and then use the window with the least distance as the resulting distance. In
-this way two sequences, where one is a prefix or postfix of the other, will
-have zero distance.
+distance calculation into comparison of substrings of length equal to the
+window and then use the window with the least distance as the resulting
+distance. In this way two sequences, where one is a prefix or postfix of the
+other, will have zero distance.
 
 
 
