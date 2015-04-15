@@ -28,6 +28,7 @@ int main(int argc, char *argv[])
                                           << endl << endl;
         return 1;
     }*/
+
 /*
     d2.printDistMatrix(argv[1], 100);
     return 0;*/
@@ -78,10 +79,36 @@ int main(int argc, char *argv[])
     cout << bitset<32>(b) << endl;*/
 
 
+    int count = 50;
+
+    string str;
+    vector<string> seqs_s;
+    int i = 0;
+    while (IO::read_sequence(fs_in, str) && i++ < count) {
+        seqs_s.push_back(str);
+        str.clear();
+    }
+
+    cout << "Comparing all read sequences...\n" << endl;
+    clock_t comp_clock = clock();
+    for (int i = 0; i < count; ++i)
+        for (int j = 0; j < count; ++j)
+            d2.levenshtein(seqs_s[i], seqs_s[j]);
+
+    double comp_secs = (clock() - comp_clock) / (double) CLOCKS_PER_SEC;
+
+    cout << "Finished comparing:\n"
+         << "Time: "            << comp_secs << " sec.\n"
+         << "Comparisons/sec: " << pow(count, 2) / comp_secs << "\n"
+         << "# of compares: "   << count * count << endl;
+
+
+
+
     /*
      * Reading sequences
      */
-    int count = 500;
+    /*int count = 500;
     //vector<vector<bitset<2>>> seqs;
     vector<Seq> seqs;
 
@@ -92,13 +119,13 @@ int main(int argc, char *argv[])
 
     cout << "Finished reading:\n"
          << "Time: "     << read_secs << " sec.\n"
-         << "Seqs/sec: " << count / read_secs << "\n" << endl;
+         << "Seqs/sec: " << count / read_secs << "\n" << endl;*/
 
 
     /*
      * Comparing sequences
      */
-    int tot = 0;
+    /*int tot = 0;
     cout << "Comparing all read sequences...\n" << endl;
     clock_t comp_clock = clock();
     for (int i = 0; i < count; ++i)
@@ -112,7 +139,7 @@ int main(int argc, char *argv[])
          << "Time: "            << comp_secs << " sec.\n"
          << "Comparisons/sec: " << pow(count, 2) / comp_secs << "\n"
          << "# of compares: "   << count * count << endl;
-    cout << tot << endl;
+    cout << tot << endl;*/
 
     /*cout << "# of clusters: " <<
         //Cluster::clust(fs_in, fs_cts, threshold, k, count) << endl;

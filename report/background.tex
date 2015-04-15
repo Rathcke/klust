@@ -107,46 +107,49 @@ strived to be found.
 \subsection{Cluster analysis algorithms}
 
 \subsubsection{Hierarchical clustering}
-The agglomerative hierarchical algorithm is based on merging clusters in a bottom up manner.
-\begin{algorithm}
-\caption{Hierarchical Clustering}
-\label{hierarchicalCluster}
-\begin{algorithmic}
-\Function{algorithm}{a,b} \\
-1: Let $C_i=\{S_i\}$ be a leaf, non-merged cluster for $1\leq i\leq n$
-\EndFunction
-\end{algorithmic}
-\end{algorithm}
-\begin{algorithm}
-  \caption{Naive \textsc{d2} distance metric}
-  \label{alg:d2_naive}
-  \begin{algorithmic}[1]
-    \Require{$s$ and $t$ are DNA or RNA sequences and $k \in \mathbb{Z}^+$}
-    \Statex
-    \Function{d2}{$s, t, k$}
-      \State initialize \texttt{freq\_map}
-      \For{$i \gets 0$ to $length(s) - k$}
-        \State freq\_map[index\_of\_kmer(s.substring(i, k)]\texttt{++}
-      \EndFor
-      \For{$i \gets 0$ to $length(t) - k$}
-        \State freq\_map[index\_of\_kmer(t.substring(i, k)]\texttt{--}
-      \EndFor
-      \State $total \gets 0$
-      \ForAll{$e \in$ freq\_map}
-        \State $total \gets e.value^2$  \Comment{calculate the Euclidean distance}
-      \EndFor
-      \State \Return $\sqrt{total}$
-    \EndFunction
-  \end{algorithmic}
-\end{algorithm}
+There are typically two types of hierarchical algorithms, both of which are 
+merge based, the agglomerative that works in a bottom-up manner and the 
+divisive that has a top-down approach, but we focus on explaining the 
+agglomerative. The agglomerative works in a bottom-
+up manner where all sequences start as leaves and they are then merged 
+together in clusters if they are within a given threshold.\\
+MAKE ILLUSTRATION \\% TODO 
+This adresses the question of what is required for a cluster to be within a 
+given threshold. Besides measuring similarity between sequences with a 
+distance metric, a definition for when a sequence is part of a cluster is 
+needed. \\
 
+With the \textit{single-linkage} approach, only one sequence from both 
+clusters are required to be within the threshold.
 
-(agglomerative and divisive).
+In the \textit{complete-linkage} approach, all sequences from one cluster 
+must be within the threshold of all sequences from the other.
+
+In the \textit{average-linkage}, the average distance of all pairs of 
+sequences is required to be within the threshold.\\
+\\
+The singly-linkage approach is often used in sequence clustering though it has its disadvantages as argued in \cite[pp. 62-63]{dong}
 
 \subsubsection{Graph based clustering}
 
 
 \subsubsection{Greedy algorithm like in \texttt{UCLUST}} 
+The \texttt{UCLUST} algorithm is greedy and is developed so that all member sequence have similarity $\geq$ $T$ to their centroid.
+It works by processing one sequence at a time and comparing these to the 
+existing centroids. If a match is found, the sequence is assigned to the 
+matching centroid, otherwise it becomes a centroid of a new cluster.\\
+It is designed to also support that each centroid has a similarity $<T$ to 
+all other centroids, but this is not guaranteed to hold. The reason is that 
+the algorithm only compares a sequence to a prespecified number of centroids 
+given by the \texttt{-maxrejects} parameter.\\
+It uses the $k$-mer counts to find good centroid candidates for a match, 
+though how it does it is not very well described.\\
+The similarity calculations are performed with global sequence alignments as 
+Robert claims that using the word counts to calculate identity is not 
+sensitive enough \cite{usearch}.
+
+
+
 
 
 \subsubsection{Greedy algorithm with recalculation of centroids}
