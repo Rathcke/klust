@@ -4,20 +4,22 @@ For a start, a naive version of the Levenshtein distance metric was
 implemented, but as expected, this is absolutely useless in any practical
 setting, since it does not reuse already calculated results. Therefore, this
 was quickly transformed into a dynamic programming solution, which solves
-subproblems just once, stores and reuses the intermediate results.
+subproblems just once, stores and reuses the intermediate results. This dynamic
+programming bottom up solution was however still very slow, yielding a
+performance of around 70 comparisons per second.
 
-\subsection{$d2$ distance}
+\subsection{Simple $d2$ distance}
 After learning that the basic Levenshtein algorithm is far too slow for the
 problem domain of this project, we turned our attention to the $d2$ distance
-metric. The first edition of the $d2$ distance metric algorithm is shown in
-figure \ref{alg:d2_naive}. This algorithm maintains a single frequence vector,
+metric. The first version of the $d2$ distance metric algorithm is shown in
+figure \ref{alg:d2_naive}. This algorithm maintains a single frequency vector,
 as a map structure to allow for large $k$ which results in a large number of
 possible different $k$-mers. The map is indexed using the lexicographical
 position of the $k$-mer. When iterating through the first sequence, $k$-mer
 counts are incremented and when iterating through the second sequence, they are
-decremented. Finally all the frequensies are squared and the square root of the
-sum is returned.
-
+decremented. Finally all the frequencies are squared and the square root of the
+sum is returned, corresponding to the Euclidean distance between frequency
+vectors for the two sequences.
 
 \begin{algorithm}
   \caption{Naive \textsc{d2} distance metric}
@@ -41,3 +43,73 @@ sum is returned.
     \EndFunction
   \end{algorithmic}
 \end{algorithm}
+
+
+\subsection{$d2$ distance with windows and Jaccard index}
+The current version of the $d2$ distance function uses the concept of a
+\emph{window}, of a certain length, that iterates over the sequences and
+calculates distances between the substrings in each window. This calculation is
+done using a kind of forward differences method for reducing the calculations
+to a few fixed operations for calculating the distance in the next window from
+the distance in the current window. This concept is described in
+\cite{hazelhurst}.
+
+The algorithm presented here uses a window size equal to the length of the
+shortest of the two sequences. Let $|s|$ be the length of the shortest of the
+two sequences. To begin with the, the $k$-mers in the first $|s|$ characters of
+each sequence are counted and the \emph{Manhattan} distance between these two
+frequency vectors is calculated.
+
+The Manhattan distance is simply the Euclidean distance where squaring is
+replaced with absolute value and the square root is omitted, i.e. for
+$u, v \in \mathbb{F}^n$, 
+\begin{equation}
+  d_{Manhattan} \eqdef \sum_{i=1}^{n} |u_i - v_i| \;.
+\end{equation}
+
+This distance is the distance between the subsequences in the first position of
+the window. To calculate the distance in the following window, i.e. advancing
+the window through the longer of the two sequences by one character, it is
+decided which $k$-mers exit and enter the window, respectively, and then by
+looking at whether the existing $k$-mer count in the frequency vector is
+negative or positive, it can be decided whether the distance increases or
+decreased by 2 or whether it stays the same. Subsequently, the frequency vector
+is updated to reflect the change in the new window. The following illustrates
+the idea of a window and $k$-mers exiting and entering the window:
+\begin{verbatim}
+      |---- window ----------|
+      ACTGATCGTAGCTAGCTAGTGTTG
+      ACGTAGATCGTGGATGGCTGATCGTAGCTAAGCTTAGCTGATCG.....
+      ^^^^                 ^^^^
+      k-mer exiting        k-mer entering
+\end{verbatim}
+
+Since the Manhattan distance can be hard to use in practice, since it is very
+dependent on the length of the shortest sequence (the length of the window),
+the concept of the \emph{Jaccard index}, or the \emph{Jaccard similarity
+coefficient}, is used to ``normalize'' the distance to a value in the interval
+$[0,1]$.
+
+The Jaccard index of two sets $A$ and $B$ is defined as follows:
+\begin{equation}
+  J(A, B) \eqdef \frac{|A \cup B| - |A \cap B|}{|A \cup B|}
+\end{equation}
+ % TODO:  maybe actually Jaccard distance; maybe add citation
+
+In the context of $k$-mer frequencies, the union can be interpreted as the
+total number of $k$-mers in the window in the two sequences, and the
+intersection as the Manhattan distance in the window.
+
+
+\subsection{Results}
+\begin{figure}[H]
+\begin{tabular}{ c | c }
+  Metric                                        & Comparisons/second      \\
+  \hline
+  Dynamic programming (bottom up) Levenshtein   & $\sim$ 70               \\
+  d2-distance with window, $k=4$                & $\sim$ 73000            \\
+  d2-distance with window, $k=6$                & $\sim$ 63000            \\
+  d2-distance with window, $k=8$                & $\sim$ 24000            \\
+\end{tabular}
+\caption{Perfomance of different distance metrics}
+\end{figure}
