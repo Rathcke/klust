@@ -8,22 +8,19 @@ from sklearn.metrics import euclidean_distances
 from sklearn.decomposition import PCA
 
 # read data
-#k4  = np.loadtxt('data/k4_distmat')
-#lev = np.loadtxt('data/lev_distmat')
-k4  = np.matrix(np.loadtxt('data/k4_distmat'))
+kmer = np.matrix(np.loadtxt('data/k6_distmat'))
 lev = np.matrix(np.loadtxt('data/lev_distmat'))
 
-k4_indices = np.triu_indices_from(k4)
-k4_a = np.asarray( k4[k4_indices] )[-1]
+# transform into array of upper tringle of matrix
+kmer_indices = np.triu_indices_from(kmer)
+kmer_a = np.asarray( kmer[kmer_indices] )[-1]
+kmer_a = [x for x in kmer_a if x != 0]
 
 lev_indices = np.triu_indices_from(lev)
-lev_a = np.asarray( lev[k4_indices] )[-1]
+lev_a = np.asarray( lev[lev_indices] )[-1]
+lev_a = [x for x in lev_a if x != 0]
 
-#tsne = manifold.TSNE(n_components=2, init='pca', random_state=0)
-#pos = tsne.fit_transform(similarities)
-
-#Scatter plot
-#plt.scatter(pos[:, 0], pos[:, 1], s=20, c='g')
-plt.scatter(k4_a, lev_a, s=20, c='g')
+# scatter plot
+plt.scatter(kmer_a, lev_a, s=20, c='g')
 
 plt.show()
