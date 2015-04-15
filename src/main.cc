@@ -56,11 +56,11 @@ int main(int argc, char *argv[])
     const int step_size = std::atoi(argv[8]);
 
     Distance d2(k, threshold, step_size);*/
-    Distance d2(8, 0.9, 0);
+    Distance d2(2, 0.9, 0);
 
-
-    /*char a[] = "aaactgg";
-    char b[] = "ggctaaact";
+/*
+    char a[] = "actgg";
+    char b[] = "ggaactg";
     Seq s(a, strlen(a));
     Seq t(b, strlen(b));
     d2.compare(s, t);
