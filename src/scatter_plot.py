@@ -8,8 +8,8 @@ from sklearn.metrics import euclidean_distances
 from sklearn.decomposition import PCA
 
 # read data
-kmer = np.matrix(np.loadtxt('data/test2.txt'))
-lev = np.matrix(np.loadtxt('data/test.txt'))
+kmer = np.matrix(np.loadtxt('data/k8_distmat'))
+lev = np.matrix(np.loadtxt('data/lev_distmat'))
 
 # transform into array of upper tringle of matrix
 kmer_indices = np.triu_indices_from(kmer)
@@ -23,4 +23,9 @@ lev_a = [x for x in lev_a if x != 0]
 # scatter plot
 plt.scatter(kmer_a, lev_a, s=20, c='g')
 
-plt.show()
+#plt.suptitle('test title', fontsize=20)
+plt.xlabel('k-mer similarity (k = 8)', fontsize=12)
+plt.ylabel('Levenshtein similarity', fontsize=12)
+
+plt.savefig("k8.png")
+#plt.show()
