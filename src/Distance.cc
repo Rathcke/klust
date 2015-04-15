@@ -206,6 +206,7 @@ double Distance::levenshtein(const string& s, const string& t) {
         return (double)(tlen - col[slen]) / (double)tlen;
     else
         return (double)(slen - col[slen]) / (double)slen; 
+    //return col[slen];
 }
 
 double Distance::levenshtein_window(const string& s, const string& t) {
@@ -213,8 +214,9 @@ double Distance::levenshtein_window(const string& s, const string& t) {
     int tlen = t.length();
     
     string shorter, longer;
-    int short_len, long_len, cur_dist;
-    int min_dist = 9999;
+    int short_len, long_len;
+    double min_dist = 9999;
+    double cur_dist;
 
     if (slen <= tlen) {
         shorter = s;

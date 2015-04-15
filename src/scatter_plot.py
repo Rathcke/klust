@@ -8,8 +8,8 @@ from sklearn.metrics import euclidean_distances
 from sklearn.decomposition import PCA
 
 # read data
-kmer = np.matrix(np.loadtxt('data/k6_distmat'))
-lev = np.matrix(np.loadtxt('data/lev_distmat'))
+kmer = np.matrix(np.loadtxt('data/test2.txt'))
+lev = np.matrix(np.loadtxt('data/test.txt'))
 
 # transform into array of upper tringle of matrix
 kmer_indices = np.triu_indices_from(kmer)
