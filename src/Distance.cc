@@ -195,7 +195,7 @@ double Distance::levenshtein(const string& s, const string& t) {
     for (int i = 0; i < tlen; i++) {
         col[0] = i+1;
         for (int j = 0; j < slen; j++) {
-            int cost = (tolower(s[j]) == tolower(t[i])) ? 0 : 1;
+            int cost = ((s[j]) == (t[i])) ? 0 : 1;
             col[j+1] = min(col[j] + 1, min(pcol[j+1] + 1, pcol[j] + cost));
         }
         for (int j = 0; j < slen + 1; j++) {
@@ -256,9 +256,11 @@ void Distance::printDistMatrix(const char* filename, int count) {
 
     for (int i = 0; i < count; ++i) {
         IO::read_sequence(fs0, fst);
+        transform(fst.begin(), fst.end(), fst.begin(), ::tolower);
 
         for (int j = 0; j < count; ++j) {
             IO::read_sequence(fs1, snd);
+            transform(snd.begin(), snd.end(), snd.begin(), ::tolower);
             if (i == j) { // don't compare a sequence to itself
                 distances[i][j] = 0;
                 continue;

@@ -28,7 +28,7 @@ int main(int argc, char *argv[])
                                           << endl << endl;
         return 1;
     }*/
-    d2.printDistMatrix(argv[1], 500);
+    d2.printDistMatrix(argv[1], 100);
     //cout << d2.levenshtein("tt","ttttt") << endl;
     return 0;
 
