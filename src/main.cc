@@ -29,12 +29,9 @@ int main(int argc, char *argv[])
         return 1;
     }*/
 
-    /*d2.jac_printDistMatrix(argv[1], 10);
+/*
+    d2.printDistMatrix(argv[1], 100);
     return 0;*/
-
-    //cout << d2.levenshtein("tt","ttttt") << endl;
-    //return 0;
-
 
     ios_base::sync_with_stdio(false); // don't share buffers with C style IO
 
