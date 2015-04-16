@@ -89,12 +89,9 @@ using namespace std;
  * sequences. Output the centroids in FASTA format to the output file stream,
  * output clusters to file stream and return the number of centroids.
  */
-int Cluster::simple_clust(ifstream& fs_in, ofstream& fs_centroids, ofstream& fs_clusters,
+int Cluster::simple_clust(const vector<Seq>& seqs, ofstream& fs_centroids, ofstream& fs_clusters,
         Distance& dist, int count, int max_rejects) {
     unordered_map<int, Seq> centroids;
-
-    vector<Seq> seqs;
-    IO::read_seqs(fs_in, seqs, count);
 
     int centroid_count = 0;
 

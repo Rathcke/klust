@@ -151,23 +151,24 @@ The singly-linkage approach is often used in sequence clustering though it has i
 
 
 \subsubsection{Greedy algorithm like in \texttt{UCLUST}} 
-The \texttt{UCLUST} algorithm is greedy and is developed so that all member sequence have similarity $\geq$ $T$ to their centroid.
-It works by processing one sequence at a time and comparing these to the 
-existing centroids. If a match is found, the sequence is assigned to the 
-matching centroid, otherwise it becomes a centroid of a new cluster.\\
-It is designed to also support that each centroid has a similarity $<T$ to 
-all other centroids, but this is not guaranteed to hold. The reason is that 
-the algorithm only compares a sequence to a prespecified number of centroids 
-given by the \texttt{-maxrejects} parameter.\\
-It uses the $k$-mer counts to locate centroid candidates for a match, 
-though how it does it is not very well described.\\
-The similarity calculations are performed with global sequence alignments as 
-Robert claims that using the word counts to calculate identity is not 
-sensitive enough \cite{usearch}.
+The \texttt{UCLUST} algorithm is greedy and is developed so that all member
+sequence have similarity $\geq$ $T$ to their centroid.  It works by processing
+one sequence at a time and comparing these to the existing centroids. If a
+match is found, the sequence is assigned to the matching centroid, otherwise it
+becomes a centroid of a new cluster.
 
+It is designed to also support that each centroid has a similarity $<T$ to all
+other centroids, but this is not guaranteed to hold. The reason is that the
+algorithm only compares a sequence to a prespecified number of centroids given
+by the \texttt{-maxrejects} parameter.
 
+It uses the $k$-mer counts to locate centroid candidates for a match, though
+how it does it is not very well described.
+
+The similarity calculations are performed with global sequence alignments as
+\cite{usearch} claims that using the word counts to calculate identity is not
+sensitive enough.
 
 
 
 \subsubsection{Greedy algorithm with recalculation of centroids}
-

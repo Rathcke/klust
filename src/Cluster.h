@@ -16,7 +16,7 @@ class Cluster
                 std::fstream& fs_clusters, Distance& dist, int count, 
                 int max_rejects);*/
 
-        static int simple_clust(std::ifstream& fs_in, std::ofstream& fs_centroids,
+        static int simple_clust(const std::vector<Seq>& seqs, std::ofstream& fs_centroids,
                 std::ofstream& fs_clusters, Distance& dist, int count, 
                 int max_rejects);
 
