@@ -142,38 +142,38 @@ double Distance::distance(const Seq& s, const Seq& t) {
 
 /* Returns a sorted vector by decreasing order and returns the n most 
    frequent kmers if they exist */
-/*vector<int> Distance::compute_key(const string& s, int n) {
-    typedef unordered_map<int,int> gmap;
-    // count grams in shorter
-    gmap grams;  // gram count index in lexicographical order
-    int index;
-    for (unsigned int i = 0; i <= s.length()-k; i++) {
-        index = gram_pos(s.substr(i,k));
+vector<int> Distance::compute_key(const Seq& s, int n) {
+    const size_t slen = s.length();
+    uint8_t *data = s.data();
 
-        if (grams.find(index) == grams.end()) {
-            grams.insert(pair<int,int>(index, 1));
-        }
-        else {
-            grams[index]++;
-        }
+    // allocate array of length equal to the number of different kmers
+    const int kmer_count = pow(4, k);
+    //int *kmers = new int[kmer_count](); // zero initialized due to ()
+    vector<int> kmers;
+    kmers.reserve(kmer_count);
+
+    static const uint32_t k2 = 2 * k;
+    static const uint32_t mask = pow(2, k2) - 1; // 0b001111 (2*k 1's)
+
+    // count kmers in the sequence
+    for (size_t i = 0; i <= slen - k; ++i) {
+        uint32_t kmer = 0; // binary repr. of kmer
+
+        kmer = stream2int(data + (i/4));
+        kmer >>= (32 - 2*(i % 4) - k2);
+        kmer &= mask;
+
+        ++kmers[kmer];
     }
 
-    vector<pair<int, int>> map_pairs;
     vector<int> ret;
-    int i = 0;
-    for (gmap::const_iterator it = grams.begin(); it != grams.end(); ++it) {
-        map_pairs.push_back({it->first,it->second});
-    }
-    sort(map_pairs.begin(), map_pairs.end(), 
-            [](const pair<int, int>& lhs, const pair<int, int>& rhs) {
-                return lhs.second > rhs.second;
-            });
-    for (vector<pair<int, int>>::const_iterator it = map_pairs.begin(); 
-            it != map_pairs.end() && i < n; ++i,++it) {
-        ret.push_back(it->first);
-    }
+    ret.reserve(n);
+    partial_sort_copy(kmers.begin(), kmers.end(),
+            ret.begin(), ret.end(), greater<int>());
+
+    //delete[] kmers;
     return ret;
-}*/
+}
 
 double Distance::levenshtein(const string& s, const string& t) {
     int slen = s.length();

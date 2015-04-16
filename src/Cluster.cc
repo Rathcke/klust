@@ -1,12 +1,12 @@
 #include <algorithm>
 #include <cmath>
 #include <iostream>
-#include <map>
-#include <string>
-#include <vector>
-#include <stdexcept>
-#include <set>
 #include <queue>
+#include <set>
+#include <stdexcept>
+#include <string>
+#include <unordered_map>
+#include <vector>
 
 #include "Cluster.h"
 #include "Distance.h"
@@ -89,27 +89,31 @@ using namespace std;
  * sequences. Output the centroids in FASTA format to the output file stream,
  * output clusters to file stream and return the number of centroids.
  */
-/*int Cluster::simple_clust(fstream& fs_in, fstream& fs_centroids, fstream& fs_clusters,
+int Cluster::simple_clust(ifstream& fs_in, ofstream& fs_centroids, ofstream& fs_clusters,
         Distance& dist, int count, int max_rejects) {
-    map<int, struct Seq> centroids; // TODO: gets big, maybe use more structure to speed up
-    struct Seq s;
+    unordered_map<int, Seq> centroids;
 
-    int i = 0;
+    vector<Seq> seqs;
+    IO::read_seqs(fs_in, seqs, count);
+
     int centroid_count = 0;
 
-    while (IO::read_sequence(fs_in, s) && i < count) {
+    for (auto q_it = seqs.cbegin(); q_it != seqs.cend(); ++q_it) {
         bool match = false;
-        ++i;
-        vector<int> s_keys = dist.compute_key(s.data, max_rejects);
+        vector<int> s_keys = dist.compute_key(*q_it, max_rejects);
+        /*if (s_keys.empty())
+          throw logic_error("Calling compute_key on " 
+                        + s.to_string() + " returns an empty vector" );*/
 
-        for (vector<int>::const_iterator it = s_keys.begin(); 
-                it != s_keys.end(); ++it) {
+        for (auto it = s_keys.cbegin(); it != s_keys.cend(); ++it) {
             if (centroids.find(*it) == centroids.end()) {
                 continue;
             }
-            if (dist.compare(s.data, (centroids.find(*it)->second).data)) {
+            Seq& target = centroids[*it];
+            if (dist.compare(*q_it, target)) {
                 // write s belongs to centroids[i] to fs_clusters
-                fs_clusters << s.data << " " << (centroids.find(*it)->second).data << endl;
+                fs_clusters << (*q_it).to_string() << " "
+                            << target.to_string()  << '\n';
                 match = true; // found cluster
                 break;
             }
@@ -117,17 +121,13 @@ using namespace std;
 
         if (!match) {
             // add new centroid and write to stream in FASTA format
-            vector<int> vec = dist.compute_key(s.data, 1);
-            if (vec.empty()) {
-              throw logic_error("Calling compute_key on " 
-                            + s.data + " returns an empty vector" );  
-            }
-            centroids.insert({vec[0], s});
+            centroids[s_keys[0]] = *q_it;
             ++centroid_count;
-            fs_centroids << '>' << s.desc << endl
-                         << s.data << endl;
+            /*fs_centroids << '>' << s.desc << endl
+                         << s.data << endl;*/
+            fs_centroids << (*q_it).to_string() << '\n';
         }
     }
 
     return centroid_count;
-}*/
+}

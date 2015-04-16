@@ -12,6 +12,7 @@
 
 class Seq {
     public:
+        Seq();
         Seq(const char *seq_str, size_t len);
         Seq(const Seq& seq);
         ~Seq();
