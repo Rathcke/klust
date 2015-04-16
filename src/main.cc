@@ -26,15 +26,14 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-	Distance d2(6, 0.85, 0);
-    int count = 100 * 1000;
+
+	Distance d2(4, 0.97, 0);
+    int count = 500 * 1000;
     int max_rejects = 8;
 
     /*
      * Reading sequences
      */
-    /*int count = 500;
-    //vector<vector<bitset<2>>> seqs;
     vector<Seq> seqs;
 
     cout << "Reading " << count << " sequences...\n" << endl;
@@ -44,7 +43,7 @@ int main(int argc, char *argv[])
 
     cout << "Finished reading:\n"
          << "Time: "     << read_secs << " sec.\n"
-         << "Seqs/sec: " << count / read_secs << "\n" << endl;*/
+         << "Seqs/sec: " << count / read_secs << "\n" << endl;
 
     /*
      * Comparing sequences
@@ -70,8 +69,9 @@ int main(int argc, char *argv[])
      */
     cout << "Clustering " << count << " sequences..." << endl;
     clock_t comp_clock = clock();
-    cout << "# of clusters: " <<
-        Cluster::simple_clust(fs_in, fs_cts, fs_cls, d2, count, max_rejects) << endl;
+    cout << "# of clusters: "
+         << Cluster::simple_clust(seqs, fs_cts, fs_cls, d2, count, max_rejects)
+         << endl;
     double comp_secs = (clock() - comp_clock) / (double) CLOCKS_PER_SEC;
 
     cout << "Finished clustering:\n"
