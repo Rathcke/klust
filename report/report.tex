@@ -58,37 +58,15 @@
 \section{What should be in report?}
 
 \begin{itemize}
-  \item Introduction: introducing the motivation and goals for the project.
-    
-  \item Terminology: clarification of USEARCH vs UCLUST, definition of
-    clustering and distance metric etc.
-
   \item Biology: the basics about gene sequences, DNA, RNA, sequencing etc.
 
   \item Background: theoretical overview of the field of clustering
-    \begin{itemize}
-      \item Types of cluster analysis algorithms
-        \begin{itemize}
-          \item Hierarchical clustering (agglomerative and divisive)
-          \item Graph based clustering
-          \item Gready algorithm like in \texttt{UCLUST}
-          \item Gready algorithm with recalculation of centroids
-        \end{itemize}
-
-      \item Distance metrics
-        \begin{itemize}
-          \item Edit distance (Levenshtein)
-          \item d2 distance (feature based distance)
-          \item Sequence alignment
-        \end{itemize}
-
+  \begin{itemize}       
       \item Clustering "history"
-    \end{itemize}
+  \end{itemize}
 
   \item Research process
     \begin{itemize}
-      \item Implementing basic Levenshtein and memoized Levenshtein,
-        implementing d2 distance and comparing these.
       \item Testing USEARCH 32-bit on real data
       \item Implementing very (almost naively) gready clustering algorithm.
       \item Testing clustering algorithm with d2 distance and comparing
