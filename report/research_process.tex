@@ -120,6 +120,37 @@ information, is added to the collection of centroids.
 
 This is repeated for all sequences in the input file.
 
+\begin{algorithm}
+  \caption{\textsc{Simple\_Clust}}
+  \label{alg:d2_naive}
+  \begin{algorithmic}[1]
+    \Require{$S$ is an array of [DR]NA sequences, $k \in \mathbb{Z}^+$ and
+             $max\_rejects \in \mathbb{Z}^+$, $id \in [0,1]$}
+    \Statex
+    \Function{Simple\_Clust}{$S, k, max\_rejects$}
+      \State $cluster\_count \gets 0$
+      \State $centroids \gets []$ \Comment{map from $k$-mer to sequence}
+      \ForAll{$s \in S$}
+        \State $mfk \gets$ $max\_rejects$ most frequent $k$-mers in $s$
+        \ForAll{$m \in mfk$}
+          \If{$centroids[m]$ does not exists}
+            \State continue
+          \ElsIf{$distance(s, centroids[m]) \geq id$}
+            \State add $s$ to cluster with centroid $centroids[m]$
+            \State write cluster output file
+            \State break
+          \EndIf
+        \EndFor
+        \If{matching centroid was not found}
+          \State centroids.insert(mfk[0], s)
+          \State write centroids output file
+        \EndIf
+      \EndFor
+      \State \Return $cluster\_count$
+    \EndFunction
+  \end{algorithmic}
+\end{algorithm}
+
 
 \subsection{Results}
 \begin{figure}[H]
