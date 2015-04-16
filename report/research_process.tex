@@ -105,19 +105,30 @@ intersection as the Manhattan distance in the window.
 \begin{figure}[H]
 \begin{tabular}{ c | c }
   Metric                                        & Comparisons/second      \\
-  \hline
+  \hline \hline
   Dynamic programming (bottom up) Levenshtein   & $\sim$ 70               \\
+  \hline
   d2-distance with window, $k=4$                & $\sim$ 73000            \\
+  \hline
   d2-distance with window, $k=6$                & $\sim$ 63000            \\
+  \hline
   d2-distance with window, $k=8$                & $\sim$ 24000            \\
 \end{tabular}
-\caption{Perfomance of different distance metrics.}
+\caption{Performance of different distance metrics.}
 \end{figure}
 
 \begin{figure}[H]
-\begin{tabular}{ c | c }
-  Metric                                        & Throughput/second      \\
+  \begin{tabular}{ p{18em} | c | c }
+  Method  & Throughput/second   & \# of clusters \\
+  \hline \hline
+  \textsc{simple\_clust}, $k=4$, $max\_rejects=8$, $id=0.97$  & $\sim$ 11400  & 444654  \\
   \hline
+  \textsc{simple\_clust}, $k=6$, $max\_rejects=8$, $id=0.97$  & $\sim$ 9575   & 470516  \\
+  \hline
+  \textsc{simple\_clust}, $k=8$, $max\_rejects=8$, $id=0.97$  & $\sim$ 2750   & 475465  \\
 \end{tabular}
-\caption{Perfomance of different clustering methods.}
+\caption{Performance of different clustering methods. Sequence data:
+         \texttt{RDP\_Pro\_Full\_sort.fna}. Count: 500,000. Throughput
+         specifies the number of sequences clustered per second (including
+         results output to file), but excludes reading the input file.}
 \end{figure}
