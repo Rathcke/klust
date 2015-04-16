@@ -100,7 +100,27 @@ In the context of $k$-mer frequencies, the union can be interpreted as the
 total number of $k$-mers in the window in the two sequences, and the
 intersection as the Manhattan distance in the window.
 
+\subsection{Evaluating distance metric}
+To evaluate our implementation of the $k$-mer distance using windows and Jaccard index, we decided to use the Levenshtein distance as reference.\\
+Since Levenshtein distance does not produce values between $0$ and $1$, we have normalized it in the same manner as.
 
+\begin{figure}
+        \begin{subfigure}[b]{0.5\textwidth}
+				\includegraphics[scale=0.34]{graphics/k4.png}
+                	\label{fig:k4}
+        \end{subfigure}
+        \begin{subfigure}[b]{0.5\textwidth}
+				\includegraphics[scale=0.34]{graphics/k6.png}
+                	\label{fig:k6}
+        \end{subfigure}
+
+	\centering
+        \begin{subfigure}[b]{0.5\textwidth}
+				\includegraphics[scale=0.34]{graphics/k8.png}
+               	\label{fig:k8}
+        \end{subfigure}
+\caption{Comparison of Levenshtein distance and our implementation of the $k$-mer distance using windows and Jaccard index.}
+\end{figure}
 
 \subsection{Results}
 \begin{figure}[H]
