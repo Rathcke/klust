@@ -11,9 +11,9 @@
 using namespace std;
 
 Seq::Seq() {
-    cerr << "default constructor Seq() called\n";
     seq_len = 0;
     bytes = 0;
+    seq_data = NULL;
 }
 
 Seq::Seq(const char *seq_str, size_t len) {
@@ -55,13 +55,15 @@ Seq::Seq(const Seq& seq) {
 }
 
 Seq::~Seq() {
-    delete[] seq_data;
+    if (seq_data != NULL)
+        delete[] seq_data;
 }
 
 Seq& Seq::operator= (const Seq& seq){
-    cout << "op= called" << endl;
+    // TODO cout << "op= called" << endl;
     if (this != &seq) {
-        delete[] seq_data;
+        if (seq_data != NULL)
+            delete[] seq_data;
         seq_data = new uint8_t[seq.bytes];
         memcpy(seq_data, seq.seq_data, seq.bytes);
         seq_len = seq.seq_len;
@@ -103,6 +105,13 @@ string Seq::to_string() const {
 
 
 void IO::read_seqs(ifstream &fs, vector<Seq>& seqs, int count) {
+    // replacing internal buffer with a larger one, might speed things up
+    //const unsigned int in_buf_size = 1024 * 1024;
+    //char *in_buf = new char[in_buf_size];
+    //fs_in.rdbuf()->pubsetbuf(in_buf, in_buf_size);
+    // (...)
+    //delete[] in_buf;
+
     seqs.reserve(count);
 
     const size_t data_size = 16 * 1024;

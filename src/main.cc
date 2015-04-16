@@ -15,95 +15,20 @@ using namespace std;
 
 int main(int argc, char *argv[])
 {
-	Distance d2(6, 0.9, 0);
-    /*if (argc < 9) {
-        std::cout << "Usage: " << argv[0] << " <.fasta input file> "
-                                             " <.fasta output file for centroids> "
-                                             " <output file for clusters> "
-                                             " <k in k-mers> "
-                                             " <similarity threshold>"
-                                             " <# of sequences to compare>"
-                                             " <max_rejects>"
-                                             " <step_size>"
-                                          << endl << endl;
-        return 1;
-    }*/
-
-/*
-    d2.printDistMatrix(argv[1], 100);
-    return 0;*/
-
     ios_base::sync_with_stdio(false); // don't share buffers with C style IO
 
     ifstream fs_in(argv[1]);
-    if (!fs_in) {
+    ofstream fs_cts(argv[2], ofstream::out | ofstream::trunc);
+    ofstream fs_cls(argv[3], ofstream::out | ofstream::trunc);
+
+    if (!fs_in || !fs_cts || !fs_cls) {
         cerr << "error opening file: " << argv[1] << endl;
         return 1;
     }
 
-    // replacing internal buffer with a larger one, might speed things up
-    //const unsigned int in_buf_size = 1024 * 1024;
-    //char *in_buf = new char[in_buf_size];
-    //fs_in.rdbuf()->pubsetbuf(in_buf, in_buf_size);
-    // (...)
-    //delete[] in_buf;
-
-    /*fstream fs_out(argv[2], fstream::out | fstream::trunc);
-    fstream fs_cts(argv[2], fstream::out | fstream::trunc);
-    fstream fs_cls(argv[3], fstream::out | fstream::trunc);
-    const int k = std::atoi(argv[4]);         // k in k-mers
-    const double threshold = stod(argv[5]); // simlilarity threshold
-    const int count = std::atoi(argv[6]);     // # of sequences to measure
-    const int max_rejects = std::atoi(argv[7]);
-    const int step_size = std::atoi(argv[8]);
-
-    Distance d2(k, threshold, step_size);*/
-
-/*
-    char a[] = "actgg";
-    char b[] = "ggaactg";
-    Seq s(a, strlen(a));
-    Seq t(b, strlen(b));
-    d2.compare(s, t);
-    return 0;*/
-
-    /*uint32_t b = 2147483648;
-
-    cout << bitset<32>(b) << endl;
-
-    int k = 8;
-    int i = 2;
-
-    b >>= (32 - 2*(i % 4) - 2*k);
-    
-    cout << bitset<32>(b) << endl;*/
-
-
-    int count = 50;
-
-    string str;
-    vector<string> seqs_s;
-    int i = 0;
-    while (IO::read_sequence(fs_in, str) && i++ < count) {
-        seqs_s.push_back(str);
-        str.clear();
-    }
-
-    cout << "Comparing all read sequences...\n" << endl;
-    clock_t comp_clock = clock();
-    for (int i = 0; i < count; ++i)
-        for (int j = 0; j < count; ++j)
-            d2.levenshtein(seqs_s[i], seqs_s[j]);
-
-    double comp_secs = (clock() - comp_clock) / (double) CLOCKS_PER_SEC;
-
-    cout << "Finished comparing:\n"
-         << "Time: "            << comp_secs << " sec.\n"
-         << "Comparisons/sec: " << pow(count, 2) / comp_secs << "\n"
-         << "# of compares: "   << count * count << endl;
-
-
-
+	Distance d2(8, 0.85, 0);
+    int count = 100 * 1000;
+    int max_rejects = 8;
 
     /*
      * Reading sequences
@@ -120,7 +45,6 @@ int main(int argc, char *argv[])
     cout << "Finished reading:\n"
          << "Time: "     << read_secs << " sec.\n"
          << "Seqs/sec: " << count / read_secs << "\n" << endl;*/
-
 
     /*
      * Comparing sequences
@@ -141,17 +65,22 @@ int main(int argc, char *argv[])
          << "# of compares: "   << count * count << endl;
     cout << tot << endl;*/
 
-    /*cout << "# of clusters: " <<
-        //Cluster::clust(fs_in, fs_cts, threshold, k, count) << endl;
-        Cluster::intersect_clust(fs_in, fs_cts, fs_cls, d2, count, max_rejects) << endl;
+    /*
+     * Clustering
+     */
+    cout << "Clustering " << count << " sequences..." << endl;
+    clock_t comp_clock = clock();
+    cout << "# of clusters: " <<
+        Cluster::simple_clust(fs_in, fs_cts, fs_cls, d2, count, max_rejects) << endl;
+    double comp_secs = (clock() - comp_clock) / (double) CLOCKS_PER_SEC;
 
-    //Distance::printDistMatrix(argv[1], k, count);
-
-    fs_out.close();
-    fs_cts.close();
-    fs_cls.close();*/
+    cout << "Finished clustering:\n"
+         << "Time: "            << comp_secs << " sec.\n"
+         << "Throughput: "      << count / comp_secs << "seqs/sec.\n";
 
     fs_in.close();
+    fs_cts.close();
+    fs_cls.close();
 
     return 0;
 }

@@ -101,9 +101,9 @@ int Cluster::simple_clust(ifstream& fs_in, ofstream& fs_centroids, ofstream& fs_
     for (auto q_it = seqs.cbegin(); q_it != seqs.cend(); ++q_it) {
         bool match = false;
         vector<int> s_keys = dist.compute_key(*q_it, max_rejects);
-        /*if (s_keys.empty())
+        if (s_keys.empty())
           throw logic_error("Calling compute_key on " 
-                        + s.to_string() + " returns an empty vector" );*/
+                        + (*q_it).to_string() + " returns an empty vector" );
 
         for (auto it = s_keys.cbegin(); it != s_keys.cend(); ++it) {
             if (centroids.find(*it) == centroids.end()) {

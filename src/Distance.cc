@@ -150,7 +150,7 @@ vector<int> Distance::compute_key(const Seq& s, int n) {
     const int kmer_count = pow(4, k);
     //int *kmers = new int[kmer_count](); // zero initialized due to ()
     vector<int> kmers;
-    kmers.reserve(kmer_count);
+    kmers.resize(kmer_count);
 
     static const uint32_t k2 = 2 * k;
     static const uint32_t mask = pow(2, k2) - 1; // 0b001111 (2*k 1's)
@@ -167,9 +167,11 @@ vector<int> Distance::compute_key(const Seq& s, int n) {
     }
 
     vector<int> ret;
-    ret.reserve(n);
+    ret.resize(n);
+
     partial_sort_copy(kmers.begin(), kmers.end(),
             ret.begin(), ret.end(), greater<int>());
+
 
     //delete[] kmers;
     return ret;
