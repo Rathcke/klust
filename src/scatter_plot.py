@@ -24,8 +24,8 @@ lev_a = [x for x in lev_a if x != 0]
 plt.scatter(kmer_a, lev_a, s=20, c='g')
 
 #plt.suptitle('test title', fontsize=20)
-plt.xlabel('k-mer similarity (k = 8)', fontsize=12)
-plt.ylabel('Levenshtein similarity', fontsize=12)
+plt.xlabel('k-mer similarity (k = 8)', fontsize=18)
+plt.ylabel('Levenshtein similarity', fontsize=18)
 
 plt.savefig("k8.png")
 #plt.show()
