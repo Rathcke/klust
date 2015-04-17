@@ -16,8 +16,9 @@ Seq::Seq() {
     seq_data = NULL;
 }
 
-Seq::Seq(const char *seq_str, size_t len) {
+Seq::Seq(const char *seq_str, size_t len, const string& desc) {
     seq_len = len;
+    description = desc;
 
     // calculate bytes necessary to store sequence as 2 bit characters in an
     // array of 8 bit unsigned ints, memset to 0 and allocate space on the heap
@@ -52,6 +53,7 @@ Seq::Seq(const Seq& seq) {
     memcpy(seq_data, seq.seq_data, seq.bytes);
     seq_len = seq.seq_len;
     bytes = seq.bytes;
+    description = seq.description;
 }
 
 Seq::~Seq() {
@@ -68,6 +70,7 @@ Seq& Seq::operator= (const Seq& seq){
         memcpy(seq_data, seq.seq_data, seq.bytes);
         seq_len = seq.seq_len;
         bytes = seq.bytes;
+        description = seq.description;
     }
     return *this;
 }
@@ -114,11 +117,15 @@ void IO::read_seqs(ifstream &fs, vector<Seq>& seqs, int count) {
 
     seqs.reserve(count);
 
+    string desc;
+
+    // sequence data buffer
     const size_t data_size = 16 * 1024;
     char *data = new char[data_size];
     char *p = data;
     size_t seq_len = 0;
 
+    // reading buffer
     const size_t buf_size = 16 * 1024;
     char *buf = new char[buf_size];
 
@@ -128,14 +135,17 @@ void IO::read_seqs(ifstream &fs, vector<Seq>& seqs, int count) {
     while (fs.getline(buf, buf_size) && i < count) {
         if (buf[0] == '>') {
             if (p != data) {
-                seqs.emplace_back(data, seq_len);
+                seqs.emplace_back(data, seq_len, desc);
                 p = data;
                 seq_len = 0;
                 i++;
             }
+            buf[fs.gcount() - 1] = '\0';
+            desc.assign(buf + 1);
             continue;
         }
 
+        // TODO: fix possibility for buffer overflow
         bytes_read = fs.gcount() - 1; // gcount() counts discarded \n as well
         memcpy(p, buf, bytes_read);
         p += bytes_read;

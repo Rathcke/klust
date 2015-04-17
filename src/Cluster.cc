@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <cmath>
+#include <iomanip>
 #include <iostream>
 #include <queue>
 #include <set>
@@ -89,11 +90,13 @@ using namespace std;
  * sequences. Output the centroids in FASTA format to the output file stream,
  * output clusters to file stream and return the number of centroids.
  */
-int Cluster::simple_clust(const vector<Seq>& seqs, ofstream& fs_centroids, ofstream& fs_clusters,
-        Distance& dist, int count, int max_rejects) {
+int Cluster::simple_clust(const vector<Seq>& seqs, ofstream& fs_centroids,
+        ofstream& fs_clusters, Distance& dist, int count, int max_rejects) {
     unordered_map<int, Seq> centroids;
 
     int centroid_count = 0;
+
+    double write_secs = 0;
 
     for (auto q_it = seqs.cbegin(); q_it != seqs.cend(); ++q_it) {
         bool match = false;
@@ -109,8 +112,13 @@ int Cluster::simple_clust(const vector<Seq>& seqs, ofstream& fs_centroids, ofstr
             Seq& target = centroids[*it];
             if (dist.compare(*q_it, target)) {
                 // write s belongs to centroids[i] to fs_clusters
+                clock_t read_clock = clock();
+
                 fs_clusters << (*q_it).to_string() << " "
                             << target.to_string()  << '\n';
+
+                write_secs += (clock() - read_clock) / (double) CLOCKS_PER_SEC;
+
                 match = true; // found cluster
                 break;
             }
@@ -122,9 +130,43 @@ int Cluster::simple_clust(const vector<Seq>& seqs, ofstream& fs_centroids, ofstr
             ++centroid_count;
             /*fs_centroids << '>' << s.desc << endl
                          << s.data << endl;*/
+            clock_t read_clock = clock();
             fs_centroids << (*q_it).to_string() << '\n';
+            write_secs += (clock() - read_clock) / (double) CLOCKS_PER_SEC;
         }
     }
 
+    cout << write_secs << endl;
+
+    return centroid_count;
+}
+
+int Cluster::thorough_clust(const vector<Seq>& seqs, ofstream& fs_centroids,
+        ofstream& fs_clusters, Distance& dist, int count) {
+
+    int centroid_count = 0;
+    vector<int> cts_index;
+
+    for (auto q_it = seqs.cbegin(); q_it != seqs.cend(); ++q_it) {
+        bool match = false;
+        for (auto t_it = cts_index.cbegin(); t_it != cts_index.cend(); ++t_it) {
+            double d = dist.distance(*q_it, seqs[*t_it]);
+            if (d >= dist.threshold()) {
+                fs_clusters << "H " << setw(6) << t_it - cts_index.cbegin() << " "
+                            << setw(10) << setprecision(5) << fixed << d << " "
+                            << (*q_it).desc() << " " << seqs[*t_it].desc() << "\n";
+                match = true; // found cluster
+                break;
+            }
+        }
+
+        if (!match) {
+            // add new centroid and write to stream in FASTA format
+            cts_index.push_back(q_it - seqs.cbegin());
+            fs_clusters << "C " << setw(6) << centroid_count++ << " "
+                        << (*q_it).desc() << "\n";
+            fs_centroids << (*q_it).to_string() << '\n';
+        }
+    }
     return centroid_count;
 }

@@ -27,8 +27,9 @@ int main(int argc, char *argv[])
     }
 
 
-	Distance d2(6, 0.9, 0);
-    int count = 126188;
+
+	Distance d2(4, 0.9, 0);
+    int count = 3083;
     int max_rejects = 8;
 
     /*
@@ -44,6 +45,10 @@ int main(int argc, char *argv[])
     cout << "Finished reading:\n"
          << "Time: "     << read_secs << " sec.\n"
          << "Seqs/sec: " << count / read_secs << "\n" << endl;
+
+    for (auto it = seqs.cbegin(); it != seqs.cend(); ++it)
+        cout << (*it).desc() << endl;
+
 
     /*
      * Comparing sequences
@@ -70,7 +75,8 @@ int main(int argc, char *argv[])
     cout << "Clustering " << count << " sequences..." << endl;
     clock_t comp_clock = clock();
     cout << "# of clusters: "
-         << Cluster::simple_clust(seqs, fs_cts, fs_cls, d2, count, max_rejects)
+         //<< Cluster::simple_clust(seqs, fs_cts, fs_cls, d2, count, max_rejects)
+         << Cluster::thorough_clust(seqs, fs_cts, fs_cls, d2, count)
          << endl;
     double comp_secs = (clock() - comp_clock) / (double) CLOCKS_PER_SEC;
 

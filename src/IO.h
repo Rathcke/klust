@@ -13,19 +13,21 @@
 class Seq {
     public:
         Seq();
-        Seq(const char *seq_str, size_t len);
+        Seq(const char *seq_str, size_t len, const std::string& description);
         Seq(const Seq& seq);
         ~Seq();
         Seq& operator= (const Seq& seq);
 
         uint8_t* data() const { return seq_data; }
         size_t length() const { return seq_len; }
+        std::string desc() const { return description; }
 
         std::string to_string() const;
 
     private:
         uint8_t *seq_data;
         size_t seq_len;
+        std::string description;
         unsigned int bytes;
 };
 
