@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <cmath>
+#include <iomanip>
 #include <iostream>
 #include <queue>
 #include <set>
@@ -149,9 +150,11 @@ int Cluster::thorough_clust(const vector<Seq>& seqs, ofstream& fs_centroids,
     for (auto q_it = seqs.cbegin(); q_it != seqs.cend(); ++q_it) {
         bool match = false;
         for (auto t_it = cts_index.cbegin(); t_it != cts_index.cend(); ++t_it) {
-            if (dist.compare(*q_it, seqs[*t_it])) {
-                fs_clusters << (*q_it).to_string() << " "
-                            << seqs[*t_it].to_string() << '\n';
+            double d = dist.distance(*q_it, seqs[*t_it]);
+            if (d >= dist.threshold()) {
+                fs_clusters << "H " << setw(6) << t_it - cts_index.cbegin() << " "
+                            << setw(10) << setprecision(5) << fixed << d << " "
+                            << (*q_it).desc() << " " << seqs[*t_it].desc() << "\n";
                 match = true; // found cluster
                 break;
             }
@@ -160,7 +163,8 @@ int Cluster::thorough_clust(const vector<Seq>& seqs, ofstream& fs_centroids,
         if (!match) {
             // add new centroid and write to stream in FASTA format
             cts_index.push_back(q_it - seqs.cbegin());
-            ++centroid_count;
+            fs_clusters << "C " << setw(6) << centroid_count++ << " "
+                        << (*q_it).desc() << "\n";
             fs_centroids << (*q_it).to_string() << '\n';
         }
     }

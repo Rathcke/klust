@@ -31,6 +31,8 @@ class Distance
 
         void jac_printDistMatrix(const char* filename, int count);
 
+        double threshold() { return thrs; }
+
     private:
         int k;          // k in k-mer (word length)
         double thrs;    // threshold
