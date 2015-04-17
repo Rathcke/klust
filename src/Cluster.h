@@ -20,6 +20,10 @@ class Cluster
                 std::ofstream& fs_clusters, Distance& dist, int count, 
                 int max_rejects);
 
+        static int thorough_clust(const std::vector<Seq>& seqs,
+                std::ofstream& fs_centroids, std::ofstream& fs_clusters,
+                Distance& dist, int count);
+
     private:
 };
 

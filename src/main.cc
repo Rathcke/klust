@@ -28,7 +28,7 @@ int main(int argc, char *argv[])
 
 
 	Distance d2(7, 0.97, 0);
-    int count = 500 * 1000;
+    int count = 1 * 1000;
     int max_rejects = 8;
 
     /*
@@ -70,7 +70,8 @@ int main(int argc, char *argv[])
     cout << "Clustering " << count << " sequences..." << endl;
     clock_t comp_clock = clock();
     cout << "# of clusters: "
-         << Cluster::simple_clust(seqs, fs_cts, fs_cls, d2, count, max_rejects)
+         //<< Cluster::simple_clust(seqs, fs_cts, fs_cls, d2, count, max_rejects)
+         << Cluster::thorough_clust(seqs, fs_cts, fs_cls, d2, count)
          << endl;
     double comp_secs = (clock() - comp_clock) / (double) CLOCKS_PER_SEC;
 
