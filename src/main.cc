@@ -27,8 +27,8 @@ int main(int argc, char *argv[])
     }
 
 
-	Distance d2(7, 0.97, 0);
-    int count = 500 * 1000;
+	Distance d2(6, 0.9, 0);
+    int count = 126188;
     int max_rejects = 8;
 
     /*
