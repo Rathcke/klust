@@ -110,14 +110,19 @@ int Cluster::simple_clust(const vector<Seq>& seqs, ofstream& fs_centroids,
                 continue;
             }
             Seq& target = centroids[*it];
-            if (dist.compare(*q_it, target)) {
+            double d = dist.distance(*q_it, target);
+            if (d >= dist.threshold()) {
                 // write s belongs to centroids[i] to fs_clusters
-                clock_t read_clock = clock();
+                //clock_t read_clock = clock();
 
-                fs_clusters << (*q_it).to_string() << " "
-                            << target.to_string()  << '\n';
+                /*fs_clusters << "H " << setw(6) << t_it - cts_index.cbegin() << " "
+                            << setw(10) << setprecision(5) << fixed << d << " "
+                            << (*q_it).desc() << " " << seqs[*t_it].desc() << "\n";*/
 
-                write_secs += (clock() - read_clock) / (double) CLOCKS_PER_SEC;
+                /*fs_clusters << (*q_it).to_string() << " "
+                            << target.to_string()  << '\n';*/
+
+                //write_secs += (clock() - read_clock) / (double) CLOCKS_PER_SEC;
 
                 match = true; // found cluster
                 break;
@@ -127,11 +132,16 @@ int Cluster::simple_clust(const vector<Seq>& seqs, ofstream& fs_centroids,
         if (!match) {
             // add new centroid and write to stream in FASTA format
             centroids[s_keys[0]] = *q_it;
-            ++centroid_count;
-            /*fs_centroids << '>' << s.desc << endl
-                         << s.data << endl;*/
+
             clock_t read_clock = clock();
-            fs_centroids << (*q_it).to_string() << '\n';
+
+            // write centroid entry to to clusters file
+            fs_clusters << "C " << setw(6) << centroid_count++ << " "
+                        << (*q_it).desc() << "\n";
+            // write FASTA format to centroids file
+            fs_centroids << ">" << (*q_it).desc() << '\n'
+                         << (*q_it).to_string()   << '\n';
+
             write_secs += (clock() - read_clock) / (double) CLOCKS_PER_SEC;
         }
     }

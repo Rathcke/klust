@@ -21,7 +21,8 @@ lev_a = np.asarray( lev[lev_indices] )[-1]
 lev_a = [x for x in lev_a if x != 0]
 
 # scatter plot
-plt.scatter(kmer_a, lev_a, s=20, c='g')
+#plt.scatter(kmer_a, lev_a, s=20, c='g')
+plt.scatter(kmer_a, lev_a, s=1, c='g', alpha=0.1)
 
 #plt.suptitle('test title', fontsize=20)
 plt.xlabel('k-mer similarity (k = 8)', fontsize=18)

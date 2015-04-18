@@ -61,6 +61,21 @@
 \input{background.tex}
 \input{research_process.tex}
 
+
+\section{Current status and plan for the rest of the project}
+
+At this point in the project, we have described and implemented a resonably
+fast distance metric, which might be able to compete with other existing
+solutions, e.g. \texttt{UCLUST}, depending on the clustering algorithm used
+with the distance metric. There is still room for improvement, however, for
+instance we plan to implement storage of $k$-mer frequency vectors together
+with the centroids such that these can be reused in subsequent similarity
+calculations.
+
+Additionally, there can be made more checks for the possibility of stopping a
+comparison early, if it is already known that it will fail.
+
+
 \newpage
 \nocite{dong, hazelhurst, usearch, uclust}
 
