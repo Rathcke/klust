@@ -146,7 +146,7 @@ int Cluster::simple_clust(const vector<Seq>& seqs, ofstream& fs_centroids,
         }
     }
 
-    cout << write_secs << endl;
+    cout << "Time spent on file output: " << write_secs << " sec." << endl;
 
     return centroid_count;
 }

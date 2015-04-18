@@ -1,11 +1,14 @@
 #include <algorithm>
+#include <climits>
 #include <cstdlib>
 #include <cstring>
+#include <cstring>
 #include <fstream>
+#include <getopt.h>
 #include <iomanip>
 #include <iostream>
 #include <string>
-#include <cstring>
+#include <unistd.h>
 
 #include "Cluster.h"
 #include "Distance.h"
@@ -17,11 +20,59 @@ int main(int argc, char *argv[])
 {
     ios_base::sync_with_stdio(false); // don't share buffers with C style IO
 
-    ifstream fs_in(argv[1]);
-    ofstream fs_cts(argv[2], ofstream::out | ofstream::trunc);
-    ofstream fs_cls(argv[3], ofstream::out | ofstream::trunc);
+    // default similarity and clustering parameters
+    int k = 6;
+    double thrs = 0.85;
+    int count = INT_MAX; // SILVA: 1583830, TODO: INT_MAX maybe not so pretty.
+    int max_rejects = 8;
+    int step = 1;
 
-    if (!fs_in || !fs_cts || !fs_cls) {
+    // CLI argument parsing
+    static struct option long_options[] = {
+        {"count",       required_argument, 0, 'c'},
+        {"id",          required_argument, 0, 't'},
+        {"max_rejects", required_argument, 0, 'm'},
+        {"step_size",   required_argument, 0, 's'}
+    };
+
+    int opt, option_index = 0;
+    while ((opt = getopt_long(argc, argv, "c:k:m:s:t:",
+                    long_options, &option_index)) != -1) {
+        switch (opt) {
+            case 'c':
+                count = atoi(optarg);
+                break;
+            case 'k':
+                k = atoi(optarg);
+                break;
+            case 'm':
+                max_rejects = atoi(optarg);
+                break;
+            case 's':
+                step = atoi(optarg);
+                break;
+            case 't':
+                thrs = atof(optarg);
+                break;
+            default:
+                cout << "unexpected argument" << endl;
+                return 1;
+        }
+    }
+
+    if ((optind + 3) > argc) {
+        cerr << "Usage: " << argv[0] << " <FASTA input file> "
+                                        " <FASTA output file for centroid> "
+                                        " <output file for clustering results> "
+                                     << endl; // TODO: mention options
+        return 1;
+    }
+
+    ifstream fs_in(argv[optind++]);
+    ofstream fs_cts(argv[optind++], ofstream::out | ofstream::trunc);
+    ofstream fs_cls(argv[optind++], ofstream::out | ofstream::trunc);
+
+    if (!(fs_in && fs_cts && fs_cls)) {
         cerr << "error opening file" << endl;
         fs_in.close();
         fs_cts.close();
@@ -29,17 +80,22 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-
-	Distance d2(6, 0.85, 0);
-    int count = 1583830;
-    int max_rejects = 8;
+    cout << "Runnig with parameters: "
+         << "\n  k = " << k
+         << "\n  id = " << thrs
+         << "\n  count = " << count
+         << "\n  max_rejects = " << max_rejects
+         << "\n  step_size = " << step
+         << "\n" << endl;
+         
+	Distance d2(k, thrs, step);
 
     /*
      * Reading sequences
      */
     vector<Seq> seqs;
 
-    cout << "Reading " << count << " sequences...\n" << endl;
+    cout << "Reading " << count << " sequences..." << endl;
     clock_t read_clock = clock();
     IO::read_seqs(fs_in, seqs, count);
     double read_secs = (clock() - read_clock) / (double) CLOCKS_PER_SEC;
@@ -80,7 +136,7 @@ int main(int argc, char *argv[])
 
     cout << "Finished clustering:\n"
          << "Time: "            << comp_secs << " sec.\n"
-         << "Throughput: "      << count / comp_secs << "seqs/sec.\n";
+         << "Throughput: "      << count / comp_secs << " seqs/sec.\n";
 
     fs_in.close();
     fs_cts.close();
