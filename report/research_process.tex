@@ -144,6 +144,13 @@ $k$-mer distance using windows and Jaccard index.}
 \end{figure}
 
 
+\subsection{``Naively greedy'' clustering algorithm} % TODO
+% \item Implementing very (almost naively) greedy clustering algorithm.
+Description and evaluation of a ``naively greedy'' clustering algorithm which
+compares every sequence to every centroid, found so far, until a match is found
+and if not, the sequence becomes a new centroid.
+
+
 \subsection{\textsc{Simple\_Clust} algorithm}
 We have developed a clustering algorithm, named \textsc{Simple\_Clust}
 (Algorithm \ref{alg:simple_clust}), which will be described in this section.
@@ -191,6 +198,17 @@ This is repeated for all sequences in the input file.
   \end{algorithmic}
   \label{alg:simple_clust}
 \end{algorithm}
+
+
+\subsection{Comparing with UCLUST on real data}
+% Testing USEARCH 32-bit on real data
+% Testing clustering algorithm with d2 distance and comparing performance to
+% USEARCH.
+Comparing perfomance and results of the developed clustering algorithms versus
+UCLUST on real data (RDP, SILVA, Amplicon etc.).
+
+Possibly things to look into: confusion matrix, Rand index, normalized
+mutual information (article: Comparing Clusterings - An Overview).
 
 
 \subsection{Results}

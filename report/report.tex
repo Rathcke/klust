@@ -44,9 +44,7 @@
 \thispagestyle{empty}
 \newpage
 
-\begin{abstract}
-  This will eventually contain a beautiful abstract...
-\end{abstract}
+\input{abstract.tex}
 \thispagestyle{plain}
 \pagenumbering{roman}
 \newpage
@@ -57,29 +55,6 @@
 
 \thispagestyle{fancy}
 \pagenumbering{arabic}
-\section{What should be in report?}
-
-\begin{itemize}
-  \item Biology: the basics about gene sequences, DNA, RNA, sequencing etc.
-
-  \item Background: theoretical overview of the field of clustering
-  \begin{itemize}       
-      \item Clustering "history"
-  \end{itemize}
-
-  \item Research process
-    \begin{itemize}
-      \item Testing USEARCH 32-bit on real data
-      \item Implementing very (almost naively) gready clustering algorithm.
-      \item Testing clustering algorithm with d2 distance and comparing
-        performance to USEARCH.
-    \end{itemize}
-\end{itemize}
-
-\section{To be done}
-
-\newpage
-
 
 \input{introduction.tex}
 \input{terminology.tex}
@@ -90,7 +65,6 @@
 \nocite{dong, hazelhurst, usearch, uclust}
 
 \bibliography{report}
-\bibliographystyle{alpha} % plain, abbrv
-
+\bibliographystyle{alpha} % alpha,plain,abbrv
 
 \end{document}
