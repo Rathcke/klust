@@ -6,7 +6,11 @@ setting, since it does not reuse already calculated results. Therefore, this
 was quickly transformed into a dynamic programming solution, which solves
 subproblems just once, stores and reuses the intermediate results. This dynamic
 programming bottom up solution was however still very slow, yielding a
-performance of around 70 comparisons per second.
+performance of around 70 comparisons per second. This could most likely be
+optimized further, but because of the characteristics of an edit distance
+algorithm like Levenshtein and because of the performance requirements for this
+project, we choose to not pursue further optimization and instead focus on
+other types of algorithms.
 
 \subsection{Simple $d2$ distance}
 After learning that the basic Levenshtein algorithm is far too slow for the
@@ -62,7 +66,7 @@ frequency vectors is calculated.
 
 The Manhattan distance is simply the Euclidean distance where squaring is
 replaced with absolute value and the square root is omitted, i.e. for
-$u, v \in \mathbb{F}^n$, 
+$u, v \in \mathbb{Z}^n$, 
 \begin{equation}
   d_{Manhattan} \eqdef \sum_{i=1}^{n} |u_i - v_i| \;.
 \end{equation}
@@ -100,6 +104,7 @@ In the context of $k$-mer frequencies, the union can be interpreted as the
 total number of $k$-mers in the window in the two sequences, and the
 intersection as the Manhattan distance in the window.
 
+
 \subsection{Evaluating distance metric}
 To evaluate our implementation of the $k$-mer distance using windows and
 Jaccard index, we decided to use the Levenshtein distance as reference.\\ Since
@@ -108,7 +113,7 @@ normalized it so it uses Jaccard index.
 
 In figure \ref{fig:Levenshtein_vs_Kmer} is three scatter plots with the
 Levenshtein distance on the $y$-axis and our version of the $k$-mer distance on
-the $x$-axis. The three plots are with $k=4,k=6$ and $k=8$.
+the $x$-axis. The three plots are with $k=4, k=6$ and $k=8$.
 
 The scatter plots gives an indication about when and how sensitive our
 implemented distance metric is. We want the distance to be as close as possible
@@ -144,11 +149,14 @@ $k$-mer distance using windows and Jaccard index.}
 \end{figure}
 
 
-\subsection{``Naively greedy'' clustering algorithm} % TODO
+\subsection{Naive, greedy clustering algorithm} % TODO
 % \item Implementing very (almost naively) greedy clustering algorithm.
-Description and evaluation of a ``naively greedy'' clustering algorithm which
+Description and evaluation of a naive, greedy clustering algorithm which
 compares every sequence to every centroid, found so far, until a match is found
-and if not, the sequence becomes a new centroid.
+and if not, the sequence becomes a new centroid. This running time of this
+algorithm depends on the number of clusters in the output and therefore it
+might be around $O(c^2)$, where $c$ denoted the number of sequences, in the
+worst case where the number of clusters is equal to the number of sequences.  %O(k*(k-1)/2)
 
 
 \subsection{\textsc{Simple\_Clust} algorithm}
