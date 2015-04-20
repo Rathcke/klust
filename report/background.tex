@@ -14,9 +14,9 @@ defined to be the minimum number of edits to turn the first sequence into the
 other. \\
 The edit operations consists of \emph{insertions}, \emph{deletions} and
 \emph{substitutions}. These operations are, respectively, inserting a letter,
-removing a letter and changing one letter for another. \\
+removing a letter and changing one letter into another. \\
 The Levenshtein distance from sequence $a$ to $b$ with indicator function 
-$1_(a_i\neq b_j)$, which is only $0$ when $a_i=b_j$, can mathematically be 
+$1_{(a_i\neq b_j)}$, which is only $0$ when $a_i=b_j$, can mathematically be 
 defined as
 \begin{equation}
 	\operatorname{lev}_{a,b}(i,j)= 
@@ -48,7 +48,7 @@ possible even though they have a close resemblance to each other.
 
 \subsubsection{Feature based distance}
 A $k$-mer, or $k$-gram or simply a \emph{word}, is a sequence of length
-$k \geq 0$ over some alphabet $\mathcal{A}$ of a sequence. $k$-mers are a type
+$k > 0$ over some alphabet $\mathcal{A}$ of a sequence. $k$-mers are a type
 of sequence \emph{feature}. An interesting feature of a sequence is the
 $k$-mers that occur in that sequence.
 
