@@ -14,20 +14,20 @@ defined to be the minimum number of edits to turn the first sequence into the
 other. \\
 The edit operations consists of \emph{insertions}, \emph{deletions} and
 \emph{substitutions}. These operations are, respectively, inserting a letter,
-removing a letter and changing one letter for another. \\
+removing a letter and changing one letter into another. \\
 The Levenshtein distance from sequence $a$ to $b$ with indicator function 
-$1_(a_i\neq b_j)$, which is only $0$ when $a_i=b_j$, can mathematically be 
+$1_{(a_i\neq b_j)}$, which is only $0$ when $a_i=b_j$, can mathematically be 
 defined as
 \begin{equation}
-	\operatorname{lev}_{a,b}(i,j)= 
-	\begin{cases}
-	  	\max(i,j) & \text{ if} \min(i,j)=0, \\
-  	  	\min \begin{cases}
-        		\operatorname{lev}_{a,b}(i-1,j) + 1 \\
-          	\operatorname{lev}_{a,b}(i,j-1) + 1 \\
-          	\operatorname{lev}_{a,b}(i-1,j-1) + 1_{(a_i \neq b_j)}
+  \operatorname{lev}_{a,b}(i,j)= 
+  \begin{cases}
+      \max(i,j) & \text{ if} \min(i,j)=0, \\
+        \min \begin{cases}
+            \operatorname{lev}_{a,b}(i-1,j) + 1 \\
+            \operatorname{lev}_{a,b}(i,j-1) + 1 \\
+            \operatorname{lev}_{a,b}(i-1,j-1) + 1_{(a_i \neq b_j)}
        \end{cases} & \text{ otherwise.}
-	\end{cases}
+  \end{cases}
 \end{equation}
 where $(i,j)=(|a|,|b|)$.\\
 For example, the two sequences
@@ -48,17 +48,18 @@ possible even though they have a close resemblance to each other.
 
 \subsubsection{Feature based distance}
 A $k$-mer, or $k$-gram or simply a \emph{word}, is a sequence of length
-$k \geq 0$ over some alphabet $\mathcal{A}$ of a sequence. $k$-mers are a type
+$k > 0$ over some alphabet $\mathcal{A}$ of a sequence. $k$-mers are a type
 of sequence \emph{feature}. An interesting feature of a sequence is the
 $k$-mers that occur in that sequence.
 
 $d2$ is a feature based distance metric, using $k$-mers as the feature. The
 distance is calculated by counting the $k$-mers occurring in two sequences,
 representing these occurrences as two vectors and finally taking the Euclidean
-distance between these two vectors.
+distance between these two vectors. \cite[pp.~53-54]{dong}
 
 Let $c_x(w)$ be the number of times that a $k$-mer $w$ occurs in the sequence
-$x$. Then the $d2$ distance can be defined as follows:
+$x$. Then the $d2$ distance between two sequences, $x$ and $y$, can be defined
+as follows \cite[pp.~1-2]{hazelhurst}:
 \begin{equation}
   d2_k(x,y) \eqdef \sqrt{\sum_{|w|=k} (c_x(w) - c_y(w))^2}
 \end{equation}
@@ -98,48 +99,58 @@ have zero distance.
 
 
 
-
 \subsubsection{Sequence alignment}
 \emph{Sequence alignment} is used in bioinformatics to identify regions of
-similarity by arranging two or more sequences in a certain manner. Besides
-shifting a sequence to a side, gaps can be inserted between objects as well. We
-represent the gap with '-' and it indicates a insertion in the sequence or a
-deletion from another sequence.\\
+similarity by aligning the characters of two or more sequences in a certain
+manner. Besides shifting a sequence to a side, gaps can be inserted between
+characters as well.  We represent a gap with '-' and it indicates an insertion
+in the sequence or a deletion from another sequence.
+
 We call a column that includes - for an indel. If it does not and all object in
-the column are same, then we have a match. Otherwise, it is a mismatch.\\
-\begin{figure}[h!]
+the column are same, then we have a match. Otherwise, it is a mismatch.
+
+\begin{figure}[H]
   \centering
-  	  \begin{align*}
-  	  	\mbox{\texttt{ATGCAACGA}} \\
-      	\mbox{\texttt{-TGCG-CGA}}
-  	  \end{align*}
+  \begin{align*}
+    \mbox{\texttt{ATGCAACGA}} \\
+    \mbox{\texttt{-TGCG-CGA}}
+  \end{align*}
   \caption{Sequence alignment of 'ATGCAACGA' and 'TGCGCGA'}
   \label{fig:seqAlignment}
 \end{figure}
-Figure \ref{fig:seqAlignment} displays an alignment of two sequences. In
-column 1 is an indel, in column 2 are matches and in column 5 is a mismatch. 
-The amount of each type can then be used in a formula to calculate the 
-similarity between the sequences. Note that more than two sequences can be 
-aligned in a \emph{multiple
-sequence alignment}. \\
-There are many alignments. Among those is an optimal alignment which is the one that is searched for. \\
-\\
-Both \texttt{VSEARCH} and \texttt{UCLUST} uses some kind of sequence alignment. \texttt{VSEARCH} uses a parallelized version of the dynamic programming algorithm Needleman-Wunsch, while \texttt{UCLUST} uses an heuristic procedure by default, but can be modified to use Needleman-Wunsch or Smith-Waterson. However, this will make \texttt{UCLUST} much slower.
+
+Figure \ref{fig:seqAlignment} displays an alignment of two sequences. In column
+1 is an indel, in column 2 are matches and in column 5 is a mismatch.  The
+number of each type can then be used in a formula to calculate the similarity
+between the sequences. Note that more than two sequences can be aligned in a
+\emph{multiple sequence alignment}.
+
+There are many alignments. Among those is an optimal alignment which is the one
+that is searched for.
+
+Both \texttt{VSEARCH} and \texttt{UCLUST} uses some kind of sequence alignment.
+\texttt{VSEARCH} uses a parallelized version of the dynamic programming
+algorithm Needleman-Wunsch, while \texttt{UCLUST} uses an heuristic procedure
+by default, but can be modified to use Needleman-Wunsch or Smith-Waterson.
+However, this will make \texttt{UCLUST} much slower.
+
 
 \subsection{Cluster analysis algorithms}
 
+
 \subsubsection{Hierarchical clustering}
-There are typically two types of hierarchical algorithms, both of which are 
-merge based, the agglomerative that works in a bottom-up manner and the 
-divisive that has a top-down approach, but we focus on explaining the 
-agglomerative. The agglomerative works in a bottom-
-up manner where all sequences start as leaves and they are then merged 
-together in clusters if they are within a given threshold.\\
-\\% TODO: MAKE ILLUSTRATION
-This adresses the question of what is required for a cluster to be within a 
-given threshold. Besides measuring similarity between sequences with a 
-distance metric, a definition for when a sequence is part of a cluster is 
-needed. \\
+There are typically two types of hierarchical algorithms, both of which are
+merge based, the agglomerative that works in a bottom-up manner and the
+divisive that has a top-down approach, but we focus on explaining the
+agglomerative. The agglomerative works in a bottom-up manner where all
+sequences start as leaves and they are then merged together in clusters if they
+are within a given threshold.
+
+% TODO: MAKE ILLUSTRATION
+
+This addresses the question of what is required for a cluster to be within a
+given threshold. Besides measuring similarity between sequences with a distance
+metric, a definition for when a sequence is part of a cluster is needed.
 
 With the \textit{single-linkage} approach, only one sequence from both 
 clusters are required to be within the threshold.
@@ -148,9 +159,10 @@ In the \textit{complete-linkage} approach, all sequences from one cluster
 must be within the threshold of all sequences from the other.
 
 In the \textit{average-linkage}, the average distance of all pairs of 
-sequences is required to be within the threshold.\\
-\\
-The singly-linkage approach is often used in sequence clustering though it has its disadvantages as argued in \cite[pp. 62-63]{dong}
+sequences is required to be within the threshold.
+
+The singly-linkage approach is often used in sequence clustering though it has
+its disadvantages as argued in \cite[pp. 62-63]{dong}.
 
 \subsubsection{Graph based clustering}
 Short description of the clustering method if relevant.
@@ -158,7 +170,7 @@ Short description of the clustering method if relevant.
 
 \subsubsection{Greedy algorithm like in \texttt{UCLUST}} 
 The \texttt{UCLUST} algorithm is greedy and is developed so that all member
-sequence have similarity $\geq$ $T$ to their centroid.  It works by processing
+sequences have similarity $\geq$ $T$ to their centroid.  It works by processing
 one sequence at a time and comparing these to the existing centroids. If a
 match is found, the sequence is assigned to the matching centroid, otherwise it
 becomes a centroid of a new cluster.
