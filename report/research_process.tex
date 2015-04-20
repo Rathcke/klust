@@ -200,15 +200,48 @@ This is repeated for all sequences in the input file.
 \end{algorithm}
 
 
-\subsection{Comparing with UCLUST on real data}
+\subsection{Comparing with UCLUST on real life data}
 % Testing USEARCH 32-bit on real data
 % Testing clustering algorithm with d2 distance and comparing performance to
 % USEARCH.
-Comparing perfomance and results of the developed clustering algorithms versus
-UCLUST on real data (RDP, SILVA, Amplicon etc.).
+Running \texttt{USEARCH} on the file \texttt{SILVA\_119\_SSURef\_tax\_silva.fasta} after it is sorted with parameters \texttt{-clust\_smallmem} and \texttt{-id 0.95} produces the following output
 
-Possibly things to look into: confusion matrix, Rand index, normalized
-mutual information (article: Comparing Clusterings - An Overview).
+\begin{lstlisting}
+28:39 1.1Gb  100.0\% 117205 clusters, max size 83904, avg 13.5                                                        
+      Seqs  1583830 (1.6M)
+  Clusters  117205 (117.2k)
+  Max size  83904 (83.9k)
+  Avg size  13.5
+  Min size  1
+Singletons  67410 (67.4k), 4.3\% of seqs, 57.5\% of clusters
+   Max mem  1.1Gb
+      Time  28:41
+Throughput  920.3 seqs/sec.
+\end{lstlisting}
+While running our implementation of the same file but unsorted and with \texttt{id=0.9, k=6} og \texttt{max\_rejects=8} produces the following
+\begin{lstlisting}
+Reading 1583830 sequences...
+Finished reading:
+Time: 24.8109 sec.
+Seqs/sec: 63836
+Clustering 1583830 sequences...
+26.4602
+# of clusters: 1364006
+Finished clustering:
+Time: 187.355 sec.
+Throughput: 8453.63seqs/sec.
+\end{lstlisting}
+Even though the \texttt{id}'s does not represent the same threshold due to it 
+being two different distance metrics we do get a lot more clusters. Running 
+it with similar \texttt{id}'s produces almost the same amount of clusters, so 
+the problem lies in the way we choose our centroids we compare a query 
+sequence with.
+
+Our implementation, however, is faster by a factor of $10$. This can be 
+attributed to our choice of distance metric.
+\\
+%Possibly things to look into: confusion matrix, Rand index, normalized
+%mutual information (article: Comparing Clusterings - An Overview).
 
 
 \subsection{Results}
