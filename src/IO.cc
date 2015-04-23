@@ -48,7 +48,7 @@ Seq::Seq(const char *seq_str, size_t len, const string& desc) {
 }
 
 Seq::Seq(const Seq& seq) {
-    cout << "copy cons called" << endl;
+    //cout << "copy cons called" << endl;
     seq_data = new uint8_t[seq.bytes];
     memcpy(seq_data, seq.seq_data, seq.bytes);
     seq_len = seq.seq_len;

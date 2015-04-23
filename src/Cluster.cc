@@ -180,3 +180,69 @@ int Cluster::thorough_clust(const vector<Seq>& seqs, ofstream& fs_centroids,
     }
     return centroid_count;
 }
+
+int Cluster::kmers_select_clust(const vector<Seq>& seqs, ofstream& fs_centroids,
+        ofstream& fs_clusters, Distance& dist, int max_rejects) {
+
+    typedef bitset<KMER_BITSET> kmer_bits;
+    vector<pair<kmer_bits, Seq>> centroids;
+
+    int centroid_count = 0;
+
+    for (auto q_it = seqs.cbegin(); q_it != seqs.cend(); ++q_it) {
+        
+        bool match = false;
+        int rejects = 0;
+
+        kmer_bits q_bitset(0);
+        get_kmer_bitset(*q_it, q_bitset);
+
+        for (auto c_it = centroids.cbegin(); 
+                (c_it != centroids.cend()) && (rejects <= max_rejects); ++c_it) {
+            
+            size_t target_bits = (c_it->first).count();
+            kmer_bits b = (c_it->first) & q_bitset;
+            size_t set_bits = b.count();
+            //cout << set_bits << " : " << (int) (target_bits/1.1) << endl;
+            if (set_bits >= target_bits*(dist.threshold())) {
+                double d = dist.distance(*q_it, c_it->second);
+                if (d >= dist.threshold()) {
+                    match = true; // found cluster
+                    break;
+                }
+                ++rejects;
+            }
+        }
+
+        if (!match) {
+            // add new centroid and write to stream in FASTA format
+            centroids.push_back({q_bitset, *q_it});
+
+            // write centroid entry to to clusters file
+            fs_clusters << "C " << setw(6) << centroid_count++ << " "
+                        << (*q_it).desc() << "\n";
+            // write FASTA format to centroids file
+            fs_centroids << ">" << (*q_it).desc() << '\n'
+                         << (*q_it).to_string()   << '\n';
+
+        }
+    }
+
+    return centroid_count;
+}
+
+void Cluster::get_kmer_bitset(const Seq& s, bitset<KMER_BITSET>& b) {
+    
+    static const uint32_t k2 = 2 * KMER_LEN;
+    static const uint32_t mask = pow(2, k2) - 1;
+    
+    for (size_t i = 0; i <= s.length() - KMER_LEN; ++i) {
+        uint32_t kmer = 0;
+
+        //memcpy(&kmer_l, (longer + (i/4)), 4);
+        kmer = Distance::stream2int(s.data() + (i/4));
+        kmer >>= (32 - 2*(i % 4) - k2);
+        kmer &= mask;
+        b.set(kmer);
+    }
+}

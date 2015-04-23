@@ -33,6 +33,13 @@ class Distance
 
         double threshold() { return thrs; }
 
+        static inline uint32_t stream2int(const uint8_t *stream) {
+            return (((uint32_t) stream[0]) << 24 |
+                    ((uint32_t) stream[1]) << 16 |
+                    ((uint32_t) stream[2]) <<  8 |
+                    ((uint32_t) stream[3]) <<  0);
+        }
+
     private:
         int k;          // k in k-mer (word length)
         double thrs;    // threshold

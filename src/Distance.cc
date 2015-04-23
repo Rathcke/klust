@@ -25,13 +25,6 @@ inline uint8_t nth_left_2bits(uint8_t b, const int& n) {
     return b & (3 << shift) >> shift;
 }
 
-static inline uint32_t stream2int(const uint8_t *stream) {
-    return (((uint32_t) stream[0]) << 24 |
-            ((uint32_t) stream[1]) << 16 |
-            ((uint32_t) stream[2]) <<  8 |
-            ((uint32_t) stream[3]) <<  0);
-}
-
 bool Distance::compare(const Seq& s, const Seq& t) {
     return distance(s, t) >= thrs;
 }
