@@ -188,9 +188,10 @@ int Cluster::kmers_select_clust(const vector<Seq>& seqs, ofstream& fs_centroids,
     vector<pair<kmer_bits, Seq>> centroids;
 
     int centroid_count = 0;
+    size_t count = seqs.cend() - seqs.cbegin();
 
     for (auto q_it = seqs.cbegin(); q_it != seqs.cend(); ++q_it) {
-        
+        cout << "\r" << 100*(q_it-seqs.cbegin())/count << "%";
         bool match = false;
         int rejects = 0;
 
