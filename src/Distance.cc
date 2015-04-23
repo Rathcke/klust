@@ -46,11 +46,11 @@ double Distance::distance(const Seq& s, const Seq& t) {
     uint8_t *shorter = slen >= tlen ? t.data() : s.data();
 
     // allocate array of length equal to the number of different kmers
-    const int kmer_count = pow(4, k);
+    static const int kmer_count = pow(4, k);
     int *kmers = new int[kmer_count](); // zero initialized due to ()
 
     static const uint32_t k2 = 2 * k;
-    static const uint32_t mask = pow(2, k2) - 1;    // 0b001111 (2*k 1's)
+    static const uint32_t mask = kmer_count - 1;    // 0b001111 (2*k 1's)
 
     // count kmers in the shorter and the longer string, respectively
     for (size_t i = 0; i <= short_len - k; ++i) {
