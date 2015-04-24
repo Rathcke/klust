@@ -146,3 +146,11 @@ sympy-plots-for-*.tex/
 *.exe
 *.out
 *.app
+
+# Bio stuff
+*.fna
+*.fasta
+*.uc
+
+# Debugging and profiling
+*.out.*
