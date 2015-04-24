@@ -28,13 +28,17 @@ int main(int argc, char *argv[])
     int count = 100000; // SILVA: 1583830, TODO: INT_MAX maybe not so pretty.
     int max_rejects = 8;
     int step = 1;
+    bool sort_incr = false;
+    bool sort_decr = false;
 
     // CLI argument parsing
     static struct option long_options[] = {
         {"count",       required_argument, 0, 'c'},
         {"id",          required_argument, 0, 't'},
         {"max_rejects", required_argument, 0, 'm'},
-        {"step_size",   required_argument, 0, 's'}
+        {"step_size",   required_argument, 0, 's'},
+        {"sort_incr",   no_argument,       0, 'i'},
+        {"sort_decr",   no_argument,       0, 'd'}
     };
 
     int opt, option_index = 0;
@@ -43,6 +47,12 @@ int main(int argc, char *argv[])
         switch (opt) {
             case 'c':
                 count = atoi(optarg);
+                break;
+            case 'd':
+                sort_decr = true;
+                break;
+            case 'i':
+                sort_incr = true;
                 break;
             case 'k':
                 k = atoi(optarg);
@@ -67,6 +77,12 @@ int main(int argc, char *argv[])
                                         " <FASTA output file for centroid> "
                                         " <output file for clustering results> "
                                      << endl; // TODO: mention options
+        return 1;
+    }
+
+    if (sort_incr && sort_decr) {
+        cerr << "Error: can't sort both by both decreasing and increasing length."
+             << endl;
         return 1;
     }
 
@@ -106,10 +122,21 @@ int main(int argc, char *argv[])
          << "Time: "     << read_secs << " sec.\n"
          << "Seqs/sec: " << count / read_secs << "\n" << endl;
 
-	sort(seqs.begin(), seqs.end(),
-	    [](Seq& s1, Seq& s2) {
-	        return s1.length() > s2.length();
-	    });
+    if (sort_decr) {
+        cout << "Sorting by decreasing sequence length..." << endl;
+        sort(seqs.begin(), seqs.end(),
+            [](Seq& s1, Seq& s2) {
+                return s1.length() > s2.length();
+            });
+    }
+    if (sort_incr) {
+        cout << "Sorting by increasing sequence length..." << endl;
+        sort(seqs.begin(), seqs.end(),
+            [](Seq& s1, Seq& s2) {
+                return s1.length() < s2.length();
+            });
+    }
+
     /*
      * Comparing sequences
      */
