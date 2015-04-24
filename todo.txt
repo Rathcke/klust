@@ -1,7 +1,26 @@
+TODO
+====
+
+  * Work on report often and early.
+    Rasmus recommends dedicating a month to writing.
+
+  * Refer to our GitHub repository somewhere in our report.
+
+  * Argue for likely correctness of our algorithm (and implementation) by
+    testing on a synthetic data set and on real data:
+
+      - Synthetic data set where we know the number of clusters that should be
+        returned from the algorithm. E.g. generate k random (non-alike)
+        sequences, make a number of permutations of these k sequences and the
+        resulting clustering should yield k clusters.
+
+      - Real data where we e.g. do multidimensional scaling and color code /
+        highlight centroids and the sequences belonging to each centroid. Then
+        centroids should not be close together (maybe they can be in multi.
+        dim. scaling?) and we better get the clusters that are apparent from
+        the visualization.
 
   * Order centroids by unique word count and stop search after a specific
-    number of rejects.
-
-  * Order centroids by most common kmers and counts, search for centroids with
-    the same most common kmers of query sequence.
+    number of rejects. This idea might still be interesting with out current
+    bitset kmer occurrence algorithm.
 

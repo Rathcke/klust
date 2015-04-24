@@ -117,9 +117,7 @@ int main(int argc, char *argv[])
     clock_t read_clock = clock();
     IO::read_seqs(fs_in, seqs, count);
     double read_secs = (clock() - read_clock) / (double) CLOCKS_PER_SEC;
-
-    cout << "Finished reading:\n"
-         << "Time: "     << read_secs << " sec.\n"
+    cout << "Time: "     << read_secs << " sec.\n"
          << "Seqs/sec: " << count / read_secs << "\n" << endl;
 
     if (sort_decr) {

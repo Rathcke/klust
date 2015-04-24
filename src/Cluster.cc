@@ -242,7 +242,7 @@ int Cluster::kmers_select_clust(const vector<Seq>& seqs, ofstream& fs_centroids,
 
     //cout << endl << "False negatives: " << neg_count << endl;
 
-    cout << endl;
+    cout << "\r100%" << endl;
     return centroid_count;
 }
 
