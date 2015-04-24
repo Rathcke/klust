@@ -190,10 +190,13 @@ int Cluster::kmers_select_clust(const vector<Seq>& seqs, ofstream& fs_centroids,
     int centroid_count = 0;
     size_t count = seqs.cend() - seqs.cbegin();
 
+    //int neg_count = 0;
+
     for (auto q_it = seqs.cbegin(); q_it != seqs.cend(); ++q_it) {
         cout << "\r" << 100*(q_it-seqs.cbegin())/count << "%";
         bool match = false;
         int rejects = 0;
+        //bool false_negative = false;
 
         kmer_bits q_bitset(0);
         get_kmer_bitset(*q_it, q_bitset);
@@ -205,7 +208,7 @@ int Cluster::kmers_select_clust(const vector<Seq>& seqs, ofstream& fs_centroids,
             kmer_bits b = (c_it->first) & q_bitset;
             size_t set_bits = b.count();
             //cout << set_bits << " : " << (int) (target_bits/1.1) << endl;
-            if (set_bits >= target_bits*(dist.threshold())) {
+            if (set_bits >= target_bits*(dist.threshold()-0.05)) {
                 double d = dist.distance(*q_it, c_it->second);
                 if (d >= dist.threshold()) {
                     match = true; // found cluster
@@ -213,9 +216,17 @@ int Cluster::kmers_select_clust(const vector<Seq>& seqs, ofstream& fs_centroids,
                 }
                 ++rejects;
             }
+
+            //if (dist.distance(*q_it, c_it->second) >= dist.threshold())
+            //    false_negative = true;
+
         }
 
         if (!match) {
+
+            //*if (false_negative)
+            //    ++neg_count;
+            
             // add new centroid and write to stream in FASTA format
             centroids.push_back({q_bitset, *q_it});
 
@@ -229,6 +240,9 @@ int Cluster::kmers_select_clust(const vector<Seq>& seqs, ofstream& fs_centroids,
         }
     }
 
+    //cout << endl << "False negatives: " << neg_count << endl;
+
+    cout << endl;
     return centroid_count;
 }
 

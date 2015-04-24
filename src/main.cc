@@ -106,6 +106,10 @@ int main(int argc, char *argv[])
          << "Time: "     << read_secs << " sec.\n"
          << "Seqs/sec: " << count / read_secs << "\n" << endl;
 
+	sort(seqs.begin(), seqs.end(),
+	    [](Seq& s1, Seq& s2) {
+	        return s1.length() > s2.length();
+	    });
     /*
      * Comparing sequences
      */
