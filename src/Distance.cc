@@ -82,7 +82,7 @@ double Distance::distance(const Seq& s, const Seq& t) {
         return (double) (total - cur_dist) / (double) total;
     }
 
-    /* 
+    /*
      * pre_gram:  kmer moving out of window
      * post_gram: kmer moving into window
      *
@@ -110,7 +110,7 @@ double Distance::distance(const Seq& s, const Seq& t) {
         // if changed for the better, decrement cur_dist, otherwise increment
         kmers[pre_gram]  > 0 ? --cur_dist : ++cur_dist;
         kmers[post_gram] < 0 ? --cur_dist : ++cur_dist;
-    
+
         // adjust kmer count from change
         --kmers[pre_gram];
         ++kmers[post_gram];
@@ -128,7 +128,7 @@ double Distance::distance(const Seq& s, const Seq& t) {
     return jaccard_dist;
 }
 
-/* Returns a sorted vector by decreasing order and returns the n most 
+/* Returns a sorted vector by decreasing order and returns the n most
    frequent kmers if they exist */
 vector<int> Distance::compute_key(const Seq& s, int n) {
     const size_t slen = s.length();
@@ -195,14 +195,14 @@ double Distance::levenshtein(const string& s, const string& t) {
     if (tlen > slen)
         return (double)(tlen - col[slen]) / (double)tlen;
     else
-        return (double)(slen - col[slen]) / (double)slen; 
+        return (double)(slen - col[slen]) / (double)slen;
     //return col[slen];
 }
 
 double Distance::levenshtein_window(const string& s, const string& t) {
     int slen = s.length();
     int tlen = t.length();
-    
+
     string shorter, longer;
     int short_len, long_len;
     double min_dist = 9999;

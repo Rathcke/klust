@@ -17,11 +17,11 @@ class Cluster
         Cluster() {}
 
         /*static int intersect_clust(std::fstream& fs_in, std::fstream& fs_centroids,
-                std::fstream& fs_clusters, Distance& dist, int count, 
+                std::fstream& fs_clusters, Distance& dist, int count,
                 int max_rejects);*/
 
         static int simple_clust(const std::vector<Seq>& seqs, std::ofstream& fs_centroids,
-                std::ofstream& fs_clusters, Distance& dist, int count, 
+                std::ofstream& fs_clusters, Distance& dist, int count,
                 int max_rejects);
 
         static int thorough_clust(const std::vector<Seq>& seqs,

@@ -102,7 +102,7 @@ int Cluster::simple_clust(const vector<Seq>& seqs, ofstream& fs_centroids,
         bool match = false;
         vector<int> s_keys = dist.compute_key(*q_it, max_rejects);
         if (s_keys.empty())
-          throw logic_error("Calling compute_key on " 
+          throw logic_error("Calling compute_key on "
                         + (*q_it).to_string() + " returns an empty vector" );
 
         for (auto it = s_keys.cbegin(); it != s_keys.cend(); ++it) {
@@ -201,9 +201,9 @@ int Cluster::kmers_select_clust(const vector<Seq>& seqs, ofstream& fs_centroids,
         kmer_bits q_bitset(0);
         get_kmer_bitset(*q_it, q_bitset);
 
-        for (auto c_it = centroids.cbegin(); 
+        for (auto c_it = centroids.cbegin();
                 (c_it != centroids.cend()) && (rejects <= max_rejects); ++c_it) {
-            
+
             size_t target_bits = (c_it->first).count();
             kmer_bits b = (c_it->first) & q_bitset;
             size_t set_bits = b.count();
@@ -226,7 +226,7 @@ int Cluster::kmers_select_clust(const vector<Seq>& seqs, ofstream& fs_centroids,
 
             //*if (false_negative)
             //    ++neg_count;
-            
+
             // add new centroid and write to stream in FASTA format
             centroids.push_back({q_bitset, *q_it});
 
@@ -247,10 +247,10 @@ int Cluster::kmers_select_clust(const vector<Seq>& seqs, ofstream& fs_centroids,
 }
 
 void Cluster::get_kmer_bitset(const Seq& s, bitset<KMER_BITSET>& b) {
-    
+
     static const uint32_t k2 = 2 * KMER_LEN;
     static const uint32_t mask = pow(2, k2) - 1;
-    
+
     for (size_t i = 0; i <= s.length() - KMER_LEN; ++i) {
         uint32_t kmer = 0;
 

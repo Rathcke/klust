@@ -105,8 +105,8 @@ int main(int argc, char *argv[])
          << "\n  max_rejects = " << max_rejects
          << "\n  step_size = " << step
          << "\n" << endl;
-         
-	Distance d2(k, thrs, step);
+
+    Distance d2(k, thrs, step);
 
     /*
      * Reading sequences
@@ -144,8 +144,8 @@ int main(int argc, char *argv[])
     for (int i = 0; i < count; ++i)
         for (int j = 0; j < count; ++j) {
             if (d2.compare(seqs[i], seqs[j]))
-            	++tot;
-        }    	
+                ++tot;
+        }
     double comp_secs = (clock() - comp_clock) / (double) CLOCKS_PER_SEC;
 
     cout << "Finished comparing:\n"

@@ -5,11 +5,6 @@
 #include <string>
 #include <fstream>
 
-/*struct Seq {
-    std::string desc; // description following '>' in fasta format
-    std::string data; // actual sequence data
-};*/
-
 class Seq {
     public:
         Seq();

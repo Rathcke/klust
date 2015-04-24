@@ -28,7 +28,7 @@ Seq::Seq(const char *seq_str, size_t len, const string& desc) {
 
     for (size_t i = 0; i < len; ++i) {
         int shift = 6 - 2 * (i % 4);
-        
+
         switch (seq_str[i]) {
             case 'c': case 'C':
                 seq_data[i/4] |= 1 << shift; //0b01
