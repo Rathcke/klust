@@ -15,14 +15,16 @@ class Seq {
 
         uint8_t* data() const { return seq_data; }
         size_t length() const { return seq_len; }
-        std::string desc() const { return description; }
+        //std::string& desc() { return description; }
 
         std::string to_string() const;
+
+        std::string desc;
 
     private:
         uint8_t *seq_data;
         size_t seq_len;
-        std::string description;
+        //std::string description;
         unsigned int bytes;
 };
 

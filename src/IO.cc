@@ -16,9 +16,9 @@ Seq::Seq() {
     seq_data = NULL;
 }
 
-Seq::Seq(const char *seq_str, size_t len, const string& desc) {
+Seq::Seq(const char *seq_str, size_t len, const string& description) {
     seq_len = len;
-    description = desc;
+    desc = description;
 
     // calculate bytes necessary to store sequence as 2 bit characters in an
     // array of 8 bit unsigned ints, memset to 0 and allocate space on the heap
@@ -48,12 +48,12 @@ Seq::Seq(const char *seq_str, size_t len, const string& desc) {
 }
 
 Seq::Seq(const Seq& seq) {
-    //cout << "copy cons called" << endl;
+    //out << "copy cons called" << endl;
     seq_data = new uint8_t[seq.bytes];
     memcpy(seq_data, seq.seq_data, seq.bytes);
     seq_len = seq.seq_len;
     bytes = seq.bytes;
-    description = seq.description;
+    desc = seq.desc;
 }
 
 Seq::~Seq() {
@@ -70,7 +70,7 @@ Seq& Seq::operator= (const Seq& seq){
         memcpy(seq_data, seq.seq_data, seq.bytes);
         seq_len = seq.seq_len;
         bytes = seq.bytes;
-        description = seq.description;
+        desc= seq.desc;
     }
     return *this;
 }

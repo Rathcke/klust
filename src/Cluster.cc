@@ -117,7 +117,7 @@ int Cluster::simple_clust(const vector<Seq>& seqs, ofstream& fs_centroids,
 
                 /*fs_clusters << "H " << setw(6) << t_it - cts_index.cbegin() << " "
                             << setw(10) << setprecision(5) << fixed << d << " "
-                            << (*q_it).desc() << " " << seqs[*t_it].desc() << "\n";*/
+                            << (*q_it).desc << " " << seqs[*t_it].desc << "\n";*/
 
                 /*fs_clusters << (*q_it).to_string() << " "
                             << target.to_string()  << '\n';*/
@@ -137,9 +137,9 @@ int Cluster::simple_clust(const vector<Seq>& seqs, ofstream& fs_centroids,
 
             // write centroid entry to to clusters file
             fs_clusters << "C " << setw(6) << centroid_count++ << " "
-                        << (*q_it).desc() << "\n";
+                        << (*q_it).desc << "\n";
             // write FASTA format to centroids file
-            fs_centroids << ">" << (*q_it).desc() << '\n'
+            fs_centroids << ">" << (*q_it).desc << '\n'
                          << (*q_it).to_string()   << '\n';
 
             write_secs += (clock() - read_clock) / (double) CLOCKS_PER_SEC;
@@ -164,7 +164,7 @@ int Cluster::thorough_clust(const vector<Seq>& seqs, ofstream& fs_centroids,
             if (d >= dist.threshold()) {
                 fs_clusters << "H " << setw(6) << t_it - cts_index.cbegin() << " "
                             << setw(10) << setprecision(5) << fixed << d << " "
-                            << (*q_it).desc() << " " << seqs[*t_it].desc() << "\n";
+                            << (*q_it).desc << " " << seqs[*t_it].desc << "\n";
                 match = true; // found cluster
                 break;
             }
@@ -174,7 +174,7 @@ int Cluster::thorough_clust(const vector<Seq>& seqs, ofstream& fs_centroids,
             // add new centroid and write to stream in FASTA format
             cts_index.push_back(q_it - seqs.cbegin());
             fs_clusters << "C " << setw(6) << centroid_count++ << " "
-                        << (*q_it).desc() << "\n";
+                        << (*q_it).desc << "\n";
             fs_centroids << (*q_it).to_string() << '\n';
         }
     }
@@ -187,13 +187,14 @@ int Cluster::kmers_select_clust(const vector<Seq>& seqs, ofstream& fs_centroids,
     typedef bitset<KMER_BITSET> kmer_bits;
     vector<pair<kmer_bits, Seq>> centroids;
 
-    int centroid_count = 0;
-    size_t count = seqs.cend() - seqs.cbegin();
+    unsigned int centroid_count = 0;
+    const size_t count = seqs.cend() - seqs.cbegin();
 
     //int neg_count = 0;
 
     for (auto q_it = seqs.cbegin(); q_it != seqs.cend(); ++q_it) {
-        cout << "\r" << 100*(q_it-seqs.cbegin())/count << "%";
+        cout << "\r" << 100 * (q_it - seqs.cbegin()) / count << "%";
+
         bool match = false;
         int rejects = 0;
         //bool false_negative = false;
@@ -201,16 +202,21 @@ int Cluster::kmers_select_clust(const vector<Seq>& seqs, ofstream& fs_centroids,
         kmer_bits q_bitset(0);
         get_kmer_bitset(*q_it, q_bitset);
 
+        int i = 0;
         for (auto c_it = centroids.cbegin();
-                (c_it != centroids.cend()) && (rejects <= max_rejects); ++c_it) {
+                (c_it != centroids.cend()) && (rejects <= max_rejects); ++c_it, ++i) {
 
+            // count number of kmers occurring in both query and target sequence
             size_t target_bits = (c_it->first).count();
             kmer_bits b = (c_it->first) & q_bitset;
             size_t set_bits = b.count();
             //cout << set_bits << " : " << (int) (target_bits/1.1) << endl;
             if (set_bits >= target_bits*(dist.threshold()-0.05)) {
-                double d = dist.distance(*q_it, c_it->second);
-                if (d >= dist.threshold()) {
+                if (dist.compare(*q_it, c_it->second)) {
+                    // write hit entry to to clusters file
+                    fs_clusters << 'H' << setw(6) << i
+                                << ' ' << (*q_it).desc
+                                << ' ' << (c_it->second).desc;
                     match = true; // found cluster
                     break;
                 }
@@ -228,14 +234,14 @@ int Cluster::kmers_select_clust(const vector<Seq>& seqs, ofstream& fs_centroids,
             //    ++neg_count;
 
             // add new centroid and write to stream in FASTA format
-            centroids.push_back({q_bitset, *q_it});
+            centroids.emplace_back(q_bitset, *q_it);
 
             // write centroid entry to to clusters file
-            fs_clusters << "C " << setw(6) << centroid_count++ << " "
-                        << (*q_it).desc() << "\n";
+            fs_clusters << 'C' << setw(6) << centroid_count++ << ' '
+                        << (*q_it).desc << '\n';
             // write FASTA format to centroids file
-            fs_centroids << ">" << (*q_it).desc() << '\n'
-                         << (*q_it).to_string()   << '\n';
+            fs_centroids << '>' << (*q_it).desc << '\n'
+                         << (*q_it).to_string() << '\n';
 
         }
     }
@@ -246,10 +252,12 @@ int Cluster::kmers_select_clust(const vector<Seq>& seqs, ofstream& fs_centroids,
     return centroid_count;
 }
 
+/**
+ * Fill given bitset with 1's for all the kmers occuring in the given sequence.
+ */
 void Cluster::get_kmer_bitset(const Seq& s, bitset<KMER_BITSET>& b) {
-
     static const uint32_t k2 = 2 * KMER_LEN;
-    static const uint32_t mask = pow(2, k2) - 1;
+    static const uint32_t mask = pow(2, k2) - 1;    // 0b00111..11 (2*k 1's)
 
     for (size_t i = 0; i <= s.length() - KMER_LEN; ++i) {
         uint32_t kmer = 0;
