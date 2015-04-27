@@ -9,6 +9,8 @@
 #include <unordered_map>
 #include <vector>
 
+#include <list>
+
 #include "Cluster.h"
 #include "Distance.h"
 #include "IO.h"
@@ -266,7 +268,7 @@ int Cluster::kmers_select_clust(const vector<Seq>& seqs, ofstream& fs_centroids,
         }
 
         if (!match) {
-            //*if (false_negative)
+            //if (false_negative)
             //    ++neg_count;
 
             // add new centroid and write to stream in FASTA format
@@ -286,4 +288,74 @@ int Cluster::kmers_select_clust(const vector<Seq>& seqs, ofstream& fs_centroids,
 
     cout << "\r100%\n";
     return centroid_count;
+}
+
+int sub_clust(vector<Seq>::iterator begin, vector<Seq>::iterator end,
+        vector<Centroid>& cts, Distance& dist, int max_rejects) {
+    const size_t seqs_size = end - begin;
+
+    for (auto q_it = begin; q_it != end; ++q_it) {
+        cout << "\r" << 100 * (q_it - begin) / seqs_size << "%";
+
+        bool match = false;
+        int rejects = 0;
+
+        // bitset of kmers occuring in query sequence
+        bitset<KMER_BITSET> q_bitset(0);
+        get_kmer_bitset(*q_it, q_bitset);
+
+        int i = 0;
+        for (auto c_it = cts.begin();
+                (c_it != cts.end()) && (rejects < max_rejects); ++c_it, ++i) {
+            // count number of kmers occurring in both query and target sequence
+            size_t set_bits = (q_bitset & c_it->bits).count();
+
+            // if the # of distinct kmers in both query and target is >= to
+            // id-0.5 times the # of distinct kmers in the target, then compare
+            if (set_bits >= c_it->count * (dist.threshold() - 0.05)) {
+                if (dist.compare(*q_it, c_it->seq)) {
+                    (c_it->cls_seqs).push_back(*q_it);
+                    match = true; // found cluster
+                    break;
+                }
+                ++rejects;
+            }
+        }
+
+        if (!match) {
+            // add new centroid and write to stream in FASTA format
+            cts.emplace_back(*q_it, q_bitset);
+        }
+    }
+    cout << "\r100%\n";
+    return cts.size();
+}
+
+
+int Cluster::clust(vector<Seq>& seqs, Distance& dist, int max_rejects) {
+    unsigned int mid = (seqs.end() - seqs.begin()) / 2;
+    vector<Centroid> cts0, cts1;
+
+    sub_clust(seqs.begin(), seqs.begin() + mid, cts0, dist, max_rejects);
+    sub_clust(seqs.begin() + mid + 1, seqs.end(), cts1, dist, max_rejects);
+
+    cout << "Finished divide" << endl
+         << "cts0.size(): " << cts0.size() << endl
+         << "cts1.size(): " << cts1.size() << endl;
+
+    //vector<Centroid> res(cts0);
+    int centroids_count = cts0.size();
+
+    //vector<Centroid>::iterator cts0_end = cts0.end();
+    for (auto it1 = cts1.begin(); it1 != cts1.end(); ++it1) {
+        for (auto it0 = cts0.begin(); it0 != cts0.end(); ++it0) {
+            if (dist.compare(it0->seq, it1->seq))
+                break;
+            //cts0.push_back(*it1);
+            //res.push_back(*it1);
+            ++centroids_count;
+        }
+    }
+
+    return centroids_count;
 }

@@ -5,11 +5,24 @@
 #include <vector>
 #include <bitset>
 
+#include <functional>
+
 #include "IO.h"
 #include "Distance.h"
 
 #define KMER_BITSET 4096
 #define KMER_LEN 6
+
+struct Centroid {
+    const Seq& seq;
+    std::bitset<KMER_BITSET> bits;
+    size_t count;
+    std::vector<std::reference_wrapper<Seq>> cls_seqs;
+
+    Centroid(const Seq& s, std::bitset<KMER_BITSET> bits) : seq(s), bits(bits) {
+        count = bits.count(); // # of distinct kmers in seq
+    }
+};
 
 class Cluster
 {
@@ -31,7 +44,13 @@ class Cluster
         static int kmers_select_clust(const std::vector<Seq>& seqs, std::ofstream& fs_centroids,
             std::ofstream& fs_clusters, Distance& dist, int max_rejects);
 
+
+        static int clust(std::vector<Seq>& seqs, Distance& dist, int max_rejects);
+
     private:
+        /*static int sub_clust(std::vector<Seq>::const_iterator begin,
+                std::vector<Seq>::const_iterator end,
+                std::vector<Centroid>& cts, Distance& dist, int max_rejects);*/
 
 };
 
