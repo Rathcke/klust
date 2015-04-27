@@ -33,7 +33,6 @@ class Cluster
 
     private:
 
-        //static void get_kmer_bitset(const Seq& s, std::bitset<KMER_BITSET>& b);
 };
 
 #endif

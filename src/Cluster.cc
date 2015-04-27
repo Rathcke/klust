@@ -199,6 +199,13 @@ inline void get_kmer_bitset(const Seq& s, bitset<KMER_BITSET>& b) {
     }
 }
 
+/**
+ * For every sequence in the given collection, search through the centroids for
+ * one where the number of distinct kmers in both the query sequence and
+ * centroid are at least dist.threshold()-0.05 times the number of distinct
+ * kmers in the centroid sequence. If no match is found after max_rejects
+ * tries, the sequence becomes a new centroid.
+ */
 int Cluster::kmers_select_clust(const vector<Seq>& seqs, ofstream& fs_centroids,
         ofstream& fs_clusters, Distance& dist, int max_rejects) {
 
