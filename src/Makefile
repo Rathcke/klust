@@ -1,10 +1,11 @@
 CC=g++
-CFLAGS=-g -c -Wall -std=c++11 -O3 -march=native
+CFLAGS=-g -c -Wall -std=c++11 -O3 -march=native #-pg
+LDFLAGS= #-pg
 
 all: main
 
 main: Distance.o main.o Cluster.o IO.o
-	$(CC) Cluster.o Distance.o IO.o main.o -o main
+	$(CC) $(LDFLAGS) Cluster.o Distance.o IO.o main.o -o main
 
 main.o: Distance.o main.cc
 	$(CC) $(CFLAGS) main.cc

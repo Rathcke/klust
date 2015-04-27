@@ -181,42 +181,72 @@ int Cluster::thorough_clust(const vector<Seq>& seqs, ofstream& fs_centroids,
     return centroid_count;
 }
 
+/**
+ * Fill given bitset with 1's for all the kmers occuring in the given sequence.
+ */
+inline void get_kmer_bitset(const Seq& s, bitset<KMER_BITSET>& b) {
+    static const uint32_t k2 = 2 * KMER_LEN;
+    static const uint32_t mask = pow(2, k2) - 1;    // 0b00111..11 (2*k 1's)
+
+    for (size_t i = 0; i <= s.length() - KMER_LEN; ++i) {
+        uint32_t kmer = 0;
+
+        //memcpy(&kmer_l, (longer + (i/4)), 4);
+        kmer = Distance::stream2int(s.data() + (i/4));
+        kmer >>= (32 - 2*(i % 4) - k2);
+        kmer &= mask;
+        b.set(kmer);
+    }
+}
+
 int Cluster::kmers_select_clust(const vector<Seq>& seqs, ofstream& fs_centroids,
         ofstream& fs_clusters, Distance& dist, int max_rejects) {
 
-    typedef bitset<KMER_BITSET> kmer_bits;
-    vector<pair<kmer_bits, Seq>> centroids;
+    struct Centroid {
+        const Seq& seq;
+        bitset<KMER_BITSET> bits;
+        size_t count;
+
+        Centroid(const Seq& s, bitset<KMER_BITSET> bits) : seq(s), bits(bits) {
+            count = bits.count(); // # of distinct kmers in seq
+        }
+    };
+
+    //typedef bitset<KMER_BITSET> kmer_bits;
+
+    vector<Centroid> centroids;
 
     unsigned int centroid_count = 0;
-    const size_t count = seqs.cend() - seqs.cbegin();
+    const size_t seqs_size = seqs.size();
 
     //int neg_count = 0;
 
     for (auto q_it = seqs.cbegin(); q_it != seqs.cend(); ++q_it) {
-        cout << "\r" << 100 * (q_it - seqs.cbegin()) / count << "%";
+        cout << "\r" << 100 * (q_it - seqs.cbegin()) / seqs_size << "%";
 
         bool match = false;
         int rejects = 0;
         //bool false_negative = false;
 
-        kmer_bits q_bitset(0);
+        // bitset of kmers occuring in query sequence
+        bitset<KMER_BITSET> q_bitset(0);
         get_kmer_bitset(*q_it, q_bitset);
 
         int i = 0;
         for (auto c_it = centroids.cbegin();
-                (c_it != centroids.cend()) && (rejects <= max_rejects); ++c_it, ++i) {
+                (c_it != centroids.cend()) && (rejects < max_rejects); ++c_it, ++i) {
 
             // count number of kmers occurring in both query and target sequence
-            size_t target_bits = (c_it->first).count();
-            kmer_bits b = (c_it->first) & q_bitset;
-            size_t set_bits = b.count();
-            //cout << set_bits << " : " << (int) (target_bits/1.1) << endl;
-            if (set_bits >= target_bits*(dist.threshold()-0.05)) {
-                if (dist.compare(*q_it, c_it->second)) {
+            size_t set_bits = (q_bitset & c_it->bits).count();
+
+            // if the # of distinct kmers in both query and target is >= to
+            // id-0.5 times the # of distinct kmers in the target, then compare
+            if (set_bits >= c_it->count * (dist.threshold() - 0.05)) {
+                if (dist.compare(*q_it, c_it->seq)) {
                     // write hit entry to to clusters file
                     fs_clusters << 'H' << setw(6) << i
                                 << ' ' << (*q_it).desc
-                                << ' ' << (c_it->second).desc;
+                                << ' ' << (c_it->seq).desc;
                     match = true; // found cluster
                     break;
                 }
@@ -229,12 +259,11 @@ int Cluster::kmers_select_clust(const vector<Seq>& seqs, ofstream& fs_centroids,
         }
 
         if (!match) {
-
             //*if (false_negative)
             //    ++neg_count;
 
             // add new centroid and write to stream in FASTA format
-            centroids.emplace_back(q_bitset, *q_it);
+            centroids.emplace_back(*q_it, q_bitset);
 
             // write centroid entry to to clusters file
             fs_clusters << 'C' << setw(6) << centroid_count++ << ' '
@@ -248,24 +277,6 @@ int Cluster::kmers_select_clust(const vector<Seq>& seqs, ofstream& fs_centroids,
 
     //cout << endl << "False negatives: " << neg_count << endl;
 
-    cout << "\r100%" << endl;
+    cout << "\r100%\n";
     return centroid_count;
-}
-
-/**
- * Fill given bitset with 1's for all the kmers occuring in the given sequence.
- */
-void Cluster::get_kmer_bitset(const Seq& s, bitset<KMER_BITSET>& b) {
-    static const uint32_t k2 = 2 * KMER_LEN;
-    static const uint32_t mask = pow(2, k2) - 1;    // 0b00111..11 (2*k 1's)
-
-    for (size_t i = 0; i <= s.length() - KMER_LEN; ++i) {
-        uint32_t kmer = 0;
-
-        //memcpy(&kmer_l, (longer + (i/4)), 4);
-        kmer = Distance::stream2int(s.data() + (i/4));
-        kmer >>= (32 - 2*(i % 4) - k2);
-        kmer &= mask;
-        b.set(kmer);
-    }
 }
