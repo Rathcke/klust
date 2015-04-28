@@ -334,28 +334,49 @@ int sub_clust(vector<Seq>::iterator begin, vector<Seq>::iterator end,
 
 int Cluster::clust(vector<Seq>& seqs, Distance& dist, int max_rejects) {
     unsigned int mid = (seqs.end() - seqs.begin()) / 2;
-    vector<Centroid> cts0, cts1;
+    vector<Centroid> c0, c1;
 
-    sub_clust(seqs.begin(), seqs.begin() + mid, cts0, dist, max_rejects);
-    sub_clust(seqs.begin() + mid + 1, seqs.end(), cts1, dist, max_rejects);
+    sub_clust(seqs.begin(), seqs.begin() + mid, c0, dist, max_rejects);
+    sub_clust(seqs.begin() + mid + 1, seqs.end(), c1, dist, max_rejects);
 
-    cout << "Finished divide" << endl
-         << "cts0.size(): " << cts0.size() << endl
-         << "cts1.size(): " << cts1.size() << endl;
+    cout << "Finished divide. Number of clusters: "
+         << c0.size() << ", " << c1.size() << "\n"
+         << "Combining clusters...\n";
 
-    //vector<Centroid> res(cts0);
-    int centroids_count = cts0.size();
+    int rejects = 0;
 
-    //vector<Centroid>::iterator cts0_end = cts0.end();
-    for (auto it1 = cts1.begin(); it1 != cts1.end(); ++it1) {
-        for (auto it0 = cts0.begin(); it0 != cts0.end(); ++it0) {
-            if (dist.compare(it0->seq, it1->seq))
-                break;
-            //cts0.push_back(*it1);
-            //res.push_back(*it1);
-            ++centroids_count;
+    for (auto it1 = c1.begin(); it1 != c1.end(); ++it1) {
+        bool match = false;
+
+        for (auto it0 = c0.begin();
+                it0 != c0.end() && rejects < max_rejects; ++it0) {
+
+            size_t set_bits = (it0->bits & it1->bits).count();
+            if (set_bits >= it0->count * (dist.threshold() - 0.05)) {
+                if (dist.compare(it0->seq, it1->seq)) {
+                    // merge clusters, i.e. combine vectors of sequences
+                    (it0->cls_seqs).insert((it0->cls_seqs).end(),
+                            (it1->cls_seqs).begin(), (it1->cls_seqs).end());
+                    match = true;
+                    break;
+                }
+                ++rejects;
+            }
+        }
+
+        if (!match) {
+            c0.push_back(*it1);
         }
     }
 
-    return centroids_count;
+    //vector<Centroid>::iterator cts0_end = cts0.end();
+    /*for (auto c1 : cts1) {
+        for (auto c0 : cts0) {
+            if (dist.compare(c0.seq, c1.seq))
+                break;
+            ++centroids_count;
+        }
+    }*/
+
+    return c0.size();
 }
