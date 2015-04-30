@@ -238,7 +238,7 @@ inline void get_kmer_bitset(const Seq& s, bitset<KMER_BITSET>& b) {
  * tries, the sequence becomes a new centroid.
  */
 void Cluster::kmer_select_clust(vector<Seq>::iterator begin, vector<Seq>::iterator end,
-        vector<Centroid>& cts) {
+        list<Centroid>& cts) {
     //const size_t seqs_size = end - begin;
     const size_t seqs_size = distance(begin, end);
 
@@ -271,6 +271,8 @@ void Cluster::kmer_select_clust(vector<Seq>::iterator begin, vector<Seq>::iterat
                     //            << ' ' << (c_it->seq).desc;
 
                     match = true; // found cluster
+                    cts.push_front(*c_it);
+                    cts.erase(c_it);
                     break;
                 }
                 ++rejects;
@@ -280,7 +282,7 @@ void Cluster::kmer_select_clust(vector<Seq>::iterator begin, vector<Seq>::iterat
         if (!match) {
             // add new centroid and write to stream in FASTA format
             // TODO: does the move work as expected?
-            cts.emplace_back(*q_it, move(q_bitset));
+            cts.emplace_front(*q_it, move(q_bitset));
 
             // write centroid entry to to clusters file
             //fs_clusters << 'C' << setw(6) << centroid_count++ << ' '
@@ -296,7 +298,7 @@ void Cluster::kmer_select_clust(vector<Seq>::iterator begin, vector<Seq>::iterat
 
 
 int Cluster::clust(vector<Seq>::iterator begin, vector<Seq>::iterator end,
-        vector<Centroid>& cts, int depth) {
+        list<Centroid>& cts, int depth) {
 
     if (depth == 0) {
         kmer_select_clust(begin, end, cts);
@@ -309,7 +311,7 @@ int Cluster::clust(vector<Seq>::iterator begin, vector<Seq>::iterator end,
     vector<Seq>::iterator snd_beg = begin + mid + 1;
     vector<Seq>::iterator snd_end = end;
 
-    vector<Centroid> c0, c1;
+    list<Centroid> c0, c1;
 
     thread t0(&Cluster::clust, this, fst_beg, fst_end, ref(c0), depth-1);
     thread t1(&Cluster::clust, this, snd_beg, snd_end, ref(c1), depth-1);
@@ -335,7 +337,7 @@ int Cluster::clust(vector<Seq>::iterator begin, vector<Seq>::iterator end,
     return c0.size();
 }
 
-int Cluster::kmer_clust(vector<Seq>& seqs, vector<Centroid>& cts) {
+int Cluster::kmer_clust(vector<Seq>& seqs, list<Centroid>& cts) {
     kmer_select_clust(seqs.begin(), seqs.end(), cts);
     return cts.size();
 }
@@ -343,7 +345,7 @@ int Cluster::kmer_clust(vector<Seq>& seqs, vector<Centroid>& cts) {
 /**
  * Merge two vectors of centroids and store the result in the first vector.
  */
-void Cluster::merge(vector<Centroid>& res, const vector<Centroid>& c1) {
+void Cluster::merge(list<Centroid>& res, const list<Centroid>& c1) {
     int rejects = 0;
     const auto res_end = res.end();
 

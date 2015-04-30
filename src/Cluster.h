@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <bitset>
+#include <list>
 
 #include <functional>
 
@@ -43,20 +44,20 @@ class Cluster
                 Distance& dist, int count);
 
         void kmer_select_clust(std::vector<Seq>::iterator begin,
-                std::vector<Seq>::iterator end, std::vector<Centroid>& cts);
+                std::vector<Seq>::iterator end, std::list<Centroid>& cts);
 
         //int clust(std::vector<Seq>& seqs, int subclusterings);
 
         int clust(std::vector<Seq>::iterator begin, std::vector<Seq>::iterator end,
-                std::vector<Centroid>& cts, int depth);
+                std::list<Centroid>& cts, int depth);
 
-        int kmer_clust(std::vector<Seq>& seqs, std::vector<Centroid>& cts);
+        int kmer_clust(std::vector<Seq>& seqs, std::list<Centroid>& cts);
 
     private:
         Distance& dist;
         int max_rejects;
 
-        void merge(std::vector<Centroid>& c0, const std::vector<Centroid>& c1);
+        void merge(std::list<Centroid>& c0, const std::list<Centroid>& c1);
 };
 
 #endif

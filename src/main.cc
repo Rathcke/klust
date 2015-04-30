@@ -10,6 +10,7 @@
 #include <string>
 #include <unistd.h>
 #include <unordered_map>
+#include <list>
 
 #include "Cluster.h"
 #include "Distance.h"
@@ -157,7 +158,7 @@ int main(int argc, char *argv[])
      * Clustering
      */
     Cluster clust(d2, max_rejects);
-    vector<Centroid> cts;
+    list<Centroid> cts;
 
     cout << "Kmers Select Clustering " << count << " sequences..." << endl;
     clock_t comp_clock = clock();
