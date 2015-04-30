@@ -156,11 +156,15 @@ int main(int argc, char *argv[])
     /*
      * Clustering
      */
+    Cluster clust(d2, max_rejects);
+    vector<Centroid> cts;
+
     cout << "Kmers Select Clustering " << count << " sequences..." << endl;
     clock_t comp_clock = clock();
+    clust.clust(seqs.begin(), seqs.end(), cts, 0);
     cout << "# of clusters: "
-         << Cluster::kmers_select_clust(seqs, fs_cts, fs_cls, d2, max_rejects)
-         //<< Cluster::clust(seqs, d2, max_rejects)
+         << cts.size()
+         //<< clust.clust(seqs)
          << endl;
     double comp_secs = (clock() - comp_clock) / (double) CLOCKS_PER_SEC;
 
