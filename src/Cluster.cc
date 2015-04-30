@@ -227,7 +227,7 @@ int Cluster::kmers_select_clust(const vector<Seq>& seqs, ofstream& fs_centroids,
     //typedef bitset<KMER_BITSET> kmer_bits;
 
     vector<Centroid> centroids;
-    //list<Centroid> abundant_centroids;
+    //list<pair<unsigned int, unsigned int>> abundant_centroids;
 
     unsigned int centroid_count = 0;
     const size_t seqs_size = seqs.size();
@@ -244,14 +244,14 @@ int Cluster::kmers_select_clust(const vector<Seq>& seqs, ofstream& fs_centroids,
         // bitset of kmers occuring in query sequence
         bitset<KMER_BITSET> q_bitset(0);
         get_kmer_bitset(*q_it, q_bitset);
-
+        
         int i = 0;
         for (auto c_it = centroids.cbegin();
                 (c_it != centroids.cend()) && (rejects < max_rejects); ++c_it, ++i) {
 
             // count number of kmers occurring in both query and target sequence
             size_t set_bits = (q_bitset & c_it->bits).count();
-
+            
             // if the # of distinct kmers in both query and target is >= to
             // id-0.5 times the # of distinct kmers in the target, then compare
             if (set_bits >= c_it->count * (dist.threshold() - 0.05)) {
@@ -261,6 +261,7 @@ int Cluster::kmers_select_clust(const vector<Seq>& seqs, ofstream& fs_centroids,
                                 << ' ' << (*q_it).desc
                                 << ' ' << (c_it->seq).desc;
                     match = true; // found cluster
+
                     break;
                 }
                 ++rejects;
@@ -277,33 +278,24 @@ int Cluster::kmers_select_clust(const vector<Seq>& seqs, ofstream& fs_centroids,
 
             // add new centroid and write to stream in FASTA format
             centroids.emplace_back(*q_it, q_bitset);
-/*
-            Centroid c(*q_it, q_bitset);
 
-            abundant_centroids.push_back(c);
+/*          Centroid c(*q_it, q_bitset);
+            if (abundant_centroids.empty())
+                abundant_centroids.push_back({0, 0});
 
-            for (auto it = abundant_centroids.rbegin(); 
-                    it != abundant_centroids.rend(); ++it) {
+            for (auto it = abundant_centroids.begin(); 
+                    it != abundant_centroids.end(); ++it) {
 
-                if (c.count < (*it).count) {
-                    if (it == abundant_centroids.rbegin())
-                        break ;
-                    //abundant_centroids.insert(it, c);
-                    //abundant_centroids.erase(abundant_centroids.end());
+                if (c.count < abundant_centroids.back().first)
+                    break;
+                if (c.count > it->first) {
+                    abundant_centroids.insert(it, {c.count, centroids.size()-1});
+                    abundant_centroids.resize(min(18000, (int) abundant_centroids.size()));
                     break;
                 }
-                if (++it == (abundant_centroids.rend()) {
-                 
-                    abundant_centroids.push_front(c);
-                    abundant_centroids.erase(abundant_centroids.end());
 
-                }
             }*/
 
-            /*sort(centroids.begin(), centroids.end(),
-                [](const Centroid& a, const Centroid& b) {
-                    return a.count > b.count;
-                });*/
 
             // write centroid entry to to clusters file
             fs_clusters << 'C' << setw(6) << centroid_count++ << ' '
