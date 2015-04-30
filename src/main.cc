@@ -17,7 +17,6 @@
 
 using namespace std;
 
-
 int main(int argc, char *argv[])
 {
     ios_base::sync_with_stdio(false); // don't share buffers with C style IO
@@ -25,7 +24,7 @@ int main(int argc, char *argv[])
     // default similarity and clustering parameters
     int k = 6;
     double thrs = 0.85;
-    int count = 100000; // SILVA: 1583830, TODO: INT_MAX maybe not so pretty.
+    int count = INT_MAX; // SILVA: 1583830, TODO: INT_MAX maybe not so pretty.
     int max_rejects = 8;
     int step = 1;
     bool sort_incr = false;
@@ -91,7 +90,7 @@ int main(int argc, char *argv[])
     ofstream fs_cls(argv[optind++], ofstream::out | ofstream::trunc);
 
     if (!(fs_in && fs_cts && fs_cls)) {
-        cerr << "error opening file" << endl;
+        cerr << "Error opening file" << endl;
         fs_in.close();
         fs_cts.close();
         fs_cls.close();
@@ -115,7 +114,7 @@ int main(int argc, char *argv[])
 
     cout << "Reading " << count << " sequences..." << endl;
     clock_t read_clock = clock();
-    IO::read_seqs(fs_in, seqs, count);
+    count = IO::read_seqs(fs_in, seqs, count);
     double read_secs = (clock() - read_clock) / (double) CLOCKS_PER_SEC;
     cout << "Time: "     << read_secs << " sec.\n"
          << "Seqs/sec: " << count / read_secs << "\n" << endl;
@@ -161,6 +160,7 @@ int main(int argc, char *argv[])
     clock_t comp_clock = clock();
     cout << "# of clusters: "
          << Cluster::kmers_select_clust(seqs, fs_cts, fs_cls, d2, max_rejects)
+         //<< Cluster::clust(seqs, d2, max_rejects)
          << endl;
     double comp_secs = (clock() - comp_clock) / (double) CLOCKS_PER_SEC;
 

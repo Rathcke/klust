@@ -3,9 +3,8 @@
 
 #include <string>
 #include <set>
-#include <bitset>
 
-#include "IO.h"
+#include "Seq.h"
 
 class Distance
 {
@@ -14,11 +13,6 @@ class Distance
 
         bool compare(const Seq& s, const Seq& t);
         double distance(const Seq& s, const Seq& t);
-
-        bool compare(const std::vector<std::bitset<2>>& s,
-                const std::vector<std::bitset<2>>& t);
-
-        bool compare(const std::string& s, const std::string& t);
 
         std::vector<int> compute_key(const Seq& s, int n);
 
@@ -32,7 +26,7 @@ class Distance
 
         void jac_printDistMatrix(const char* filename, int count);
 
-        double threshold() { return thrs; }
+        inline double threshold() { return thrs; }
 
         static inline uint32_t stream2int(const uint8_t *stream) {
             return (((uint32_t) stream[0]) << 24 |

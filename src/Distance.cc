@@ -7,10 +7,9 @@
 #include <unordered_map>
 #include <set>
 #include <vector>
-#include <bitset>
 
 #include "Distance.h"
-#include "IO.h"
+#include "Seq.h"
 
 using namespace std;
 
@@ -235,7 +234,7 @@ double Distance::levenshtein_window(const string& s, const string& t) {
     return (double)(win_size - min_dist) / (double)win_size;
 }
 
-void Distance::printDistMatrix(const char* filename, int count) {
+/*void Distance::printDistMatrix(const char* filename, int count) {
     ifstream fs0(filename);
     ifstream fs1(filename);
 
@@ -247,11 +246,11 @@ void Distance::printDistMatrix(const char* filename, int count) {
             distances[i][j] = -1; // initialize distance matrix entries to -1
 
     for (int i = 0; i < count; ++i) {
-        IO::read_sequence(fs0, fst);
+        io::read_sequence(fs0, fst);
         transform(fst.begin(), fst.end(), fst.begin(), ::tolower);
 
         for (int j = 0; j < count; ++j) {
-            IO::read_sequence(fs1, snd);
+            io::read_sequence(fs1, snd);
             transform(snd.begin(), snd.end(), snd.begin(), ::tolower);
             if (i == j) { // don't compare a sequence to itself
                 distances[i][j] = 0;
@@ -285,7 +284,7 @@ void Distance::jac_printDistMatrix(const char* filename, int count) {
     double distances[count][count];
     vector<Seq> seqs;
 
-    IO::read_seqs(fs0, seqs, count);
+    io::read_seqs(fs0, seqs, count);
 
     for (int i = 0; i < count; i++)
         for (int j = 0; j < count; j++)
@@ -316,7 +315,7 @@ void Distance::jac_printDistMatrix(const char* filename, int count) {
     }
 
     fs0.close();
-}
+}*/
 
 /*set<string> Distance::kmers(const Seq& s) {
     set<string> kmers;
