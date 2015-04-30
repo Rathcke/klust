@@ -13,15 +13,23 @@
 #define KMER_LEN 6
 
 struct Centroid {
-    const Seq& seq;
+    Seq& seq;
     std::bitset<KMER_BITSET> bits;
     size_t count;
     std::vector<std::reference_wrapper<Seq>> cls_seqs;
     //std::vector<Seq> cls_seqs;    // TODO: maybe move?
 
-    Centroid(const Seq& s, std::bitset<KMER_BITSET> bits) : seq(s), bits(bits) {
+    Centroid(Seq& s, std::bitset<KMER_BITSET> bits) : seq(s), bits(bits) {
         count = bits.count(); // # of distinct kmers in seq
     }
+
+    /*Centroid& operator=(Centroid& other) {
+        seq = std::ref(other.seq);
+        bits = other.bits;
+        count = other.count;
+        cls_seqs = std::ref(other.cls_seqs);
+        return *this;
+    }*/
 };
 
 class Cluster

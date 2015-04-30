@@ -58,7 +58,7 @@ Seq::~Seq() {
         delete[] seq_data;
 }
 
-Seq& Seq::operator= (const Seq& seq){
+Seq& Seq::operator= (const Seq& seq) {
     // TODO cout << "op= called" << endl;
     if (this != &seq) {
         if (seq_data != NULL)

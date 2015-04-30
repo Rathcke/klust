@@ -159,8 +159,8 @@ int main(int argc, char *argv[])
     cout << "Kmers Select Clustering " << count << " sequences..." << endl;
     clock_t comp_clock = clock();
     cout << "# of clusters: "
-         //<< Cluster::kmers_select_clust(seqs, fs_cts, fs_cls, d2, max_rejects)
-         << Cluster::clust(seqs, d2, max_rejects)
+         << Cluster::kmers_select_clust(seqs, fs_cts, fs_cls, d2, max_rejects)
+         //<< Cluster::clust(seqs, d2, max_rejects)
          << endl;
     double comp_secs = (clock() - comp_clock) / (double) CLOCKS_PER_SEC;
 

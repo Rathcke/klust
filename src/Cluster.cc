@@ -275,6 +275,11 @@ int Cluster::kmers_select_clust(const vector<Seq>& seqs, ofstream& fs_centroids,
             // add new centroid and write to stream in FASTA format
             centroids.emplace_back(*q_it, q_bitset);
 
+            /*sort(centroids.begin(), centroids.end(),
+                [](const Centroid& a, const Centroid& b) {
+                    return a.count > b.count;
+                });*/
+
             // write centroid entry to to clusters file
             fs_clusters << 'C' << setw(6) << centroid_count++ << ' '
                         << (*q_it).desc << '\n';
@@ -366,11 +371,13 @@ int Cluster::clust(vector<Seq>& seqs, Distance& dist, int max_rejects) {
 
     int rejects = 0;
 
+    auto c0_end = c0.end();
+
     for (auto it1 = c1.begin(); it1 != c1.end(); ++it1) {
         bool match = false;
 
         for (auto it0 = c0.begin();
-                it0 != c0.end() && rejects < max_rejects; ++it0) {
+                it0 != c0_end && rejects < max_rejects; ++it0) {
 
             size_t set_bits = (it0->bits & it1->bits).count();
             if (set_bits >= it0->count * (dist.threshold() - 0.05)) {
@@ -378,6 +385,7 @@ int Cluster::clust(vector<Seq>& seqs, Distance& dist, int max_rejects) {
                     // merge clusters, i.e. combine vectors of sequences
                     (it0->cls_seqs).insert((it0->cls_seqs).end(),
                             (it1->cls_seqs).begin(), (it1->cls_seqs).end());
+                    //(it0->cls_seqs).push_back(it1->seq);
                     match = true;
                     break;
                 }
