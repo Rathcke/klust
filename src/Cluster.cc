@@ -8,6 +8,7 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
+#include <list>
 
 #include "Cluster.h"
 #include "Distance.h"
@@ -217,11 +218,13 @@ int Cluster::kmers_select_clust(const vector<Seq>& seqs, ofstream& fs_centroids,
         Centroid(const Seq& s, bitset<KMER_BITSET> bits) : seq(s), bits(bits) {
             count = bits.count(); // # of distinct kmers in seq
         }
+
     };
 
     //typedef bitset<KMER_BITSET> kmer_bits;
 
     vector<Centroid> centroids;
+    //list<Centroid> abundant_centroids;
 
     unsigned int centroid_count = 0;
     const size_t seqs_size = seqs.size();
@@ -271,10 +274,33 @@ int Cluster::kmers_select_clust(const vector<Seq>& seqs, ofstream& fs_centroids,
 
             // add new centroid and write to stream in FASTA format
             centroids.emplace_back(*q_it, q_bitset);
+/*
+            Centroid c(*q_it, q_bitset);
+
+            abundant_centroids.push_back(c);
+
+            for (auto it = abundant_centroids.rbegin(); 
+                    it != abundant_centroids.rend(); ++it) {
+
+                if (c.count < (*it).count) {
+                    if (it == abundant_centroids.rbegin())
+                        break ;
+                    //abundant_centroids.insert(it, c);
+                    //abundant_centroids.erase(abundant_centroids.end());
+                    break;
+                }
+                if (++it == (abundant_centroids.rend()) {
+                 
+                    abundant_centroids.push_front(c);
+                    abundant_centroids.erase(abundant_centroids.end());
+
+                }
+            }*/
 
             // write centroid entry to to clusters file
             fs_clusters << 'C' << setw(6) << centroid_count++ << ' '
                         << (*q_it).desc << '\n';
+
             // write FASTA format to centroids file
             fs_centroids << '>' << (*q_it).desc << '\n'
                          << (*q_it).to_string() << '\n';
