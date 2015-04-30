@@ -17,7 +17,6 @@
 
 using namespace std;
 
-
 int main(int argc, char *argv[])
 {
     ios_base::sync_with_stdio(false); // don't share buffers with C style IO
@@ -25,7 +24,7 @@ int main(int argc, char *argv[])
     // default similarity and clustering parameters
     int k = 6;
     double thrs = 0.85;
-    int count = 100000; // SILVA: 1583830, TODO: INT_MAX maybe not so pretty.
+    int count = INT_MAX; // SILVA: 1583830, TODO: INT_MAX maybe not so pretty.
     int max_rejects = 8;
     int step = 1;
     bool sort_incr = false;
@@ -115,7 +114,7 @@ int main(int argc, char *argv[])
 
     cout << "Reading " << count << " sequences..." << endl;
     clock_t read_clock = clock();
-    IO::read_seqs(fs_in, seqs, count);
+    count = IO::read_seqs(fs_in, seqs, count);
     double read_secs = (clock() - read_clock) / (double) CLOCKS_PER_SEC;
     cout << "Time: "     << read_secs << " sec.\n"
          << "Seqs/sec: " << count / read_secs << "\n" << endl;

@@ -7,7 +7,6 @@
 
 #include <functional>
 
-#include "IO.h"
 #include "Distance.h"
 
 #define KMER_BITSET 4096
@@ -18,6 +17,7 @@ struct Centroid {
     std::bitset<KMER_BITSET> bits;
     size_t count;
     std::vector<std::reference_wrapper<Seq>> cls_seqs;
+    //std::vector<Seq> cls_seqs;    // TODO: maybe move?
 
     Centroid(const Seq& s, std::bitset<KMER_BITSET> bits) : seq(s), bits(bits) {
         count = bits.count(); // # of distinct kmers in seq

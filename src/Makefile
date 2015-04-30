@@ -1,11 +1,11 @@
 CC=g++
-CFLAGS=-g -c -Wall -std=c++11 -O3 -march=native #-pg
-LDFLAGS= #-pg
+CFLAGS=-g -c -Wall -std=c++11 -O3 -march=native -pthread #-pg
+LDFLAGS=-pthread #-pg
 
 all: main
 
-main: Distance.o main.o Cluster.o IO.o
-	$(CC) $(LDFLAGS) Cluster.o Distance.o IO.o main.o -o main
+main: Distance.o main.o Cluster.o IO.o Seq.o
+	$(CC) $(LDFLAGS) Cluster.o Distance.o IO.o Seq.o main.o -o main
 
 main.o: Distance.o main.cc
 	$(CC) $(CFLAGS) main.cc
@@ -18,6 +18,9 @@ Cluster.o: Cluster.h Cluster.cc
 
 IO.o: IO.h IO.cc
 	$(CC) $(CFLAGS) IO.cc
+
+Seq.o: Seq.h Seq.cc
+	$(CC) $(CFLAGS) Seq.cc
 
 run:
 	./main
