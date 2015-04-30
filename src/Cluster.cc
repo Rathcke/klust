@@ -203,88 +203,13 @@ inline void get_kmer_bitset(const Seq& s, bitset<KMER_BITSET>& b) {
     }
 }
 
-/**
- * For every sequence in the given collection, search through the centroids for
- * one where the number of distinct kmers in both the query sequence and
- * centroid are at least dist.threshold()-0.05 times the number of distinct
- * kmers in the centroid sequence. If no match is found after max_rejects
- * tries, the sequence becomes a new centroid.
- */
-int Cluster::kmers_select_clust(const vector<Seq>& seqs, ofstream& fs_centroids,
-        ofstream& fs_clusters, Distance& dist, int max_rejects) {
-
-    struct Centroid {
-        const Seq& seq;
-        bitset<KMER_BITSET> bits;
-        size_t count;
-
-        Centroid(const Seq& s, bitset<KMER_BITSET> bits) : seq(s), bits(bits) {
-            count = bits.count(); // # of distinct kmers in seq
-        }
-
-    };
-
-    //typedef bitset<KMER_BITSET> kmer_bits;
-
-    vector<Centroid> centroids;
-    //list<pair<unsigned int, unsigned int>> abundant_centroids;
-
-    unsigned int centroid_count = 0;
-    const size_t seqs_size = seqs.size();
-
-    //int neg_count = 0;
-
-    for (auto q_it = seqs.cbegin(); q_it != seqs.cend(); ++q_it) {
-        cout << "\r" << 100 * (q_it - seqs.cbegin()) / seqs_size << "%";
-
-        bool match = false;
-        int rejects = 0;
-        //bool false_negative = false;
-
-        // bitset of kmers occuring in query sequence
-        bitset<KMER_BITSET> q_bitset(0);
-        get_kmer_bitset(*q_it, q_bitset);
-        
-        int i = 0;
-        for (auto c_it = centroids.cbegin();
-                (c_it != centroids.cend()) && (rejects < max_rejects); ++c_it, ++i) {
-
-            // count number of kmers occurring in both query and target sequence
-            size_t set_bits = (q_bitset & c_it->bits).count();
-            
-            // if the # of distinct kmers in both query and target is >= to
-            // id-0.5 times the # of distinct kmers in the target, then compare
-            if (set_bits >= c_it->count * (dist.threshold() - 0.05)) {
-                if (dist.compare(*q_it, c_it->seq)) {
-                    // write hit entry to to clusters file
-                    fs_clusters << 'H' << setw(6) << i
-                                << ' ' << (*q_it).desc
-                                << ' ' << (c_it->seq).desc;
-                    match = true; // found cluster
-
-                    break;
-                }
-                ++rejects;
-            }
-
-            //if (dist.distance(*q_it, c_it->second) >= dist.threshold())
-            //    false_negative = true;
-
-        }
-
-        if (!match) {
-            //if (false_negative)
-            //    ++neg_count;
-
-            // add new centroid and write to stream in FASTA format
-            centroids.emplace_back(*q_it, q_bitset);
 
 /*          Centroid c(*q_it, q_bitset);
             if (abundant_centroids.empty())
                 abundant_centroids.push_back({0, 0});
 
-            for (auto it = abundant_centroids.begin(); 
-                    it != abundant_centroids.end(); ++it) {
+            for (auto it = abundant_centroids.rbegin();
+                    it != abundant_centroids.rend(); ++it) {
 
                 if (c.count < abundant_centroids.back().first)
                     break;
@@ -294,28 +219,26 @@ int Cluster::kmers_select_clust(const vector<Seq>& seqs, ofstream& fs_centroids,
                     break;
                 }
 
+                if (++it == (abundant_centroids.rend()) {
+
+                    abundant_centroids.push_front(c);
+                    abundant_centroids.erase(abundant_centroids.end());
+
             }*/
 
 
-            // write centroid entry to to clusters file
-            fs_clusters << 'C' << setw(6) << centroid_count++ << ' '
-                        << (*q_it).desc << '\n';
-
-            // write FASTA format to centroids file
-            fs_centroids << '>' << (*q_it).desc << '\n'
-                         << (*q_it).to_string() << '\n';
-
-        }
-    }
-
     //cout << endl << "False negatives: " << neg_count << endl;
 
-    cout << "\r100%\n";
-    return centroid_count;
-}
 
-void sub_clust(vector<Seq>::iterator begin, vector<Seq>::iterator end,
-        vector<Centroid>& cts, Distance& dist, int max_rejects) {
+/**
+ * For every sequence in the given collection, search through the centroids for
+ * one where the number of distinct kmers in both the query sequence and
+ * centroid are at least dist.threshold()-0.05 times the number of distinct
+ * kmers in the centroid sequence. If no match is found after max_rejects
+ * tries, the sequence becomes a new centroid.
+ */
+void Cluster::kmer_select_clust(vector<Seq>::iterator begin, vector<Seq>::iterator end,
+        vector<Centroid>& cts) {
     //const size_t seqs_size = end - begin;
     const size_t seqs_size = distance(begin, end);
 
@@ -341,6 +264,12 @@ void sub_clust(vector<Seq>::iterator begin, vector<Seq>::iterator end,
                 if (dist.compare(*q_it, c_it->seq)) {
                     (c_it->cls_seqs).push_back(ref(*q_it));
                     //(c_it->cls_seqs).push_back(move(*q_it)); // TODO: maybe move?
+
+                    // write hit entry to to clusters file
+                    //fs_clusters << 'H' << setw(6) << i
+                    //            << ' ' << (*q_it).desc
+                    //            << ' ' << (c_it->seq).desc;
+
                     match = true; // found cluster
                     break;
                 }
@@ -350,52 +279,74 @@ void sub_clust(vector<Seq>::iterator begin, vector<Seq>::iterator end,
 
         if (!match) {
             // add new centroid and write to stream in FASTA format
-            cts.emplace_back(*q_it, move(q_bitset)); // TODO: does the move work as expected?
+            // TODO: does the move work as expected?
+            cts.emplace_back(*q_it, move(q_bitset));
+
+            // write centroid entry to to clusters file
+            //fs_clusters << 'C' << setw(6) << centroid_count++ << ' '
+            //            << (*q_it).desc << '\n';
+
+            // write FASTA format to centroids file
+            //fs_centroids << '>' << (*q_it).desc << '\n'
+            //             << (*q_it).to_string() << '\n';
         }
     }
     cout << "\r100%\n";
-    //return cts.size();
 }
 
 
-int Cluster::clust(vector<Seq>& seqs, Distance& dist, int max_rejects) {
+int Cluster::clust(vector<Seq>::iterator begin, vector<Seq>::iterator end,
+        vector<Centroid>& cts, int depth) {
 
-    cout << thread::hardware_concurrency()
-         << " concurrent threads are supported.\n"; // only a hint
+    if (depth == 0) {
+        kmer_select_clust(begin, end, cts);
+    }
 
-    unsigned int mid = (seqs.end() - seqs.begin()) / 2;
+    unsigned int mid = (end - begin) / 2;
 
-    vector<Seq>::iterator fst_beg = seqs.begin();
-    vector<Seq>::iterator fst_end = seqs.begin() + mid;
-    vector<Seq>::iterator snd_beg = seqs.begin() + mid + 1;
-    vector<Seq>::iterator snd_end = seqs.end();
+    vector<Seq>::iterator fst_beg = begin;
+    vector<Seq>::iterator fst_end = begin + mid;
+    vector<Seq>::iterator snd_beg = begin + mid + 1;
+    vector<Seq>::iterator snd_end = end;
 
     vector<Centroid> c0, c1;
 
-    thread t0(sub_clust, fst_beg, fst_end, ref(c0), ref(dist), max_rejects);
-    thread t1(sub_clust, snd_beg, snd_end, ref(c1), ref(dist), max_rejects);
+    thread t0(&Cluster::clust, this, fst_beg, fst_end, ref(c0), depth-1);
+    thread t1(&Cluster::clust, this, snd_beg, snd_end, ref(c1), depth-1);
 
     t0.join();
     cout << "t0 joined" << endl;
     t1.join();
     cout << "t1 joined" << endl;
 
-    /*sub_clust(seqs.begin(), seqs.begin() + mid, c0, dist, max_rejects);
-    sub_clust(seqs.begin() + mid + 1, seqs.end(), c1, dist, max_rejects);*/
-
     cout << "Finished divide. Number of clusters: "
          << c0.size() << ", " << c1.size() << "\n"
          << "Combining clusters...\n";
 
-    int rejects = 0;
+    merge(c0, c1);
 
-    auto c0_end = c0.end();
+    /*thread t0(&Cluster::kmer_select_clust, this, fst_beg, fst_end, ref(c0));
+    thread t1(&Cluster::kmer_select_clust, this, snd_beg, snd_end, ref(c1));*/
+
+    /*cout << thread::hardware_concurrency()
+         << " concurrent threads are supported.\n"; // only a hint */
+
+
+    return c0.size();
+}
+
+/**
+ * Merge two vectors of centroids and store the result in the first vector.
+ */
+void Cluster::merge(vector<Centroid>& res, const vector<Centroid>& c1) {
+    int rejects = 0;
+    const auto res_end = res.end();
 
     for (auto it1 = c1.begin(); it1 != c1.end(); ++it1) {
         bool match = false;
 
-        for (auto it0 = c0.begin();
-                it0 != c0_end && rejects < max_rejects; ++it0) {
+        for (auto it0 = res.begin();
+                it0 != res_end && rejects < max_rejects; ++it0) {
 
             size_t set_bits = (it0->bits & it1->bits).count();
             if (set_bits >= it0->count * (dist.threshold() - 0.05)) {
@@ -403,27 +354,14 @@ int Cluster::clust(vector<Seq>& seqs, Distance& dist, int max_rejects) {
                     // merge clusters, i.e. combine vectors of sequences
                     (it0->cls_seqs).insert((it0->cls_seqs).end(),
                             (it1->cls_seqs).begin(), (it1->cls_seqs).end());
-                    //(it0->cls_seqs).push_back(it1->seq);
+                    (it0->cls_seqs).push_back(it1->seq); // push_back centroid
                     match = true;
                     break;
                 }
                 ++rejects;
             }
         }
-
-        if (!match) {
-            c0.push_back(*it1);
-        }
+        if (!match)
+            res.push_back(*it1);
     }
-
-    //vector<Centroid>::iterator cts0_end = cts0.end();
-    /*for (auto c1 : cts1) {
-        for (auto c0 : cts0) {
-            if (dist.compare(c0.seq, c1.seq))
-                break;
-            ++centroids_count;
-        }
-    }*/
-
-    return c0.size();
 }
