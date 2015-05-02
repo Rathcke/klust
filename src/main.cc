@@ -10,6 +10,7 @@
 #include <string>
 #include <unistd.h>
 #include <unordered_map>
+#include <list>
 
 #include "Cluster.h"
 #include "Distance.h"
@@ -29,19 +30,21 @@ int main(int argc, char *argv[])
     int step = 1;
     bool sort_incr = false;
     bool sort_decr = false;
+    int depth = 0;
 
     // CLI argument parsing
     static struct option long_options[] = {
         {"count",       required_argument, 0, 'c'},
+        {"depth",       required_argument, 0, 'l'},
         {"id",          required_argument, 0, 't'},
         {"max_rejects", required_argument, 0, 'm'},
-        {"step_size",   required_argument, 0, 's'},
+        {"sort_decr",   no_argument,       0, 'd'},
         {"sort_incr",   no_argument,       0, 'i'},
-        {"sort_decr",   no_argument,       0, 'd'}
+        {"step_size",   required_argument, 0, 's'}
     };
 
     int opt, option_index = 0;
-    while ((opt = getopt_long(argc, argv, "c:k:m:s:t:",
+    while ((opt = getopt_long(argc, argv, "c:k:l:m:s:t:",
                     long_options, &option_index)) != -1) {
         switch (opt) {
             case 'c':
@@ -55,6 +58,9 @@ int main(int argc, char *argv[])
                 break;
             case 'k':
                 k = atoi(optarg);
+                break;
+            case 'l':
+                depth = atoi(optarg);
                 break;
             case 'm':
                 max_rejects = atoi(optarg);
@@ -103,6 +109,7 @@ int main(int argc, char *argv[])
          << "\n  count = " << count
          << "\n  max_rejects = " << max_rejects
          << "\n  step_size = " << step
+         << "\n  depth = " << depth
          << "\n" << endl;
 
     Distance d2(k, thrs, step);
@@ -157,13 +164,13 @@ int main(int argc, char *argv[])
      * Clustering
      */
     Cluster clust(d2, max_rejects);
-    vector<Centroid> cts;
+    list<Centroid> cts;
 
     cout << "Kmers Select Clustering " << count << " sequences..." << endl;
     clock_t comp_clock = clock();
     cout << "# of clusters: "
          //<< clust.kmer_clust(seqs, cts)
-         << clust.clust(seqs, cts, 3)
+         << clust.clust(seqs, cts, depth)
          << endl;
     double comp_secs = (clock() - comp_clock) / (double) CLOCKS_PER_SEC;
 

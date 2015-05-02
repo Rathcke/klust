@@ -203,42 +203,29 @@ inline void get_kmer_bitset(const Seq& s, bitset<KMER_BITSET>& b) {
     }
 }
 
-    //int neg_count = 0;
 
-        //bool false_negative = false;
-
-            //if (dist.distance(*q_it, c_it->second) >= dist.threshold())
-            //    false_negative = true;
-
-            //if (false_negative)
-            //    ++neg_count;
-
-            /*Centroid c(*q_it, q_bitset);
-
-            abundant_centroids.push_back(c);
+/*          Centroid c(*q_it, q_bitset);
+            if (abundant_centroids.empty())
+                abundant_centroids.push_back({0, 0});
 
             for (auto it = abundant_centroids.rbegin();
                     it != abundant_centroids.rend(); ++it) {
 
-                if (c.count < (*it).count) {
-                    if (it == abundant_centroids.rbegin())
-                        break ;
-                    //abundant_centroids.insert(it, c);
-                    //abundant_centroids.erase(abundant_centroids.end());
+                if (c.count < abundant_centroids.back().first)
+                    break;
+                if (c.count > it->first) {
+                    abundant_centroids.insert(it, {c.count, centroids.size()-1});
+                    abundant_centroids.resize(min(18000, (int) abundant_centroids.size()));
                     break;
                 }
+
                 if (++it == (abundant_centroids.rend()) {
 
                     abundant_centroids.push_front(c);
                     abundant_centroids.erase(abundant_centroids.end());
 
-                }
             }*/
 
-            /*sort(centroids.begin(), centroids.end(),
-                [](const Centroid& a, const Centroid& b) {
-                    return a.count > b.count;
-                });*/
 
     //cout << endl << "False negatives: " << neg_count << endl;
 
@@ -251,12 +238,12 @@ inline void get_kmer_bitset(const Seq& s, bitset<KMER_BITSET>& b) {
  * tries, the sequence becomes a new centroid.
  */
 void Cluster::kmer_select_clust(vector<Seq>::iterator begin, vector<Seq>::iterator end,
-        vector<Centroid>& cts) {
+        list<Centroid>& cts) {
     //const size_t seqs_size = end - begin;
-    //const size_t seqs_size = distance(begin, end);
+    const size_t seqs_size = distance(begin, end);
 
     for (auto q_it = begin; q_it != end; ++q_it) {
-        //cout << "\r" << 100 * (q_it - begin) / seqs_size << "%";
+        cout << "\r" << 100 * (q_it - begin) / seqs_size << "%";
 
         bool match = false;
         int rejects = 0;
@@ -284,6 +271,8 @@ void Cluster::kmer_select_clust(vector<Seq>::iterator begin, vector<Seq>::iterat
                     //            << ' ' << (c_it->seq).desc;
 
                     match = true; // found cluster
+                    cts.push_front(*c_it);
+                    cts.erase(c_it);
                     break;
                 }
                 ++rejects;
@@ -293,7 +282,7 @@ void Cluster::kmer_select_clust(vector<Seq>::iterator begin, vector<Seq>::iterat
         if (!match) {
             // add new centroid and write to stream in FASTA format
             // TODO: does the move work as expected?
-            cts.emplace_back(*q_it, move(q_bitset));
+            cts.emplace_front(*q_it, move(q_bitset));
 
             // write centroid entry to to clusters file
             //fs_clusters << 'C' << setw(6) << centroid_count++ << ' '
@@ -304,77 +293,74 @@ void Cluster::kmer_select_clust(vector<Seq>::iterator begin, vector<Seq>::iterat
             //             << (*q_it).to_string() << '\n';
         }
     }
-    //cout << "\r100%\n";
+    cout << "\r100%";
 }
 
 
-int Cluster::clust(vector<Seq>& seqs, vector<Centroid>& cts, int depth) {
-    int seqs_size = seqs.size();
+int Cluster::clust(vector<Seq>& seqs, list<Centroid>& cts, int depth) {
+    cout << thread::hardware_concurrency()
+         << " concurrent threads are supported.\n"; // only a hint
 
+    int seqs_size = seqs.size();
     int sub_count = pow(2, depth);
     int sub_size = seqs_size / sub_count;
 
-    vector<vector<Centroid>> cts_vecs;
-    cts_vecs.resize(sub_count);
+    vector<list<Centroid>> cts_ls;
+    cts_ls.resize(sub_count);
 
     vector<thread> threads;
 
-    /*threads.emplace_back(&Cluster::kmer_select_clust, this,
-            seqs.begin(), seqs.begin() + sub_size, ref(cts_vecs[0]));*/
-
-    cout << "seqs.size: " << seqs.size() << endl;
+    //cout << "seqs.size: " << seqs.size() << endl;
+    cout << "Diving " << depth << " times ("
+         << sub_count << " sub-clustering(s) and "
+         << sub_count << " concurrent thread(s))..." << endl;
     for (int i = 0; i < sub_count-1; ++i) {
         threads.emplace_back(&Cluster::kmer_select_clust, this,
                 seqs.begin() + i*sub_size, seqs.begin() + (i+1)*sub_size - 1,
-                ref(cts_vecs[i]));
+                ref(cts_ls[i]));
 
-        cout << (seqs.begin() + i*sub_size) - seqs.begin() << " "
-             << (seqs.begin() + (i+1)*sub_size - 1) - seqs.begin() << endl;
+        /*cout << (seqs.begin() + i*sub_size) - seqs.begin() << " "
+             << (seqs.begin() + (i+1)*sub_size - 1) - seqs.begin() << endl;*/
     }
     threads.emplace_back(&Cluster::kmer_select_clust, this,
-            seqs.begin() + sub_size*(sub_count-1), seqs.end(), ref(cts_vecs[sub_count-1]));
+            seqs.begin() + sub_size*(sub_count-1), seqs.end(),
+            ref(cts_ls[sub_count-1]));
 
-    cout << (seqs.begin() + sub_size*(sub_count-1)) - seqs.begin() << " "
-         << seqs.end() - seqs.begin() << endl;
+    /*cout << (seqs.begin() + sub_size*(sub_count-1)) - seqs.begin() << " "
+         << seqs.end() - seqs.begin() << endl;*/
 
     for (auto& t : threads)
         t.join();
 
-    cout << "Finished divide. Number of clusters: "
-         << c0.size() << ", " << c1.size() << "\n"
-         << "Combining clusters...\n";
+    int clusters_sum = 0;
+    cout << "\nFinished divide. Number of clusters: ";
+    for (auto& ls : cts_ls) {
+        int ls_size = ls.size();
+        clusters_sum += ls_size;
+        cout << ls_size << " ";
+    }
+    cout << "\nCombining clusters..." << endl;
 
-    /*if (depth == 0) {
-        kmer_select_clust(begin, end, cts);
-        return cts.size();
+    // merge centroid lists in a bottom-up manner; result will be in first list
+    int delta = 2;
+    int i = 0;
+    while (i < sub_count-1 && delta <= sub_count) {
+        //cout << "merging centroids " << i << " and " << i+(delta/2) << endl;
+        merge(cts_ls[i], cts_ls[i + (delta/2)]);
+        if (i + delta >= sub_count-1) {
+            i = 0;
+            delta *= 2;
+        } else {
+            i += delta;
+        }
     }
 
-    unsigned int mid = (end - begin) / 2;
+    cout << "Merged " << clusters_sum - cts_ls[0].size() << " clusters." << endl;
 
-    vector<Seq>::iterator fst_beg = begin;
-    vector<Seq>::iterator fst_end = begin + mid;
-    vector<Seq>::iterator snd_beg = begin + mid + 1;
-    vector<Seq>::iterator snd_end = end;
-
-    vector<Centroid> c0, c1;
-
-    thread t0(&Cluster::clust, this, fst_beg, fst_end, ref(c0), depth-1);
-    thread t1(&Cluster::clust, this, snd_beg, snd_end, ref(c1), depth-1);
-
-
-    merge(c0, c1);*/
-
-    /*thread t0(&Cluster::kmer_select_clust, this, fst_beg, fst_end, ref(c0));
-    thread t1(&Cluster::kmer_select_clust, this, snd_beg, snd_end, ref(c1));*/
-
-    /*cout << thread::hardware_concurrency()
-         << " concurrent threads are supported.\n"; // only a hint */
-
-
-    return 0; //cts_vecs[0].size();
+    return cts_ls[0].size();
 }
 
-int Cluster::kmer_clust(vector<Seq>& seqs, vector<Centroid>& cts) {
+int Cluster::kmer_clust(vector<Seq>& seqs, list<Centroid>& cts) {
     kmer_select_clust(seqs.begin(), seqs.end(), cts);
     return cts.size();
 }
@@ -382,7 +368,7 @@ int Cluster::kmer_clust(vector<Seq>& seqs, vector<Centroid>& cts) {
 /**
  * Merge two vectors of centroids and store the result in the first vector.
  */
-void Cluster::merge(vector<Centroid>& res, const vector<Centroid>& c1) {
+void Cluster::merge(list<Centroid>& res, const list<Centroid>& c1) {
     int rejects = 0;
     const auto res_end = res.end();
 
