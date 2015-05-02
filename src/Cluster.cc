@@ -253,10 +253,10 @@ inline void get_kmer_bitset(const Seq& s, bitset<KMER_BITSET>& b) {
 void Cluster::kmer_select_clust(vector<Seq>::iterator begin, vector<Seq>::iterator end,
         vector<Centroid>& cts) {
     //const size_t seqs_size = end - begin;
-    const size_t seqs_size = distance(begin, end);
+    //const size_t seqs_size = distance(begin, end);
 
     for (auto q_it = begin; q_it != end; ++q_it) {
-        cout << "\r" << 100 * (q_it - begin) / seqs_size << "%";
+        //cout << "\r" << 100 * (q_it - begin) / seqs_size << "%";
 
         bool match = false;
         int rejects = 0;
@@ -304,15 +304,49 @@ void Cluster::kmer_select_clust(vector<Seq>::iterator begin, vector<Seq>::iterat
             //             << (*q_it).to_string() << '\n';
         }
     }
-    cout << "\r100%\n";
+    //cout << "\r100%\n";
 }
 
 
-int Cluster::clust(vector<Seq>::iterator begin, vector<Seq>::iterator end,
-        vector<Centroid>& cts, int depth) {
+int Cluster::clust(vector<Seq>& seqs, vector<Centroid>& cts, int depth) {
+    int seqs_size = seqs.size();
 
-    if (depth == 0) {
+    int sub_count = pow(2, depth);
+    int sub_size = seqs_size / sub_count;
+
+    vector<vector<Centroid>> cts_vecs;
+    cts_vecs.resize(sub_count);
+
+    vector<thread> threads;
+
+    /*threads.emplace_back(&Cluster::kmer_select_clust, this,
+            seqs.begin(), seqs.begin() + sub_size, ref(cts_vecs[0]));*/
+
+    cout << "seqs.size: " << seqs.size() << endl;
+    for (int i = 0; i < sub_count-1; ++i) {
+        threads.emplace_back(&Cluster::kmer_select_clust, this,
+                seqs.begin() + i*sub_size, seqs.begin() + (i+1)*sub_size - 1,
+                ref(cts_vecs[i]));
+
+        cout << (seqs.begin() + i*sub_size) - seqs.begin() << " "
+             << (seqs.begin() + (i+1)*sub_size - 1) - seqs.begin() << endl;
+    }
+    threads.emplace_back(&Cluster::kmer_select_clust, this,
+            seqs.begin() + sub_size*(sub_count-1), seqs.end(), ref(cts_vecs[sub_count-1]));
+
+    cout << (seqs.begin() + sub_size*(sub_count-1)) - seqs.begin() << " "
+         << seqs.end() - seqs.begin() << endl;
+
+    for (auto& t : threads)
+        t.join();
+
+    cout << "Finished divide. Number of clusters: "
+         << c0.size() << ", " << c1.size() << "\n"
+         << "Combining clusters...\n";
+
+    /*if (depth == 0) {
         kmer_select_clust(begin, end, cts);
+        return cts.size();
     }
 
     unsigned int mid = (end - begin) / 2;
@@ -327,16 +361,8 @@ int Cluster::clust(vector<Seq>::iterator begin, vector<Seq>::iterator end,
     thread t0(&Cluster::clust, this, fst_beg, fst_end, ref(c0), depth-1);
     thread t1(&Cluster::clust, this, snd_beg, snd_end, ref(c1), depth-1);
 
-    t0.join();
-    cout << "t0 joined" << endl;
-    t1.join();
-    cout << "t1 joined" << endl;
 
-    cout << "Finished divide. Number of clusters: "
-         << c0.size() << ", " << c1.size() << "\n"
-         << "Combining clusters...\n";
-
-    merge(c0, c1);
+    merge(c0, c1);*/
 
     /*thread t0(&Cluster::kmer_select_clust, this, fst_beg, fst_end, ref(c0));
     thread t1(&Cluster::kmer_select_clust, this, snd_beg, snd_end, ref(c1));*/
@@ -345,7 +371,7 @@ int Cluster::clust(vector<Seq>::iterator begin, vector<Seq>::iterator end,
          << " concurrent threads are supported.\n"; // only a hint */
 
 
-    return c0.size();
+    return 0; //cts_vecs[0].size();
 }
 
 int Cluster::kmer_clust(vector<Seq>& seqs, vector<Centroid>& cts) {
