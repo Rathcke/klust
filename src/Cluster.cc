@@ -203,33 +203,6 @@ inline void get_kmer_bitset(const Seq& s, bitset<KMER_BITSET>& b) {
     }
 }
 
-
-/*          Centroid c(*q_it, q_bitset);
-            if (abundant_centroids.empty())
-                abundant_centroids.push_back({0, 0});
-
-            for (auto it = abundant_centroids.rbegin();
-                    it != abundant_centroids.rend(); ++it) {
-
-                if (c.count < abundant_centroids.back().first)
-                    break;
-                if (c.count > it->first) {
-                    abundant_centroids.insert(it, {c.count, centroids.size()-1});
-                    abundant_centroids.resize(min(18000, (int) abundant_centroids.size()));
-                    break;
-                }
-
-                if (++it == (abundant_centroids.rend()) {
-
-                    abundant_centroids.push_front(c);
-                    abundant_centroids.erase(abundant_centroids.end());
-
-            }*/
-
-
-    //cout << endl << "False negatives: " << neg_count << endl;
-
-
 /**
  * For every sequence in the given collection, search through the centroids for
  * one where the number of distinct kmers in both the query sequence and
