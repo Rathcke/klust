@@ -1,7 +1,6 @@
 CC=g++
-CFLAGS=-g -c -Wall -std=c++11 -O3 -march=native -pthread #-pg
-#LDFLAGS=-pthread #-pg
-LDFLAGS=-pthread -static # -static-libgcc -static-libstdc++ -static-glibc
+CFLAGS=-g -c -Wall -std=c++11 -O3 -march=native -pthread
+LDFLAGS=-pthread
 
 all: klust
 
