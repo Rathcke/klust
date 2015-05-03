@@ -2,13 +2,13 @@ CC=g++
 CFLAGS=-g -c -Wall -std=c++11 -O3 -march=native -pthread #-pg
 LDFLAGS=-pthread #-pg
 
-all: main
+all: klust
 
-main: Distance.o main.o Cluster.o IO.o Seq.o
-	$(CC) $(LDFLAGS) Cluster.o Distance.o IO.o Seq.o main.o -o main
+klust: Distance.o klust.o Cluster.o IO.o Seq.o
+	$(CC) $(LDFLAGS) Cluster.o Distance.o IO.o Seq.o klust.o -o klust
 
-main.o: Distance.o main.cc
-	$(CC) $(CFLAGS) main.cc
+klust.o: Distance.o klust.cc
+	$(CC) $(CFLAGS) klust.cc
 
 Distance.o: Distance.h Distance.cc
 	$(CC) $(CFLAGS) Distance.cc
@@ -23,9 +23,9 @@ Seq.o: Seq.h Seq.cc
 	$(CC) $(CFLAGS) Seq.cc
 
 run:
-	./main
+	./klust
 
 clean:
-	rm main ./*.o
+	rm klust ./*.o
 
 .PHONY: all run clean
