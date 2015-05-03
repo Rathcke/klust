@@ -360,11 +360,6 @@ int Cluster::clust(vector<Seq>& seqs, list<Centroid>& cts, int depth) {
     return cts_ls[0].size();
 }
 
-int Cluster::kmer_clust(vector<Seq>& seqs, list<Centroid>& cts) {
-    kmer_select_clust(seqs.begin(), seqs.end(), cts);
-    return cts.size();
-}
-
 /**
  * Merge two vectors of centroids and store the result in the first vector.
  */

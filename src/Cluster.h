@@ -46,11 +46,7 @@ class Cluster
         void kmer_select_clust(std::vector<Seq>::iterator begin,
                 std::vector<Seq>::iterator end, std::list<Centroid>& cts);
 
-        //int clust(std::vector<Seq>& seqs, int subclusterings);
-
-        int clust(std::vector<Seq>& seqs, std::list<Centroid>& cts, int depth);
-
-        int kmer_clust(std::vector<Seq>& seqs, std::list<Centroid>& cts);
+        int clust(std::vector<Seq>& seqs, std::list<Centroid>& cts, int depth = 0);
 
     private:
         Distance& dist;
