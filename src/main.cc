@@ -168,8 +168,10 @@ int main(int argc, char *argv[])
 
     cout << "Kmers Select Clustering " << count << " sequences..." << endl;
     clock_t comp_clock = clock();
+    clust.kmer_select_clust(seqs.begin(), seqs.end(), cts);
     cout << "# of clusters: "
-         << clust.clust(seqs, cts, depth)
+         << cts.size()
+         //<< clust.clust(seqs, cts, depth)
          << endl;
     double comp_secs = (clock() - comp_clock) / (double) CLOCKS_PER_SEC;
 
