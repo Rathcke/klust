@@ -11,18 +11,18 @@ class Seq {
 
         inline uint8_t* data() const { return seq_data; }
         inline size_t length() const { return seq_len; }
-        //std::string& desc() { return description; }
+        const std::string& desc() const { return description; }
 
         std::string to_string() const;
 
-        std::string desc;
+        //std::string desc;
 
         uint32_t substr(size_t pos, size_t len) const;
 
     private:
         uint8_t *seq_data;
         size_t seq_len;
-        //std::string description;
+        std::string description;
         unsigned int bytes;
 };
 

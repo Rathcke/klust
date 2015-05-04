@@ -1,8 +1,12 @@
+#include <climits>
 #include <cstring>
 #include <fstream>
+#include <iomanip>
+#include <list>
 #include <string>
 #include <vector>
 
+#include "Cluster.h"
 #include "IO.h"
 #include "Seq.h"
 
@@ -23,7 +27,8 @@ int read_seqs(ifstream &fs, vector<Seq>& seqs, int count) {
     // (...)
     //delete[] in_buf;
 
-    //seqs.reserve(count); TODO: maybe reserve if we know count
+    if (count != INT_MAX)
+        seqs.reserve(count); // reserve space if sequence count is specified
 
     string desc;
 
@@ -84,6 +89,31 @@ bool read_sequence(ifstream& fs, string& s) {
         getline(fs, tmp);
     }
     return true;
+}
+
+/**
+ * Given a list of Centroid structs and two file streams, centroids and
+ * clusters, write centroids in FASTA format to the former and clustering
+ * results to the latter (in a format inpired by UCLUST's .uc format).
+ */
+void write_results(const list<Centroid>& cts, ofstream& fs_centroids,
+        ofstream& fs_clusters) {
+
+    for (auto& c : cts) {
+        // write FASTA format to centroids file
+        fs_centroids << '>' << c.seq.desc() << '\n'
+                     << c.seq.to_string() << '\n';
+
+        // write centroid entry to clusters file
+        fs_clusters << 'C' << setw(6) << c.num << ' ' << c.seq.desc() << '\n';
+
+        // write hit entries to clusters file
+        for (auto& q : c.cls_seqs) {
+            fs_clusters << 'H' << setw(6) << c.num
+                        << ' ' << q.get().desc()
+                        << ' ' << c.seq.desc() << '\n';
+        }
+    }
 }
 
 } // namespace IO
