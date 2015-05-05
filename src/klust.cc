@@ -2,15 +2,13 @@
 #include <climits>
 #include <cstdlib>
 #include <cstring>
-#include <cstring>
 #include <fstream>
 #include <getopt.h>
 #include <iomanip>
 #include <iostream>
+#include <list>
 #include <string>
 #include <unistd.h>
-#include <unordered_map>
-#include <list>
 
 #include "Cluster.h"
 #include "Distance.h"
@@ -25,7 +23,7 @@ int main(int argc, char *argv[])
     // default similarity and clustering parameters
     int k = 6;
     double thrs = 0.85;
-    int count = INT_MAX; // SILVA: 1583830, TODO: INT_MAX maybe not so pretty.
+    int count = INT_MAX;
     int max_rejects = 8;
     int step = 1;
     bool sort_incr = false;
@@ -77,7 +75,7 @@ int main(int argc, char *argv[])
         }
     }
 
-    if ((optind + 3) > argc) {
+    if (argc < (optind + 3)) {
         cerr << "Usage: " << argv[0] << " <FASTA input file> "
                                         " <FASTA output file for centroid> "
                                         " <output file for clustering results> "
@@ -86,8 +84,8 @@ int main(int argc, char *argv[])
     }
 
     if (sort_incr && sort_decr) {
-        cerr << "Error: can't sort both by both decreasing and increasing length."
-             << endl;
+        cerr << "Error: can't sort both by both "
+                "decreasing and increasing length." << endl;
         return 1;
     }
 
@@ -109,8 +107,6 @@ int main(int argc, char *argv[])
          << "\n  max_rejects = " << max_rejects
          << "\n  depth = " << depth
          << "\n" << endl;
-
-    Distance d2(k, thrs, step);
 
     /*
      * Reading sequences
@@ -161,7 +157,7 @@ int main(int argc, char *argv[])
     /*
      * Clustering
      */
-    Cluster clust(d2, max_rejects);
+    Cluster clust(Distance(k, thrs, step), max_rejects);
     list<Centroid> cts;
 
     cout << "Kmers Select Clustering " << count << " sequences..." << endl;
@@ -175,27 +171,11 @@ int main(int argc, char *argv[])
          << "Time: "            << comp_secs << " sec.\n"
          << "Throughput: "      << count / comp_secs << " seqs/sec.\n";
 
-/*    cout << endl << "Thorough Clustering " << count << " sequences..." << endl;
-    comp_clock = clock();
-    cout << "# of clusters: "
-         << Cluster::thorough_clust(seqs, fs_cts, fs_cls, d2, count)
-         << endl;
-    comp_secs = (clock() - comp_clock) / (double) CLOCKS_PER_SEC;
+    /*
+     * Outputting results
+     */
+    IO::write_results(cts, fs_cts, fs_cls);
 
-    cout << "Finished clustering:\n"
-         << "Time: "            << comp_secs << " sec.\n"
-         << "Throughput: "      << count / comp_secs << " seqs/sec.\n";
-
-    cout << endl << "Simple Clustering " << count << " sequences..." << endl;
-    comp_clock = clock();
-    cout << "# of clusters: "
-         << Cluster::simple_clust(seqs, fs_cts, fs_cls, d2, count, max_rejects)
-         << endl;
-    comp_secs = (clock() - comp_clock) / (double) CLOCKS_PER_SEC;
-
-    cout << "Finished clustering:\n"
-         << "Time: "            << comp_secs << " sec.\n"
-         << "Throughput: "      << count / comp_secs << " seqs/sec.\n";*/
 
     fs_in.close();
     fs_cts.close();

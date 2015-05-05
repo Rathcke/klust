@@ -14,13 +14,17 @@
 #define KMER_LEN 6
 
 struct Centroid {
-    Seq& seq;
-    std::bitset<KMER_BITSET> bits;
-    size_t count;
-    std::vector<std::reference_wrapper<Seq>> cls_seqs;
-    //std::vector<Seq> cls_seqs; TODO: maybe move?
+    Seq& seq;                       // centroid sequence
+    std::bitset<KMER_BITSET> bits;  // bitset of the k-mers occurring in seq
+    size_t count;                   // # of distinct k-mers in seq
 
-    Centroid(Seq& s, std::bitset<KMER_BITSET> bits) : seq(s), bits(bits) {
+    // sequences in the cluster represented by the centroid
+    std::vector<std::reference_wrapper<Seq>> cls_seqs;
+
+    const unsigned num; // numbering of centroid in the order of discovery
+
+    Centroid(Seq& s, std::bitset<KMER_BITSET> bits, unsigned int num)
+            : seq {s}, bits {bits}, num {num} {
         count = bits.count(); // # of distinct kmers in seq
     }
 };
@@ -28,18 +32,14 @@ struct Centroid {
 class Cluster
 {
     public:
-        Cluster(Distance& d, int max_rejects)
+        Cluster(Distance&& d, int max_rejects)
             : dist {d}, max_rejects {max_rejects} {}
 
-        /*static int intersect_clust(std::fstream& fs_in, std::fstream& fs_centroids,
-                std::fstream& fs_clusters, Distance& dist, int count,
-                int max_rejects);*/
-
-        static int simple_clust(const std::vector<Seq>& seqs, std::ofstream& fs_centroids,
+        int simple_clust(const std::vector<Seq>& seqs, std::ofstream& fs_centroids,
                 std::ofstream& fs_clusters, Distance& dist, int count,
                 int max_rejects);
 
-        static int thorough_clust(const std::vector<Seq>& seqs,
+        int thorough_clust(const std::vector<Seq>& seqs,
                 std::ofstream& fs_centroids, std::ofstream& fs_clusters,
                 Distance& dist, int count);
 

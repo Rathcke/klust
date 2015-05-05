@@ -3,15 +3,14 @@
 #include <fstream>
 #include <iomanip>
 #include <iostream>
+#include <list>
 #include <queue>
 #include <set>
 #include <stdexcept>
 #include <string>
+#include <thread>
 #include <unordered_map>
 #include <vector>
-#include <list>
-
-#include <thread>
 
 #include "Cluster.h"
 #include "Distance.h"
@@ -141,9 +140,9 @@ int Cluster::simple_clust(const vector<Seq>& seqs, ofstream& fs_centroids,
 
             // write centroid entry to to clusters file
             fs_clusters << "C " << setw(6) << centroid_count++ << " "
-                        << (*q_it).desc << "\n";
+                        << (*q_it).desc() << "\n";
             // write FASTA format to centroids file
-            fs_centroids << ">" << (*q_it).desc << '\n'
+            fs_centroids << ">" << (*q_it).desc() << '\n'
                          << (*q_it).to_string()   << '\n';
 
             write_secs += (clock() - read_clock) / (double) CLOCKS_PER_SEC;
@@ -168,7 +167,7 @@ int Cluster::thorough_clust(const vector<Seq>& seqs, ofstream& fs_centroids,
             if (d >= dist.threshold()) {
                 fs_clusters << "H " << setw(6) << t_it - cts_index.cbegin() << " "
                             << setw(10) << setprecision(5) << fixed << d << " "
-                            << (*q_it).desc << " " << seqs[*t_it].desc << "\n";
+                            << (*q_it).desc() << " " << seqs[*t_it].desc() << "\n";
                 match = true; // found cluster
                 break;
             }
@@ -178,7 +177,7 @@ int Cluster::thorough_clust(const vector<Seq>& seqs, ofstream& fs_centroids,
             // add new centroid and write to stream in FASTA format
             cts_index.push_back(q_it - seqs.cbegin());
             fs_clusters << "C " << setw(6) << centroid_count++ << " "
-                        << (*q_it).desc << "\n";
+                        << (*q_it).desc() << "\n";
             fs_centroids << (*q_it).to_string() << '\n';
         }
     }
@@ -212,8 +211,8 @@ inline void get_kmer_bitset(const Seq& s, bitset<KMER_BITSET>& b) {
  */
 void Cluster::kmer_select_clust(vector<Seq>::iterator begin, vector<Seq>::iterator end,
         list<Centroid>& cts) {
-    //const size_t seqs_size = end - begin;
     const size_t seqs_size = distance(begin, end);
+    unsigned int centroid_count = 0;
 
     for (auto q_it = begin; q_it != end; ++q_it) {
         cout << "\r" << 100 * (q_it - begin) / seqs_size << "%";
@@ -238,11 +237,6 @@ void Cluster::kmer_select_clust(vector<Seq>::iterator begin, vector<Seq>::iterat
                     (c_it->cls_seqs).push_back(ref(*q_it));
                     //(c_it->cls_seqs).push_back(move(*q_it)); // TODO: maybe move?
 
-                    // write hit entry to to clusters file
-                    //fs_clusters << 'H' << setw(6) << i
-                    //            << ' ' << (*q_it).desc
-                    //            << ' ' << (c_it->seq).desc;
-
                     match = true; // found cluster
                     cts.push_front(*c_it);
                     cts.erase(c_it);
@@ -254,17 +248,8 @@ void Cluster::kmer_select_clust(vector<Seq>::iterator begin, vector<Seq>::iterat
         }
 
         if (!match) {
-            // add new centroid and write to stream in FASTA format
-            // TODO: does the move work as expected?
-            cts.emplace_front(*q_it, move(q_bitset));
-
-            // write centroid entry to to clusters file
-            //fs_clusters << 'C' << setw(6) << centroid_count++ << ' '
-            //            << (*q_it).desc << '\n';
-
-            // write FASTA format to centroids file
-            //fs_centroids << '>' << (*q_it).desc << '\n'
-            //             << (*q_it).to_string() << '\n';
+            // add new centroid to list
+            cts.emplace_front(*q_it, q_bitset, centroid_count++);
         }
     }
     cout << "\r100%";
@@ -284,7 +269,6 @@ int Cluster::clust(vector<Seq>& seqs, list<Centroid>& cts, int depth) {
 
     vector<thread> threads;
 
-    //cout << "seqs.size: " << seqs.size() << endl;
     cout << "Diving " << depth << " times ("
          << sub_count << " sub-clustering(s) and "
          << sub_count << " concurrent thread(s))..." << endl;
@@ -292,16 +276,10 @@ int Cluster::clust(vector<Seq>& seqs, list<Centroid>& cts, int depth) {
         threads.emplace_back(&Cluster::kmer_select_clust, this,
                 seqs.begin() + i*sub_size, seqs.begin() + (i+1)*sub_size - 1,
                 ref(cts_ls[i]));
-
-        /*cout << (seqs.begin() + i*sub_size) - seqs.begin() << " "
-             << (seqs.begin() + (i+1)*sub_size - 1) - seqs.begin() << endl;*/
     }
     threads.emplace_back(&Cluster::kmer_select_clust, this,
             seqs.begin() + sub_size*(sub_count-1), seqs.end(),
             ref(cts_ls[sub_count-1]));
-
-    /*cout << (seqs.begin() + sub_size*(sub_count-1)) - seqs.begin() << " "
-         << seqs.end() - seqs.begin() << endl;*/
 
     for (auto& t : threads)
         t.join();
@@ -331,7 +309,8 @@ int Cluster::clust(vector<Seq>& seqs, list<Centroid>& cts, int depth) {
 
     cout << "Merged " << clusters_sum - cts_ls[0].size() << " clusters." << endl;
 
-    return cts_ls[0].size();
+    cts = move(cts_ls[0]); // move resulting centroid list into argument
+    return cts.size();
 }
 
 /**

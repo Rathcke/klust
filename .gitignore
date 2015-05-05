@@ -150,6 +150,7 @@ sympy-plots-for-*.tex/
 # Bio stuff
 *.fna
 *.fasta
+*.fa
 *.uc
 
 # Debugging and profiling
