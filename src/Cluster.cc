@@ -224,7 +224,7 @@ void Cluster::kmer_select_clust(vector<Seq>::iterator begin, vector<Seq>::iterat
         bitset<KMER_BITSET> q_bitset(0);
         get_kmer_bitset(*q_it, q_bitset);
 
-        Centroid *close_match = nullptr;
+        Seq *close_match = nullptr;
 
         int i = 0;
         for (auto c_it = cts.begin();
@@ -240,14 +240,17 @@ void Cluster::kmer_select_clust(vector<Seq>::iterator begin, vector<Seq>::iterat
                     //(c_it->cls_seqs).push_back(move(*q_it)); // TODO: maybe move?
 
                     match = true; // found cluster
-                    cts.push_front(*c_it);
+                    cts.push_front(move(*c_it));
+                    //cts.push_front(*c_it);
                     cts.erase(c_it);
                     break;
                 }
-                if (c_it->link != nullptr) {
-                    cout << c_it->link << endl;
-                    /*if (dist.compare(*q_it, c_it->link->seq)) {
-                        cout << "abc" << endl;
+                if (c_it->link) {
+                  //  cout << c_it->link << endl;
+                    if (dist.compare(*q_it, *(c_it->link))) {
+                        break;
+                    }
+                        /*cout << "abc" << endl;
                         (c_it->link->cls_seqs).push_back(ref(*q_it));
 
                         cout << "def" << endl;
@@ -258,7 +261,7 @@ void Cluster::kmer_select_clust(vector<Seq>::iterator begin, vector<Seq>::iterat
                         break;
                     }*/
                 }
-                close_match = &(*c_it);
+                close_match = &(c_it->seq);
                 ++rejects;
             }
         }
@@ -266,7 +269,7 @@ void Cluster::kmer_select_clust(vector<Seq>::iterator begin, vector<Seq>::iterat
         if (!match) {
             // add new centroid to list
             cts.emplace_front(*q_it, q_bitset, centroid_count++);
-            if (close_match != nullptr)
+            if (close_match)
                 cts.front().link = close_match;
         }
     }
