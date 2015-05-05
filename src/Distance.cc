@@ -122,7 +122,6 @@ double Distance::distance(const Seq& s, const Seq& t) {
             return jaccard_dist;
         }
     }
-
     delete[] kmers;
     return jaccard_dist;
 }
