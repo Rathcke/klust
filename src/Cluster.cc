@@ -250,6 +250,7 @@ void Cluster::kmer_select_clust(vector<Seq>::iterator begin, vector<Seq>::iterat
                 }
                 ++rejects;
             }
+            
         }
 
         if (!match) {
