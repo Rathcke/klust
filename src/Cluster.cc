@@ -227,16 +227,16 @@ void Cluster::kmer_select_clust(vector<Seq>::iterator begin, vector<Seq>::iterat
         int i = 0;
         for (auto c_it = cts.begin();
                 (c_it != cts.end()) && (rejects < max_rejects); ++c_it, ++i) {
+
             // count number of kmers occurring in both query and target sequence
             size_t set_bits = (q_bitset & c_it->bits).count();
 
             // if the # of distinct kmers in both query and target is >= to
             // id-0.5 times the # of distinct kmers in the target, then compare
-            if (set_bits >= c_it->count * (dist.threshold() - 0.05)) {
+            if (set_bits >= c_it->count * (dist.threshold()-0.05)) {
                 if (dist.compare(*q_it, c_it->seq)) {
                     (c_it->cls_seqs).push_back(ref(*q_it));
                     //(c_it->cls_seqs).push_back(move(*q_it)); // TODO: maybe move?
-
                     match = true; // found cluster
                     cts.push_front(*c_it);
                     cts.erase(c_it);
@@ -244,7 +244,6 @@ void Cluster::kmer_select_clust(vector<Seq>::iterator begin, vector<Seq>::iterat
                 }
                 ++rejects;
             }
-            
         }
 
         if (!match) {
