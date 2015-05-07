@@ -25,9 +25,9 @@ void set_kmer_bitset(vector<Seq>::iterator b, vector<Seq>::iterator e) {
     static const uint32_t k2 = 2 * KMER_LEN;
     static const uint32_t mask = pow(2, k2) - 1;    // 0b00111..11 (2*k 1's)
 
-    bitset<KMER_BITSET> bits;
-
     for (auto it = b; it != e; ++it) {
+        bitset<KMER_BITSET> bits;
+
         for (size_t i = 0; i <= (*it).length() - KMER_LEN; ++i) {
             uint32_t kmer = 0;
 
@@ -162,25 +162,33 @@ int main(int argc, char *argv[])
 
     vector<thread> threads;
 
-    int sub_count = 1; // thread::hardware_concurrency();
+    int sub_count = thread::hardware_concurrency();
     int seqs_size = seqs.size();
     int sub_size = seqs_size / sub_count;
 
     cout << "Calculating bitsets using " << sub_count << " threads..." << endl;
-    for (int i = 0; i < sub_count; ++i) {
+    for (int i = 0; i < sub_count - 1; ++i) {
         threads.emplace_back(set_kmer_bitset, seqs.begin() + i*sub_size,
-                seqs.begin() + (i+1)*sub_size);
+                seqs.begin() + (i+1)*sub_size - 1);
+
         cout << (seqs.begin() + i*sub_size) - seqs.begin() << " : ";
         cout << (seqs.begin() + (i+1)*sub_size) - seqs.begin() << endl;
     }
+
+    threads.emplace_back(set_kmer_bitset,
+            seqs.begin() + sub_size*(sub_count-1), seqs.end());
+
+    cout << (seqs.begin() + sub_size*(sub_count-1)) - seqs.begin() << " : ";
+    cout << (seqs.end() - seqs.begin()) << endl;
+
     for (auto& t : threads)
         t.join();
     cout << "Finished!" << endl;
 
     //cout << seqs[0].get_bits() << endl;
-    for (auto& s : seqs)
+    /*for (auto& s : seqs)
         cout << s.get_count() << " ";
-    cout << endl;
+    cout << endl;*/
     //cout << seqs[0].get_count() << endl;
 
 
