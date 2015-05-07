@@ -209,8 +209,8 @@ inline void get_kmer_bitset(const Seq& s, bitset<KMER_BITSET>& b) {
  * kmers in the centroid sequence. If no match is found after max_rejects
  * tries, the sequence becomes a new centroid.
  */
-void Cluster::kmer_select_clust(vector<Seq>::iterator begin, vector<Seq>::iterator end,
-        list<Centroid>& cts) {
+void Cluster::kmer_select_clust(vector<Seq>::const_iterator begin,
+        vector<Seq>::const_iterator end, list<Centroid>& cts) {
     const size_t seqs_size = distance(begin, end);
     unsigned int centroid_count = 0;
 
@@ -224,7 +224,7 @@ void Cluster::kmer_select_clust(vector<Seq>::iterator begin, vector<Seq>::iterat
         bitset<KMER_BITSET> q_bitset(0);
         get_kmer_bitset(*q_it, q_bitset);
 
-        Seq *close_match = nullptr;
+        const Seq *close_match = nullptr;
 
         int i = 0;
         for (auto c_it = cts.begin();
@@ -270,7 +270,7 @@ void Cluster::kmer_select_clust(vector<Seq>::iterator begin, vector<Seq>::iterat
 }
 
 
-int Cluster::clust(vector<Seq>& seqs, list<Centroid>& cts, int depth) {
+int Cluster::clust(const vector<Seq>& seqs, list<Centroid>& cts, int depth) {
     cout << thread::hardware_concurrency()
          << " concurrent threads are supported.\n"; // only a hint
 

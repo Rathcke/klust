@@ -14,18 +14,18 @@
 #define KMER_LEN 6
 
 struct Centroid {
-    Seq& seq;                       // centroid sequence
+    const Seq& seq;                 // centroid sequence
     std::bitset<KMER_BITSET> bits;  // bitset of the k-mers occurring in seq
     size_t count;                   // # of distinct k-mers in seq
 
     // sequences in the cluster represented by the centroid
-    std::vector<std::reference_wrapper<Seq>> cls_seqs;
+    std::vector<std::reference_wrapper<const Seq>> cls_seqs;
 
     const unsigned num; // numbering of centroid in the order of discovery
 
-    Seq *link;
+    const Seq *link;
 
-    Centroid(Seq& s, std::bitset<KMER_BITSET> bits, unsigned int num)
+    Centroid(const Seq& s, std::bitset<KMER_BITSET> bits, unsigned int num)
             : seq {s}, bits {bits}, num {num} {
         count = bits.count(); // # of distinct kmers in seq
         link = nullptr;
@@ -46,10 +46,10 @@ class Cluster
                 std::ofstream& fs_centroids, std::ofstream& fs_clusters,
                 Distance& dist, int count);
 
-        void kmer_select_clust(std::vector<Seq>::iterator begin,
-                std::vector<Seq>::iterator end, std::list<Centroid>& cts);
+        void kmer_select_clust(std::vector<Seq>::const_iterator begin,
+                std::vector<Seq>::const_iterator end, std::list<Centroid>& cts);
 
-        int clust(std::vector<Seq>& seqs, std::list<Centroid>& cts, int depth = 0);
+        int clust(const std::vector<Seq>& seqs, std::list<Centroid>& cts, int depth = 0);
 
     private:
         Distance& dist;
