@@ -234,32 +234,25 @@ void Cluster::kmer_select_clust(vector<Seq>::iterator begin, vector<Seq>::iterat
 
             // if the # of distinct kmers in both query and target is >= to
             // id-0.5 times the # of distinct kmers in the target, then compare
-            if (set_bits >= c_it->count * (dist.threshold() - 0.05)) {
+            if (set_bits >= c_it->count * dist.threshold()) {
                 if (dist.compare(*q_it, c_it->seq)) {
                     (c_it->cls_seqs).push_back(ref(*q_it));
                     //(c_it->cls_seqs).push_back(move(*q_it)); // TODO: maybe move?
 
                     match = true; // found cluster
                     cts.push_front(move(*c_it));
-                    //cts.push_front(*c_it);
                     cts.erase(c_it);
                     break;
                 }
                 if (c_it->link) {
                   //  cout << c_it->link << endl;
                     if (dist.compare(*q_it, *(c_it->link))) {
+                        (c_it->cls_seqs).push_back(ref(*q_it));
+                        match = true; // found cluster
                         break;
                     }
-                        /*cout << "abc" << endl;
-                        (c_it->link->cls_seqs).push_back(ref(*q_it));
-
-                        cout << "def" << endl;
-
-                        match = true; // found cluster
                         //cts.push_front(*(c_it->link));
                         //cts.erase(c_it->link);
-                        break;
-                    }*/
                 }
                 close_match = &(c_it->seq);
                 ++rejects;

@@ -13,6 +13,10 @@
 
 using namespace std;
 
+template <typename T> int sgn(T val) {
+    return (T(0) < val) - (val < T(0));
+}
+
 Distance::Distance(int kmer, double threshold, int step_size) {
     this->k = kmer;
     this->thrs = threshold;
@@ -46,6 +50,8 @@ double Distance::distance(const Seq& s, const Seq& t) {
     static const uint32_t k2 = 2 * k;
     static const uint32_t mask = kmer_count - 1;    // 0b001111 (2*k 1's)
 
+    int cur_dist = 0;
+
     // count kmers in the shorter and the longer string, respectively
     for (size_t i = 0; i <= short_len - k; ++i) {
         uint32_t kmer_l = 0; // binary repr. of kmer in longer sequence
@@ -60,14 +66,14 @@ double Distance::distance(const Seq& s, const Seq& t) {
         kmer_s >>= (32 - 2*(i % 4) - k2);
         kmer_s &= mask;
 
-        ++kmers[kmer_l];
-        --kmers[kmer_s];
+        kmers[kmer_l]++ >= 0 ? ++cur_dist : --cur_dist;
+        kmers[kmer_s]-- <= 0 ? ++cur_dist : --cur_dist;
     }
 
     // Manhattan distance between the two strings
-    int cur_dist = 0;
+    /*int cur_dist = 0;
     for (int i = 0; i < kmer_count; ++i)
-        cur_dist += abs(kmers[i]);
+        cur_dist += abs(kmers[i]);*/
 
     int min_dist = cur_dist;    // the least distance window so far
     int win_size = short_len;
