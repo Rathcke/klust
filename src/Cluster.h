@@ -23,9 +23,13 @@ struct Centroid {
 
     const unsigned num; // numbering of centroid in the order of discovery
 
+
+    Seq *link;
+
     Centroid(Seq& s, std::bitset<KMER_BITSET> bits, unsigned int num)
             : seq {s}, bits {bits}, num {num} {
         count = bits.count(); // # of distinct kmers in seq
+        link = nullptr;
     }
 };
 

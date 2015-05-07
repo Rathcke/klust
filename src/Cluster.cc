@@ -224,6 +224,9 @@ void Cluster::kmer_select_clust(vector<Seq>::iterator begin, vector<Seq>::iterat
         bitset<KMER_BITSET> q_bitset(0);
         get_kmer_bitset(*q_it, q_bitset);
 
+
+        Seq *close_match = nullptr;
+
         int i = 0;
         for (auto c_it = cts.begin();
                 (c_it != cts.end()) && (rejects < max_rejects); ++c_it, ++i) {
@@ -232,23 +235,37 @@ void Cluster::kmer_select_clust(vector<Seq>::iterator begin, vector<Seq>::iterat
             size_t set_bits = (q_bitset & c_it->bits).count();
 
             // if the # of distinct kmers in both query and target is >= to
-            // id-0.5 times the # of distinct kmers in the target, then compare
-            if (set_bits >= c_it->count * (dist.threshold()-0.05)) {
+            // id times the # of distinct kmers in the target, then compare
+            if (set_bits >= c_it->count * dist.threshold()) {
                 if (dist.compare(*q_it, c_it->seq)) {
                     (c_it->cls_seqs).push_back(ref(*q_it));
                     //(c_it->cls_seqs).push_back(move(*q_it)); // TODO: maybe move?
                     match = true; // found cluster
                     cts.push_front(move(*c_it));
+
+                    //cts.push_front(*c_it);
                     cts.erase(c_it);
                     break;
                 }
+                if (c_it->link) {
+                  //  cout << c_it->link << endl;
+                    if (dist.compare(*q_it, *(c_it->link))) {
+                        (c_it->cls_seqs).push_back(ref(*q_it));
+                        match = true;
+                        break;
+                    }                        
+                }
                 ++rejects;
+                close_match = &(c_it->seq);
             }
         }
 
         if (!match) {
             // add new centroid to list
             cts.emplace_front(*q_it, q_bitset, centroid_count++);
+            if (close_match)
+                cts.front().link = close_match;
+        }
     }
     cout << "\r100%";
 }
@@ -325,7 +342,7 @@ void Cluster::merge(list<Centroid>& res, const list<Centroid>& c1) {
                 it0 != res_end && rejects < max_rejects; ++it0) {
 
             size_t set_bits = (it0->bits & it1->bits).count();
-            if (set_bits >= it0->count * (dist.threshold() - 0.05)) {
+            if (set_bits >= it0->count * dist.threshold()) {
                 if (dist.compare(it0->seq, it1->seq)) {
                     // merge clusters, i.e. combine vectors of sequences
                     (it0->cls_seqs).insert((it0->cls_seqs).end(),
