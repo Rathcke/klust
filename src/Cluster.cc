@@ -208,11 +208,11 @@ void Cluster::kmer_select_clust(vector<Seq>::const_iterator begin,
         for (auto c_it = cts.begin();
                 (c_it != cts.end()) && (rejects < max_rejects); ++c_it, ++i) {
             // count number of kmers occurring in both query and target sequence
-            size_t set_bits = ((*q_it).get_bits() & c_it->seq.get_bits()).count();
+            size_t set_bits = ((*q_it).bits & c_it->seq.bits).count();
 
             // if the # of distinct kmers in both query and target is >= to
             // id-0.5 times the # of distinct kmers in the target, then compare
-            if (set_bits >= c_it->seq.get_count() * dist.threshold()) {
+            if (set_bits >= c_it->seq.count * dist.threshold()) {
                 if (dist.compare(*q_it, c_it->seq)) {
                     (c_it->cls_seqs).push_back(ref(*q_it));
                     //(c_it->cls_seqs).push_back(move(*q_it)); // TODO: maybe move?
@@ -318,8 +318,8 @@ void Cluster::merge(list<Centroid>& res, const list<Centroid>& c1) {
         for (auto it0 = res.begin();
                 it0 != res_end && rejects < max_rejects; ++it0) {
 
-            size_t set_bits = (it0->seq.get_bits() & it1->seq.get_bits()).count();
-            if (set_bits >= it0->seq.get_count() * (dist.threshold() - 0.05)) {
+            size_t set_bits = (it0->seq.bits & it1->seq.bits).count();
+            if (set_bits >= it0->seq.count * (dist.threshold() - 0.05)) {
                 if (dist.compare(it0->seq, it1->seq)) {
                     // merge clusters, i.e. combine vectors of sequences
                     (it0->cls_seqs).insert((it0->cls_seqs).end(),

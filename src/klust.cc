@@ -169,7 +169,7 @@ int main(int argc, char *argv[])
     cout << "Calculating bitsets using " << sub_count << " threads..." << endl;
     for (int i = 0; i < sub_count - 1; ++i) {
         threads.emplace_back(set_kmer_bitset, seqs.begin() + i*sub_size,
-                seqs.begin() + (i+1)*sub_size - 1);
+                seqs.begin() + (i+1)*sub_size);
 
         cout << (seqs.begin() + i*sub_size) - seqs.begin() << " : ";
         cout << (seqs.begin() + (i+1)*sub_size) - seqs.begin() << endl;
