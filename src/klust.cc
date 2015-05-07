@@ -135,6 +135,39 @@ int main(int argc, char *argv[])
             });
     }
 
+
+    /*for (auto it = seqs.begin(); it != seqs.end(); ++it) {
+        string d = (*it).desc();
+        string s = (*it).to_string();
+
+        fs_cts << ">" << d << "\n"
+               << s << "\n";
+
+        for (int i = 0; i < 9; ++i) {
+
+            string s2 = s;
+
+            for (size_t j = 0; j < s.length(); ++j) {
+                if ((rand() % 101) > 97) {
+                    switch (s[j]) {
+                        case 'A': s2[j] = 'C';
+                                  break;
+                        case 'C': s2[j] = 'G';
+                                  break;
+                        case 'G': s2[j] = 'T';
+                                  break;
+                        case 'T': s2[j] = 'A';
+                                  break;
+                    }
+                }
+            }
+            fs_cts << ">" << d << "\n"
+                   << s2 << "\n";
+        }
+    }
+
+    return 0;*/
+
     /*
      * Comparing sequences
      */

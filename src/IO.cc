@@ -64,6 +64,12 @@ int read_seqs(ifstream &fs, vector<Seq>& seqs, int count) {
         p += bytes_read;
         seq_len += bytes_read;
     }
+    if (p != data) {
+        seqs.emplace_back(data, seq_len, desc);
+        p = data;
+        seq_len = 0;
+        i++;
+    }
 
     delete[] data;
     delete[] buf;

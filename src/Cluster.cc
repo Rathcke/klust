@@ -237,22 +237,17 @@ void Cluster::kmer_select_clust(vector<Seq>::const_iterator begin,
             if (set_bits >= c_it->count * dist.threshold()) {
                 if (dist.compare(*q_it, c_it->seq)) {
                     (c_it->cls_seqs).push_back(ref(*q_it));
-                    //(c_it->cls_seqs).push_back(move(*q_it)); // TODO: maybe move?
-
                     match = true; // found cluster
                     cts.push_front(move(*c_it));
                     cts.erase(c_it);
                     break;
                 }
                 if (c_it->link) {
-                  //  cout << c_it->link << endl;
                     if (dist.compare(*q_it, *(c_it->link))) {
                         (c_it->cls_seqs).push_back(ref(*q_it));
                         match = true; // found cluster
                         break;
                     }
-                        //cts.push_front(*(c_it->link));
-                        //cts.erase(c_it->link);
                 }
                 close_match = &(c_it->seq);
                 ++rejects;
