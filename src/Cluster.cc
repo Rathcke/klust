@@ -215,7 +215,7 @@ void Cluster::kmer_select_clust(vector<Seq>::const_iterator begin,
     const size_t seqs_size = distance(begin, end);
     unsigned int centroid_count = 0;
     for (auto q_it = begin; q_it != end; ++q_it) {
-        //cout << "\r" << 100 * (q_it - begin) / seqs_size << "%";
+        cout << "\r" << 100 * (q_it - begin) / seqs_size << "%";
 
         bool match = false;
         int rejects = 0;
@@ -224,7 +224,7 @@ void Cluster::kmer_select_clust(vector<Seq>::const_iterator begin,
         bitset<KMER_BITSET> q_bitset(0);
         get_kmer_bitset(*q_it, q_bitset);
 
-        cout << q_bitset.count() << " ";
+        //cout << q_bitset.count() << " ";
 
         const Seq *close_match = nullptr;
 
