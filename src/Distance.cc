@@ -45,6 +45,7 @@ double Distance::distance(const Seq& s, const Seq& t) {
 
     static const uint32_t k2 = 2 * k;
     static const uint32_t mask = kmer_count - 1;    // 0b001111 (2*k 1's)
+    int cur_dist = 0;
 
     // count kmers in the shorter and the longer string, respectively
     for (size_t i = 0; i <= short_len - k; ++i) {
@@ -60,14 +61,21 @@ double Distance::distance(const Seq& s, const Seq& t) {
         kmer_s >>= (32 - 2*(i % 4) - k2);
         kmer_s &= mask;
 
-        ++kmers[kmer_l];
-        --kmers[kmer_s];
+        kmers[kmer_l]++ < 0 ? --cur_dist : ++cur_dist;
+        kmers[kmer_s]-- > 0 ? --cur_dist : ++cur_dist;
+
+        /*kmers[kmer_l]++;
+        kmers[kmer_s]--;*/
+
     }
 
+/*    cout << endl << cur_dist << " : ";
+    cur_dist = 0;
     // Manhattan distance between the two strings
-    int cur_dist = 0;
     for (int i = 0; i < kmer_count; ++i)
         cur_dist += abs(kmers[i]);
+
+    cout << cur_dist << endl;*/
 
     int min_dist = cur_dist;    // the least distance window so far
     int win_size = short_len;

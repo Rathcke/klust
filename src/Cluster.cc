@@ -202,6 +202,7 @@ inline void get_kmer_bitset(const Seq& s, bitset<KMER_BITSET>& b) {
     }
 }
 
+
 /**
  * For every sequence in the given collection, search through the centroids for
  * one where the number of distinct kmers in both the query sequence and
@@ -215,7 +216,7 @@ void Cluster::kmer_select_clust(vector<Seq>::iterator begin, vector<Seq>::iterat
     unsigned int centroid_count = 0;
 
     for (auto q_it = begin; q_it != end; ++q_it) {
-        cout << "\r" << 100 * (q_it - begin) / seqs_size << "%";
+        //cout << "\r" << 100 * (q_it - begin) / seqs_size << "%";
 
         bool match = false;
         int rejects = 0;
@@ -224,13 +225,14 @@ void Cluster::kmer_select_clust(vector<Seq>::iterator begin, vector<Seq>::iterat
         bitset<KMER_BITSET> q_bitset(0);
         get_kmer_bitset(*q_it, q_bitset);
 
+        cout << q_bitset.count() << " ";
 
         Seq *close_match = nullptr;
 
         int i = 0;
         for (auto c_it = cts.begin();
                 (c_it != cts.end()) && (rejects < max_rejects); ++c_it, ++i) {
-
+ 
             // count number of kmers occurring in both query and target sequence
             size_t set_bits = (q_bitset & c_it->bits).count();
 
