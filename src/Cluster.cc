@@ -214,7 +214,6 @@ void Cluster::kmer_select_clust(vector<Seq>::const_iterator begin,
         vector<Seq>::const_iterator end, list<Centroid>& cts) {
     const size_t seqs_size = distance(begin, end);
     unsigned int centroid_count = 0;
-
     for (auto q_it = begin; q_it != end; ++q_it) {
         //cout << "\r" << 100 * (q_it - begin) / seqs_size << "%";
 

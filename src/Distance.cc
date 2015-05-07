@@ -47,8 +47,6 @@ double Distance::distance(const Seq& s, const Seq& t) {
     static const uint32_t mask = kmer_count - 1;    // 0b001111 (2*k 1's)
     int cur_dist = 0;
 
-    int cur_dist = 0;
-
     // count kmers in the shorter and the longer string, respectively
     for (size_t i = 0; i <= short_len - k; ++i) {
         uint32_t kmer_l = 0; // binary repr. of kmer in longer sequence
