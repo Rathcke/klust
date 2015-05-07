@@ -9,33 +9,33 @@
 using namespace std;
 
 Seq::Seq() {
-    seq_len = 0;
+    len = 0;
     bytes = 0;
-    seq_data = nullptr;
+    data = nullptr;
 }
 
-Seq::Seq(const char *seq_str, size_t len, const string& desc) {
-    seq_len = len;
+Seq::Seq(const char *seq_str, size_t seq_len, const string& desc) {
+    len = seq_len;
     description = desc;
 
     // calculate bytes necessary to store sequence as 2 bit characters in an
     // array of 8 bit unsigned ints, memset to 0 and allocate space on the heap
     bytes = len / 4 + (len % 4 != 0);
-    seq_data = new uint8_t[bytes];
-    memset(seq_data, 0, bytes);
+    data = new uint8_t[bytes];
+    memset(data, 0, bytes);
 
     for (size_t i = 0; i < len; ++i) {
         int shift = 6 - 2 * (i % 4);
 
         switch (seq_str[i]) {
             case 'c': case 'C':
-                seq_data[i/4] |= 1 << shift; //0b01
+                data[i/4] |= 1 << shift; //0b01
                 break;
             case 'g': case 'G':
-                seq_data[i/4] |= 2 << shift; //0b10
+                data[i/4] |= 2 << shift; //0b10
                 break;
             case 't': case 'T': case 'u': case 'U':
-                seq_data[i/4] |= 3 << shift; //0b11
+                data[i/4] |= 3 << shift; //0b11
                 break;
             default:
                 // TODO: handle more gracefully
@@ -46,26 +46,26 @@ Seq::Seq(const char *seq_str, size_t len, const string& desc) {
 
 Seq::Seq(const Seq& seq) {
     //out << "copy cons called" << endl;
-    seq_data = new uint8_t[seq.bytes];
-    memcpy(seq_data, seq.seq_data, seq.bytes);
-    seq_len = seq.seq_len;
+    data = new uint8_t[seq.bytes];
+    memcpy(data, seq.data, seq.bytes);
+    len = seq.len;
     bytes = seq.bytes;
     description = seq.description;
 }
 
 Seq::~Seq() {
-    if (seq_data != NULL)
-        delete[] seq_data;
+    if (data != NULL)
+        delete[] data;
 }
 
 Seq& Seq::operator= (const Seq& seq) {
     // TODO cout << "op= called" << endl;
     if (this != &seq) {
-        if (seq_data != NULL)
-            delete[] seq_data;
-        seq_data = new uint8_t[seq.bytes];
-        memcpy(seq_data, seq.seq_data, seq.bytes);
-        seq_len = seq.seq_len;
+        if (data != NULL)
+            delete[] data;
+        data = new uint8_t[seq.bytes];
+        memcpy(data, seq.data, seq.bytes);
+        len = seq.len;
         bytes = seq.bytes;
         description = seq.description;
     }
@@ -74,12 +74,12 @@ Seq& Seq::operator= (const Seq& seq) {
 
 string Seq::to_string() const {
     string s;
-    s.resize(seq_len);
+    s.resize(len);
 
-    for (size_t i = 0; i < seq_len; ++i) {
+    for (size_t i = 0; i < len; ++i) {
         int shift = 6 - 2 * (i % 4);
         uint8_t mask = 3 << shift;
-        uint8_t bit = (seq_data[i/4] & mask) >> shift;
+        uint8_t bit = (data[i/4] & mask) >> shift;
 
         switch (bit) {
             case 0:
@@ -117,10 +117,10 @@ uint32_t Seq::substr(size_t pos, size_t len) const {
     uint32_t kmer = 0;  // binary repr. of substring in sequence
     size_t index = pos / 4; // position in uint8_t array
 
-    kmer = (uint32_t) seq_data[index]   << 24 |
-           (uint32_t) seq_data[index+1] << 16 |
-           (uint32_t) seq_data[index+2] <<  8 |
-           (uint32_t) seq_data[index+3];
+    kmer = (uint32_t) data[index]   << 24 |
+           (uint32_t) data[index+1] << 16 |
+           (uint32_t) data[index+2] <<  8 |
+           (uint32_t) data[index+3];
 
     kmer >>= (32 - 2*(pos % 4) - k2);
     kmer &= mask;

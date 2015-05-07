@@ -24,8 +24,8 @@ bool Distance::compare(const Seq& s, const Seq& t) {
 }
 
 double Distance::distance(const Seq& s, const Seq& t) {
-    size_t slen = s.length(),
-           tlen = t.length();
+    size_t slen = s.len,
+           tlen = t.len;
 
     size_t long_len, short_len;
     if (slen >= tlen) {
@@ -36,8 +36,8 @@ double Distance::distance(const Seq& s, const Seq& t) {
         short_len = slen;
     }
 
-    uint8_t *longer  = slen >= tlen ? s.data() : t.data();
-    uint8_t *shorter = slen >= tlen ? t.data() : s.data();
+    uint8_t *longer  = slen >= tlen ? s.data : t.data;
+    uint8_t *shorter = slen >= tlen ? t.data : s.data;
 
     // allocate array of length equal to the number of different kmers
     static const int kmer_count = pow(4, k);
@@ -132,8 +132,8 @@ double Distance::distance(const Seq& s, const Seq& t) {
 /* Returns a sorted vector by decreasing order and returns the n most
    frequent kmers if they exist */
 vector<int> Distance::compute_key(const Seq& s, int n) {
-    const size_t slen = s.length();
-    uint8_t *data = s.data();
+    const size_t slen = s.len;
+    uint8_t *data = s.data;
 
     // allocate array of length equal to the number of different kmers
     const int kmer_count = pow(4, k);

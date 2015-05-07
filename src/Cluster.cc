@@ -191,11 +191,11 @@ inline void get_kmer_bitset(const Seq& s, bitset<KMER_BITSET>& b) {
     static const uint32_t k2 = 2 * KMER_LEN;
     static const uint32_t mask = pow(2, k2) - 1;    // 0b00111..11 (2*k 1's)
 
-    for (size_t i = 0; i <= s.length() - KMER_LEN; ++i) {
+    for (size_t i = 0; i <= s.len - KMER_LEN; ++i) {
         uint32_t kmer = 0;
 
         //memcpy(&kmer_l, (longer + (i/4)), 4);
-        kmer = Distance::stream2int(s.data() + (i/4));
+        kmer = Distance::stream2int(s.data + (i/4));
         kmer >>= (32 - 2*(i % 4) - k2);
         kmer &= mask;
         b.set(kmer);
@@ -212,6 +212,7 @@ inline void get_kmer_bitset(const Seq& s, bitset<KMER_BITSET>& b) {
  */
 void Cluster::kmer_select_clust(vector<Seq>::const_iterator begin,
         vector<Seq>::const_iterator end, list<Centroid>& cts) {
+
     const size_t seqs_size = distance(begin, end);
     unsigned int centroid_count = 0;
     for (auto q_it = begin; q_it != end; ++q_it) {

@@ -124,14 +124,14 @@ int main(int argc, char *argv[])
         cout << "Sorting by decreasing sequence length..." << endl;
         sort(seqs.begin(), seqs.end(),
             [](Seq& s1, Seq& s2) {
-                return s1.length() > s2.length();
+                return s1.len > s2.len;
             });
     }
     if (sort_incr) {
         cout << "Sorting by increasing sequence length..." << endl;
         sort(seqs.begin(), seqs.end(),
             [](Seq& s1, Seq& s2) {
-                return s1.length() < s2.length();
+                return s1.len < s2.len;
             });
     }
 
