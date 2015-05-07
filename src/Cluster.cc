@@ -210,8 +210,8 @@ inline void get_kmer_bitset(const Seq& s, bitset<KMER_BITSET>& b) {
  * kmers in the centroid sequence. If no match is found after max_rejects
  * tries, the sequence becomes a new centroid.
  */
-void Cluster::kmer_select_clust(vector<Seq>::iterator begin, vector<Seq>::iterator end,
-        list<Centroid>& cts) {
+void Cluster::kmer_select_clust(vector<Seq>::const_iterator begin,
+        vector<Seq>::const_iterator end, list<Centroid>& cts) {
     const size_t seqs_size = distance(begin, end);
     unsigned int centroid_count = 0;
 
@@ -227,7 +227,7 @@ void Cluster::kmer_select_clust(vector<Seq>::iterator begin, vector<Seq>::iterat
 
         cout << q_bitset.count() << " ";
 
-        Seq *close_match = nullptr;
+        const Seq *close_match = nullptr;
 
         int i = 0;
         for (auto c_it = cts.begin();
@@ -241,21 +241,17 @@ void Cluster::kmer_select_clust(vector<Seq>::iterator begin, vector<Seq>::iterat
             if (set_bits >= c_it->count * dist.threshold()) {
                 if (dist.compare(*q_it, c_it->seq)) {
                     (c_it->cls_seqs).push_back(ref(*q_it));
-                    //(c_it->cls_seqs).push_back(move(*q_it)); // TODO: maybe move?
                     match = true; // found cluster
                     cts.push_front(move(*c_it));
-
-                    //cts.push_front(*c_it);
                     cts.erase(c_it);
                     break;
                 }
                 if (c_it->link) {
-                  //  cout << c_it->link << endl;
                     if (dist.compare(*q_it, *(c_it->link))) {
                         (c_it->cls_seqs).push_back(ref(*q_it));
-                        match = true;
+                        match = true; // found cluster
                         break;
-                    }                        
+                    }
                 }
                 ++rejects;
                 close_match = &(c_it->seq);
@@ -273,7 +269,7 @@ void Cluster::kmer_select_clust(vector<Seq>::iterator begin, vector<Seq>::iterat
 }
 
 
-int Cluster::clust(vector<Seq>& seqs, list<Centroid>& cts, int depth) {
+int Cluster::clust(const vector<Seq>& seqs, list<Centroid>& cts, int depth) {
     cout << thread::hardware_concurrency()
          << " concurrent threads are supported.\n"; // only a hint
 
