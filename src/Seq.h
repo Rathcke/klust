@@ -1,6 +1,11 @@
 #ifndef SEQ_H
 #define SEQ_H
 
+#include <bitset>
+
+#define KMER_BITSET 4096
+#define KMER_LEN 6
+
 class Seq {
     public:
         Seq();
@@ -15,6 +20,14 @@ class Seq {
 
         std::string to_string() const;
 
+        inline std::bitset<KMER_BITSET> get_bits() const { return bits; }
+        inline size_t get_count() const { return count; }
+
+        void set_bits(std::bitset<KMER_BITSET> b) {
+            bits = b;
+            count = b.count();
+        }
+
         //std::string desc;
 
         uint32_t substr(size_t pos, size_t len) const;
@@ -24,6 +37,9 @@ class Seq {
         size_t seq_len;
         std::string description;
         unsigned int bytes;
+
+        std::bitset<KMER_BITSET> bits;  // bitset of the k-mers occurring in seq
+        size_t count;                   // # of distinct k-mers in seq
 };
 
 #endif

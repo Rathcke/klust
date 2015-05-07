@@ -15,8 +15,6 @@
 
 struct Centroid {
     const Seq& seq;                 // centroid sequence
-    std::bitset<KMER_BITSET> bits;  // bitset of the k-mers occurring in seq
-    size_t count;                   // # of distinct k-mers in seq
 
     // sequences in the cluster represented by the centroid
     std::vector<std::reference_wrapper<const Seq>> cls_seqs;
@@ -25,9 +23,8 @@ struct Centroid {
 
     const Seq *link;
 
-    Centroid(const Seq& s, std::bitset<KMER_BITSET> bits, unsigned int num)
-            : seq {s}, bits {bits}, num {num} {
-        count = bits.count(); // # of distinct kmers in seq
+    Centroid(const Seq& s, unsigned int num)
+            : seq {s}, num {num} {
         link = nullptr;
     }
 };
