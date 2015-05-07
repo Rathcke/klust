@@ -13,10 +13,6 @@
 
 using namespace std;
 
-template <typename T> int sgn(T val) {
-    return (T(0) < val) - (val < T(0));
-}
-
 Distance::Distance(int kmer, double threshold, int step_size) {
     this->k = kmer;
     this->thrs = threshold;
