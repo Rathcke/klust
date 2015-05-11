@@ -202,6 +202,7 @@ inline void get_kmer_bitset(const Seq& s, bitset<KMER_BITSET>& b) {
     }
 }
 
+
 /**
  * For every sequence in the given collection, search through the centroids for
  * one where the number of distinct kmers in both the query sequence and
@@ -211,9 +212,9 @@ inline void get_kmer_bitset(const Seq& s, bitset<KMER_BITSET>& b) {
  */
 void Cluster::kmer_select_clust(vector<Seq>::const_iterator begin,
         vector<Seq>::const_iterator end, list<Centroid>& cts) {
+
     const size_t seqs_size = distance(begin, end);
     unsigned int centroid_count = 0;
-
     for (auto q_it = begin; q_it != end; ++q_it) {
         cout << "\r" << 100 * (q_it - begin) / seqs_size << "%";
 
@@ -224,16 +225,19 @@ void Cluster::kmer_select_clust(vector<Seq>::const_iterator begin,
         bitset<KMER_BITSET> q_bitset(0);
         get_kmer_bitset(*q_it, q_bitset);
 
+        //cout << q_bitset.count() << " ";
+
         const Seq *close_match = nullptr;
 
         int i = 0;
         for (auto c_it = cts.begin();
                 (c_it != cts.end()) && (rejects < max_rejects); ++c_it, ++i) {
+
             // count number of kmers occurring in both query and target sequence
             size_t set_bits = (q_bitset & c_it->bits).count();
 
             // if the # of distinct kmers in both query and target is >= to
-            // id-0.5 times the # of distinct kmers in the target, then compare
+            // id times the # of distinct kmers in the target, then compare
             if (set_bits >= c_it->count * dist.threshold()) {
                 if (dist.compare(*q_it, c_it->seq)) {
                     (c_it->cls_seqs).push_back(ref(*q_it));
@@ -249,8 +253,8 @@ void Cluster::kmer_select_clust(vector<Seq>::const_iterator begin,
                         break;
                     }
                 }
-                close_match = &(c_it->seq);
                 ++rejects;
+                close_match = &(c_it->seq);
             }
         }
 
@@ -336,7 +340,7 @@ void Cluster::merge(list<Centroid>& res, const list<Centroid>& c1) {
                 it0 != res_end && rejects < max_rejects; ++it0) {
 
             size_t set_bits = (it0->bits & it1->bits).count();
-            if (set_bits >= it0->count * (dist.threshold() - 0.05)) {
+            if (set_bits >= it0->count * dist.threshold()) {
                 if (dist.compare(it0->seq, it1->seq)) {
                     // merge clusters, i.e. combine vectors of sequences
                     (it0->cls_seqs).insert((it0->cls_seqs).end(),

@@ -160,6 +160,7 @@ int main(int argc, char *argv[])
     Cluster clust(Distance(k, thrs, step), max_rejects);
     list<Centroid> cts;
 
+    
     cout << "Kmers Select Clustering " << count << " sequences..." << endl;
     clock_t comp_clock = clock();
     cout << "# of clusters: "
