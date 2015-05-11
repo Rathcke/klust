@@ -14,6 +14,30 @@ namespace IO {
 
 using namespace std;
 
+int read_seqs2(istream &fs, vector<Seq>& seqs, int count) {
+    if (count != INT_MAX)
+        seqs.reserve(count); // reserve space if sequence count is specified
+
+    string seq, desc;
+
+    int i = 0;
+    while (i < count) {
+        seq.clear();
+        desc.clear();
+
+        if (fs)
+            getline(fs, desc);
+        else
+            break;
+        getline(fs, seq, '>');
+
+        seqs.emplace_back(seq.c_str(), seq.length(), desc);
+        ++i;
+    }
+
+    return seqs.size();
+}
+
 /**
  * Read the specified number of sequences from the given filestream (in FASTA
  * format), construct a Seq object for each sequence and store in the given
@@ -120,6 +144,49 @@ void write_results(const list<Centroid>& cts, ofstream& fs_centroids,
                         << ' ' << c.seq.desc << '\n';
         }
     }
+}
+
+void springy(const list<Centroid>& cts, ofstream& fs) {
+
+    fs << "<html>\n"
+          "<body>\n"
+          "<script src=\"http://ajax.googleapis.com/ajax/libs/jquery/"
+          "1.3.2/jquery.min.js\"></script>\n"
+          "<script src=\"springy.js\"></script>\n"
+          "<script src=\"springyui.js\"></script>\n"
+          "<script>\n"
+          "var graph = new Springy.Graph();\n\n";
+
+    int cent_num = 0;
+    int seq_num = 0;
+
+    for (auto it = cts.cbegin(); it != cts.cend(); ++it) {
+        fs << "var c" << cent_num
+           << " = graph.newNode({label: 'c" << cent_num << "'});\n";
+
+        vector<reference_wrapper<const Seq>> seqs = it->cls_seqs;
+        for (auto s_it = seqs.cbegin(); s_it != seqs.cend(); ++s_it) {
+            fs << "var s" << seq_num
+               << " = graph.newNode({label: 's" << seq_num << "'});\n"
+               << "graph.newEdge(c" << cent_num << ", s" << seq_num << ", "
+                                    << "{color: '#0000ff'});\n";
+            ++seq_num;
+        }
+        ++cent_num;
+    }
+
+    fs << "\njQuery(function(){\n"
+       << "  var springy = window.springy = jQuery('#springydemo').springy({\n"
+       << "    graph: graph,\n"
+       << "    nodeSelected: function(node){\n"
+       << "      console.log('Node selected: ' + JSON.stringify(node.data));\n"
+       << "    }\n"
+       << "  });\n"
+       << "});\n"
+       << "</script>\n\n"
+       << "<canvas id=\"springydemo\" width=\"1250\" height=\"650\" />\n"
+       << "</body>\n"
+       << "</html>\n";
 }
 
 } // namespace IO

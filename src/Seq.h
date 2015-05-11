@@ -1,6 +1,9 @@
 #ifndef SEQ_H
 #define SEQ_H
 
+#include <fstream>
+#include <vector>
+
 struct Seq {
     Seq();
     Seq(const char *seq_str, size_t len, const std::string& description);
@@ -16,6 +19,10 @@ struct Seq {
     std::string to_string() const;
 
     uint32_t substr(size_t pos, size_t len) const;
+
+    static void permute(std::vector<Seq>& seqs, int count, double ratio,
+        std::ofstream& fs_cts);
 };
+
 
 #endif

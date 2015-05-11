@@ -13,6 +13,7 @@
 #include "Cluster.h"
 #include "Distance.h"
 #include "IO.h"
+#include "Seq.h"
 
 using namespace std;
 
@@ -116,6 +117,7 @@ int main(int argc, char *argv[])
     cout << "Reading sequences..." << endl;
     clock_t read_clock = clock();
     count = IO::read_seqs(fs_in, seqs, count);
+    //count = IO::read_seqs2(fs_in, seqs, count);
     double read_secs = (clock() - read_clock) / (double) CLOCKS_PER_SEC;
     cout << "Time: "     << read_secs << " sec.\n"
          << "Seqs/sec: " << count / read_secs << "\n" << endl;
@@ -134,6 +136,8 @@ int main(int argc, char *argv[])
                 return s1.length < s2.length;
             });
     }
+
+    //Seq::permute(seqs, 10, 0.01, fs_cts);
 
     /*
      * Comparing sequences
@@ -160,7 +164,6 @@ int main(int argc, char *argv[])
     Cluster clust(Distance(k, thrs, step), max_rejects);
     list<Centroid> cts;
 
-    
     cout << "Kmers Select Clustering " << count << " sequences..." << endl;
     clock_t comp_clock = clock();
     cout << "# of clusters: "
@@ -177,6 +180,8 @@ int main(int argc, char *argv[])
      */
     IO::write_results(cts, fs_cts, fs_cls);
 
+    ofstream fs_springy("springy.html", ofstream::out | ofstream::trunc);
+    IO::springy(cts, fs_springy);
 
     fs_in.close();
     fs_cts.close();
