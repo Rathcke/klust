@@ -177,7 +177,6 @@ int main(int argc, char *argv[])
      */
     IO::write_results(cts, fs_cts, fs_cls);
 
-
     fs_in.close();
     fs_cts.close();
     fs_cls.close();
