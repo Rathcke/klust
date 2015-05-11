@@ -107,17 +107,17 @@ void write_results(const list<Centroid>& cts, ofstream& fs_centroids,
 
     for (auto& c : cts) {
         // write FASTA format to centroids file
-        fs_centroids << '>' << c.seq.desc() << '\n'
+        fs_centroids << '>' << c.seq.desc << '\n'
                      << c.seq.to_string() << '\n';
 
         // write centroid entry to clusters file
-        fs_clusters << 'C' << setw(6) << c.num << ' ' << c.seq.desc() << '\n';
+        fs_clusters << 'C' << setw(6) << c.num << ' ' << c.seq.desc << '\n';
 
         // write hit entries to clusters file
         for (auto& q : c.cls_seqs) {
             fs_clusters << 'H' << setw(6) << c.num
-                        << ' ' << q.get().desc()
-                        << ' ' << c.seq.desc() << '\n';
+                        << ' ' << q.get().desc
+                        << ' ' << c.seq.desc << '\n';
         }
     }
 }

@@ -140,9 +140,9 @@ int Cluster::simple_clust(const vector<Seq>& seqs, ofstream& fs_centroids,
 
             // write centroid entry to to clusters file
             fs_clusters << "C " << setw(6) << centroid_count++ << " "
-                        << (*q_it).desc() << "\n";
+                        << (*q_it).desc << "\n";
             // write FASTA format to centroids file
-            fs_centroids << ">" << (*q_it).desc() << '\n'
+            fs_centroids << ">" << (*q_it).desc << '\n'
                          << (*q_it).to_string()   << '\n';
 
             write_secs += (clock() - read_clock) / (double) CLOCKS_PER_SEC;
@@ -167,7 +167,7 @@ int Cluster::thorough_clust(const vector<Seq>& seqs, ofstream& fs_centroids,
             if (d >= dist.threshold()) {
                 fs_clusters << "H " << setw(6) << t_it - cts_index.cbegin() << " "
                             << setw(10) << setprecision(5) << fixed << d << " "
-                            << (*q_it).desc() << " " << seqs[*t_it].desc() << "\n";
+                            << (*q_it).desc << " " << seqs[*t_it].desc << "\n";
                 match = true; // found cluster
                 break;
             }
@@ -177,7 +177,7 @@ int Cluster::thorough_clust(const vector<Seq>& seqs, ofstream& fs_centroids,
             // add new centroid and write to stream in FASTA format
             cts_index.push_back(q_it - seqs.cbegin());
             fs_clusters << "C " << setw(6) << centroid_count++ << " "
-                        << (*q_it).desc() << "\n";
+                        << (*q_it).desc << "\n";
             fs_centroids << (*q_it).to_string() << '\n';
         }
     }
@@ -191,11 +191,11 @@ inline void get_kmer_bitset(const Seq& s, bitset<KMER_BITSET>& b) {
     static const uint32_t k2 = 2 * KMER_LEN;
     static const uint32_t mask = pow(2, k2) - 1;    // 0b00111..11 (2*k 1's)
 
-    for (size_t i = 0; i <= s.length() - KMER_LEN; ++i) {
+    for (size_t i = 0; i <= s.length - KMER_LEN; ++i) {
         uint32_t kmer = 0;
 
         //memcpy(&kmer_l, (longer + (i/4)), 4);
-        kmer = Distance::stream2int(s.data() + (i/4));
+        kmer = Distance::stream2int(s.data + (i/4));
         kmer >>= (32 - 2*(i % 4) - k2);
         kmer &= mask;
         b.set(kmer);
