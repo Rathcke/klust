@@ -5,6 +5,7 @@
 #include <list>
 #include <string>
 #include <vector>
+#include <iostream>
 
 #include "Cluster.h"
 #include "IO.h"
@@ -81,18 +82,16 @@ int read_seqs(ifstream &fs, vector<Seq>& seqs, int count) {
             desc.assign(buf + 1);
             continue;
         }
-
         // TODO: fix possibility for buffer overflow
         bytes_read = fs.gcount() - 1; // gcount() counts discarded \n as well
         memcpy(p, buf, bytes_read);
         p += bytes_read;
         seq_len += bytes_read;
     }
+    data[seq_len] = buf[seq_len];    
+    seq_len += 1;
     if (p != data) {
         seqs.emplace_back(data, seq_len, desc);
-        p = data;
-        seq_len = 0;
-        i++;
     }
 
     delete[] data;

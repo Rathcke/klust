@@ -225,8 +225,6 @@ void Cluster::kmer_select_clust(vector<Seq>::const_iterator begin,
         bitset<KMER_BITSET> q_bitset(0);
         get_kmer_bitset(*q_it, q_bitset);
 
-        //cout << q_bitset.count() << " ";
-
         const Seq *close_match = nullptr;
 
         int i = 0;
