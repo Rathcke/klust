@@ -22,6 +22,16 @@ void permute(vector<Seq>& seqs, int count, double ratio, ofstream& fs_cts);
 
 int main(int argc, char *argv[])
 {
+
+    for (int i = 0; i < 100; ++i) {
+        cout << Utils::get_rand_base_not('G');
+    }
+    cout << endl;
+
+    return 0;
+
+
+
     ios_base::sync_with_stdio(false); // don't share buffers with C style IO
 
     // default similarity and clustering parameters
@@ -34,6 +44,9 @@ int main(int argc, char *argv[])
     bool sort_decr = false;
     int depth = 0;
 
+    // misc parameters
+    bool springy = false;
+
     // CLI argument parsing
     static struct option long_options[] = {
         {"count",       required_argument, 0, 'c'},
@@ -42,7 +55,9 @@ int main(int argc, char *argv[])
         {"max_rejects", required_argument, 0, 'm'},
         {"sort_decr",   no_argument,       0, 'd'},
         {"sort_incr",   no_argument,       0, 'i'},
-        {"step_size",   required_argument, 0, 's'}
+        {"step_size",   required_argument, 0, 's'},
+
+        {"springy",     no_argument,       0,  0 }
     };
 
     int opt, option_index = 0;
@@ -72,6 +87,11 @@ int main(int argc, char *argv[])
                 break;
             case 't':
                 thrs = atof(optarg);
+                break;
+
+            // misc other parameters
+            case  0 :
+                springy = true;
                 break;
             default:
                 cout << "unexpected argument" << endl;
@@ -183,8 +203,14 @@ int main(int argc, char *argv[])
      */
     IO::write_results(cts, fs_cts, fs_cls);
 
-    ofstream fs_springy("springy.html", ofstream::out | ofstream::trunc);
-    IO::springy(cts, fs_springy);
+    if (springy) {
+        ofstream fs_springy("springy.html", ofstream::out | ofstream::trunc);
+        if (fs_springy) {
+            IO::springy(cts, fs_springy);
+            fs_springy.close();
+        } else
+            cerr << "error generating springy code" << endl;
+    }
 
     fs_in.close();
     fs_cts.close();
@@ -192,4 +218,3 @@ int main(int argc, char *argv[])
 
     return 0;
 }
-
