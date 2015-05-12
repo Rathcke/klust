@@ -18,11 +18,8 @@
 
 using namespace std;
 
-void permute(vector<Seq>& seqs, int count, double ratio, ofstream& fs_cts);
-
 int main(int argc, char *argv[])
 {
-
     ios_base::sync_with_stdio(false); // don't share buffers with C style IO
 
     // default similarity and clustering parameters
