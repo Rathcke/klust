@@ -14,8 +14,11 @@
 #include "Distance.h"
 #include "IO.h"
 #include "Seq.h"
+#include "Utils.h"
 
 using namespace std;
+
+void permute(vector<Seq>& seqs, int count, double ratio, ofstream& fs_cts);
 
 int main(int argc, char *argv[])
 {
@@ -137,9 +140,12 @@ int main(int argc, char *argv[])
             });
     }
 
+/*    Utils::permute(seqs, 10, 0.02, fs_cts);
+    return 0;*/
 
-
-    //Seq::permute(seqs, 10, 0.01, fs_cts);
+    Distance dist(k, thrs, step);
+    Utils::print_matrix(seqs, cout, dist);
+    return 0;
 
 
     /*
@@ -192,3 +198,4 @@ int main(int argc, char *argv[])
 
     return 0;
 }
+
