@@ -151,9 +151,9 @@ int main(int argc, char *argv[])
             });
     }
 
-    //Utils::permute(seqs, 10, 0.02, fs_cts);
-    //return 0;
-    /*Utils::permute_chunks(seqs, 10, 0.004, fs_cts);
+    /*Utils::permute(seqs, 10, 0.01, fs_cts);
+    return 0;*/
+    /*Utils::permute_chunks(seqs, 10, 0.002, fs_cts);
     return 0;*/
 
     Distance dist(k, thrs, step);
