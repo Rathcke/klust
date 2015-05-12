@@ -74,6 +74,46 @@ void permute(vector<Seq>& seqs, int count, double ratio, ofstream& fs_cts) {
     }
 }
 
+void permute_chunks(vector<Seq>& seqs, int count, double ratio, ofstream& fs_cts) {
+
+
+    int chunk_size = 5;
+
+    for (auto& s : seqs) {
+        // write original sequence
+        fs_cts << '>' << s.desc << '\n'
+               << s.to_string() << '\n';
+
+        for (int i = 0; i < count; ++i) {
+
+            int rand_indices_count = s.length * ratio;
+
+            vector<int> rand_indices;   // indices in sequence to be changed
+
+            int j = 0;
+            while (j < rand_indices_count) {
+                int random_index = get_rand(0, s.length-1);
+                if (find(rand_indices.begin(),rand_indices.end(), random_index)
+                        == rand_indices.end()) {
+                    rand_indices.push_back(random_index);
+                    ++j;
+                }
+            }
+
+            string s_perm = s.to_string();
+
+            for (int r : rand_indices)
+                for (int j = 0; j < chunk_size; ++j)
+                    s_perm[r] = get_rand_base_not(s_perm[min(r+j, (int) s.length-1)]);
+
+            fs_cts << '>' << s.desc << '\n'
+                   << s_perm << '\n';
+
+        }
+    }
+}
+
+
 void print_matrix(vector<Seq>& seqs, ostream& fs_mat, Distance& dist) {
 
     double matrix[seqs.size()][seqs.size()];

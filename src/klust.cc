@@ -23,15 +23,6 @@ void permute(vector<Seq>& seqs, int count, double ratio, ofstream& fs_cts);
 int main(int argc, char *argv[])
 {
 
-    for (int i = 0; i < 100; ++i) {
-        cout << Utils::get_rand_base_not('G');
-    }
-    cout << endl;
-
-    return 0;
-
-
-
     ios_base::sync_with_stdio(false); // don't share buffers with C style IO
 
     // default similarity and clustering parameters
@@ -160,7 +151,9 @@ int main(int argc, char *argv[])
             });
     }
 
-/*    Utils::permute(seqs, 10, 0.02, fs_cts);
+    //Utils::permute(seqs, 10, 0.02, fs_cts);
+    //return 0;
+    /*Utils::permute_chunks(seqs, 10, 0.004, fs_cts);
     return 0;*/
 
     Distance dist(k, thrs, step);
