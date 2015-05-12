@@ -14,8 +14,11 @@
 #include "Distance.h"
 #include "IO.h"
 #include "Seq.h"
+#include "Utils.h"
 
 using namespace std;
+
+void permute(vector<Seq>& seqs, int count, double ratio, ofstream& fs_cts);
 
 int main(int argc, char *argv[])
 {
@@ -137,7 +140,7 @@ int main(int argc, char *argv[])
             });
     }
 
-    //Seq::permute(seqs, 10, 0.01, fs_cts);
+    Utils::permute(seqs, 10, 0.01, fs_cts);
 
     /*
      * Comparing sequences
@@ -189,3 +192,4 @@ int main(int argc, char *argv[])
 
     return 0;
 }
+
