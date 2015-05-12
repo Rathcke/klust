@@ -129,7 +129,7 @@ uint32_t Seq::substr(size_t pos, size_t len) const {
     return kmer;
 }
 
-void permute(vector<Seq>& seqs, int count, double ratio, ofstream fs_cts) {
+void permute(vector<Seq>& seqs, int count, double ratio, ofstream& fs_cts) {
 
     for (auto& s : seqs) {
         // write original sequence

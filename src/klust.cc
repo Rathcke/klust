@@ -137,7 +137,10 @@ int main(int argc, char *argv[])
             });
     }
 
+
+
     //Seq::permute(seqs, 10, 0.01, fs_cts);
+
 
     /*
      * Comparing sequences
