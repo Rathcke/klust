@@ -18,20 +18,8 @@
 
 using namespace std;
 
-void permute(vector<Seq>& seqs, int count, double ratio, ofstream& fs_cts);
-
 int main(int argc, char *argv[])
 {
-
-    for (int i = 0; i < 100; ++i) {
-        cout << Utils::get_rand_base_not('G');
-    }
-    cout << endl;
-
-    return 0;
-
-
-
     ios_base::sync_with_stdio(false); // don't share buffers with C style IO
 
     // default similarity and clustering parameters
