@@ -74,10 +74,8 @@ void permute(vector<Seq>& seqs, int count, double ratio, ofstream& fs_cts) {
     }
 }
 
-void permute_chunks(vector<Seq>& seqs, int count, double ratio, ofstream& fs_cts) {
-
-
-    int chunk_size = 5;
+void permute_chunks(vector<Seq>& seqs, int count, double ratio, 
+                        ofstream& fs_cts, int chunk_size) {
 
     for (auto& s : seqs) {
         // write original sequence
@@ -91,20 +89,39 @@ void permute_chunks(vector<Seq>& seqs, int count, double ratio, ofstream& fs_cts
             vector<int> rand_indices;   // indices in sequence to be changed
 
             int j = 0;
-            while (j < rand_indices_count) {
-                int random_index = get_rand(0, s.length-1);
-                if (find(rand_indices.begin(),rand_indices.end(), random_index)
-                        == rand_indices.end()) {
-                    rand_indices.push_back(random_index);
-                    ++j;
+            
+            while (j < ceil((double) rand_indices_count/chunk_size)) {
+                int random_index = get_rand(0, s.length-chunk_size);
+                
+                for (int k = 0; k < rand_indices_count; ++k) {
+                    if (rand_indices.empty() ||
+                            abs(rand_indices[k] - random_index) >= chunk_size) {
+                        rand_indices.push_back(random_index);
+                        ++j;
+                        break;  
+                    } else 
+                        break;
+
                 }
             }
 
-            string s_perm = s.to_string();
+            string s_perm = s.to_string();           
 
-            for (int r : rand_indices)
-                for (int j = 0; j < chunk_size; ++j)
-                    s_perm[r] = get_rand_base_not(s_perm[min(r+j, (int) s.length-1)]);
+            for (int r : rand_indices) {
+
+                if (rand_indices_count == 0)
+                        break;
+
+                for (int j = 0; j < chunk_size; ++j) {
+
+                    if (rand_indices_count == 0)                    
+                        break;
+
+                    s_perm[r+j] = get_rand_base_not(s_perm[r+j]);
+
+                    --rand_indices_count;
+                }
+            }
 
             fs_cts << '>' << s.desc << '\n'
                    << s_perm << '\n';

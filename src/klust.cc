@@ -20,6 +20,7 @@ using namespace std;
 
 int main(int argc, char *argv[])
 {
+
     ios_base::sync_with_stdio(false); // don't share buffers with C style IO
 
     // default similarity and clustering parameters
@@ -150,8 +151,8 @@ int main(int argc, char *argv[])
 
     /*Utils::permute(seqs, 10, 0.01, fs_cts);
     return 0;*/
-    Utils::permute_chunks(seqs, 10, 0.002, fs_cts);
-    return 0;
+    /*Utils::permute_chunks(seqs, 10, 0.01, fs_cts, 5);
+    return 0;*/
 
     /*Distance dist(k, thrs, step);
     Utils::print_matrix(seqs, cout, dist);*/
