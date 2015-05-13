@@ -117,10 +117,10 @@ void permute_chunks(vector<Seq>& seqs, int count, double ratio, ofstream& fs_cts
 void print_matrix(vector<Seq>& seqs, ostream& fs_mat, Distance& dist) {
 
     double matrix[seqs.size()][seqs.size()];
-    
+
     for (unsigned int i = 0; i < seqs.size(); ++i) {
         for (unsigned int j = 0; j < seqs.size(); ++j) {
-            
+
             if (i == j)
                 matrix[i][j] = 1;
 
@@ -130,12 +130,12 @@ void print_matrix(vector<Seq>& seqs, ostream& fs_mat, Distance& dist) {
     }
     for (unsigned int i = 0; i < seqs.size(); ++i) {
         for (unsigned int j = 0; j < seqs.size(); ++j) {
-            
-            fs_mat << setw(6) << setprecision(3) << matrix[i][j]; 
+
+            fs_mat << setw(6) << setprecision(3) << matrix[i][j];
 
         }
         fs_mat << '\n';
-    }  
-} 
+    }
+}
 
 } // namespace Util

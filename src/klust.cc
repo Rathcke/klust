@@ -150,11 +150,11 @@ int main(int argc, char *argv[])
 
     /*Utils::permute(seqs, 10, 0.01, fs_cts);
     return 0;*/
-    /*Utils::permute_chunks(seqs, 10, 0.002, fs_cts);
-    return 0;*/
+    Utils::permute_chunks(seqs, 10, 0.002, fs_cts);
+    return 0;
 
-    Distance dist(k, thrs, step);
-    Utils::print_matrix(seqs, cout, dist);
+    /*Distance dist(k, thrs, step);
+    Utils::print_matrix(seqs, cout, dist);*/
     return 0;
 
 
