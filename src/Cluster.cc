@@ -206,25 +206,27 @@ inline void get_kmer_bitset(const Seq& s, bitset<KMER_BITSET>& b) {
 /**
  * For every sequence in the given collection, search through the centroids for
  * one where the number of distinct kmers in both the query sequence and
- * centroid are at least dist.threshold()-0.05 times the number of distinct
- * kmers in the centroid sequence. If no match is found after max_rejects
- * tries, the sequence becomes a new centroid.
+ * centroid are at least dist.threshold() times the number of distinct kmers in
+ * the centroid sequence. If no match is found after max_rejects tries, the
+ * sequence becomes a new centroid.
  */
 void Cluster::kmer_select_clust(vector<Seq>::const_iterator begin,
         vector<Seq>::const_iterator end, list<Centroid>& cts) {
 
     const size_t seqs_size = distance(begin, end);
     unsigned int centroid_count = 0;
+
     for (auto q_it = begin; q_it != end; ++q_it) {
         cout << "\r" << 100 * (q_it - begin) / seqs_size << "%";
 
         bool match = false;
-        int rejects = 0;
+        int rejects = 0;    // number of unsuccessful compares so far
 
         // bitset of kmers occuring in query sequence
         bitset<KMER_BITSET> q_bitset(0);
         get_kmer_bitset(*q_it, q_bitset);
 
+        // pointer to most recent unsuccesful, compared centroid Seq
         const Seq *close_match = nullptr;
 
         int i = 0;
