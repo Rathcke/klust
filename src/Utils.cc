@@ -1,7 +1,8 @@
 #include <algorithm>
 #include <cstdlib>
-#include <vector>
 #include <iomanip>
+#include <random>
+#include <vector>
 
 #include "Seq.h"
 #include "Utils.h"
@@ -74,7 +75,7 @@ void permute(vector<Seq>& seqs, int count, double ratio, ofstream& fs_cts) {
     }
 }
 
-void permute_chunks(vector<Seq>& seqs, int count, double ratio, 
+void permute_chunks(vector<Seq>& seqs, int count, double ratio,
                         ofstream& fs_cts, int chunk_size) {
 
     for (auto& s : seqs) {

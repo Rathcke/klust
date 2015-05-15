@@ -20,7 +20,6 @@ using namespace std;
 
 int main(int argc, char *argv[])
 {
-
     ios_base::sync_with_stdio(false); // don't share buffers with C style IO
 
     // default similarity and clustering parameters
@@ -155,8 +154,8 @@ int main(int argc, char *argv[])
     return 0;*/
 
     /*Distance dist(k, thrs, step);
-    Utils::print_matrix(seqs, cout, dist);*/
-    return 0;
+    Utils::print_matrix(seqs, cout, dist);
+    return 0;*/
 
 
     /*
