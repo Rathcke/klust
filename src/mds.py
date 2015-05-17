@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import numpy as np
 
 from matplotlib import pyplot as plt
@@ -9,6 +11,7 @@ from sklearn.decomposition import PCA
 
 # Read data
 similarities = np.loadtxt('distmat.txt')
+#similarities = np.loadtxt('distmat_SILVA_100.txt')
 
 # Perform Multi Dimensional Scaling
 mds = manifold.MDS(n_components=2, max_iter=3000, eps=1e-9, random_state=0,
@@ -21,9 +24,6 @@ pos = mds.fit(similarities).embedding_
 # Perform t-SNE
 tsne = manifold.TSNE(n_components=2, init='pca', random_state=0)
 pos = tsne.fit_transform(similarities)
-
-# Scatter plot
-plt.scatter(pos[:, 0], pos[:, 1], s=20, c='g')
 
 # Centroids for t = 0.85
 centroids = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 12, 13, 14, 15, 16, 17, 18, 19, 20,
@@ -40,6 +40,29 @@ centroids = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 12, 13, 14, 15, 16, 17, 18, 19, 20,
         442, 443, 444, 445, 447, 449, 452, 455, 457, 463, 475, 479, 483, 487,
         492, 493, 495, 497, 499]
 
+# 50 centroids for t = 0.85 on first 100 seqs of SILVA
+#centroids = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 12, 13, 14, 15, 16, 17, 18, 19, 20,
+#        23, 25, 26, 29, 30, 31, 37, 39 , 40, 42, 43, 44, 46, 48, 50, 62, 63,
+#        65, 66, 69, 71, 72, 76, 77, 79, 85, 87, 89, 93, 96, 97]
+
+colors = ['g'] * len(pos[:,0])
+markers = [u'o'] * len(pos[:,0])
+zorders = [1] * len(pos[:,0])
+sizes = [15] * len(pos[:,0])
+
+for c in centroids:
+    colors[c] = 'r'
+    markers[c] = u'+'
+    zorders[c] = 2
+    sizes[c] = 30
+
+# Scatter plot
+#plt.scatter(pos[:, 0], pos[:, 1], s=20, c='g')
+
+for x, y, m, sz, color, z in zip(pos[:,0], pos[:,1], markers, sizes, colors, zorders):
+    plt.scatter(x, y, s=sz, c=color, marker=m, zorder=z)
+
+
 # Centroids for t = 0.6
 #centroids = [0, 1, 2, 3, 4, 6, 7, 8, 9, 12, 14, 15, 17, 19, 20, 23, 30, 44, 46,
 #        62, 65, 66, 71, 77, 97, 114, 131, 195, 202, 203, 220, 221, 227, 243,
@@ -51,15 +74,15 @@ centroids = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 12, 13, 14, 15, 16, 17, 18, 19, 20,
 #        261, 287, 293, 296, 299, 351, 394, 407, 430, 432, 439, 445, 449, 463]
 
 # Label centroids
-c = 0
-for x, y in zip(pos[:,0], pos[:,1]):
-    if c in centroids:
-        plt.annotate(
-            str(c),
-            xy= (x,y), xytext=(-20,20),
-            textcoords='offset points', ha='right', va='bottom',
-            arrowprops = dict(arrowstyle = '->', connectionstyle = 'arc3,rad=0') )
-    c += 1
+#c = 0
+#for x, y in zip(pos[:,0], pos[:,1]):
+#    if c in centroids:
+#        plt.annotate(
+#            str(c),
+#            xy= (x,y), xytext=(-20,20),
+#            textcoords='offset points', ha='right', va='bottom',
+#            arrowprops = dict(arrowstyle = '->', connectionstyle = 'arc3,rad=0') )
+#    c += 1
 
-plt.savefig("MDS_t-SNE_SILVA_500.png")
-#plt.show()
+#plt.savefig("MDS_t-SNE_SILVA_500.png")
+plt.show()
