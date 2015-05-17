@@ -155,12 +155,14 @@ int Cluster::simple_clust(const vector<Seq>& seqs, ofstream& fs_centroids,
 }
 
 int Cluster::thorough_clust(const vector<Seq>& seqs, ofstream& fs_centroids,
-        ofstream& fs_clusters, Distance& dist, int count) {
+        ofstream& fs_clusters) {
 
     int centroid_count = 0;
     vector<int> cts_index;
+    int numb = -1;
 
     for (auto q_it = seqs.cbegin(); q_it != seqs.cend(); ++q_it) {
+        ++numb;
         bool match = false;
         for (auto t_it = cts_index.cbegin(); t_it != cts_index.cend(); ++t_it) {
             double d = dist.distance(*q_it, seqs[*t_it]);
@@ -176,6 +178,7 @@ int Cluster::thorough_clust(const vector<Seq>& seqs, ofstream& fs_centroids,
         if (!match) {
             // add new centroid and write to stream in FASTA format
             cts_index.push_back(q_it - seqs.cbegin());
+            cout << numb << ", ";
             fs_clusters << "C " << setw(6) << centroid_count++ << " "
                         << (*q_it).desc << "\n";
             fs_centroids << (*q_it).to_string() << '\n';
@@ -215,9 +218,11 @@ void Cluster::kmer_select_clust(vector<Seq>::const_iterator begin,
 
     const size_t seqs_size = distance(begin, end);
     unsigned int centroid_count = 0;
+    //int numb = -1;
 
     for (auto q_it = begin; q_it != end; ++q_it) {
         cout << "\r" << 100 * (q_it - begin) / seqs_size << "%";
+        //++numb;
 
         bool match = false;
         int rejects = 0;    // number of unsuccessful compares so far
@@ -261,11 +266,12 @@ void Cluster::kmer_select_clust(vector<Seq>::const_iterator begin,
         if (!match) {
             // add new centroid to list
             cts.emplace_front(*q_it, q_bitset, centroid_count++);
+            //cout << numb << ", ";
             if (close_match)
                 cts.front().link = close_match;
         }
     }
-    cout << "\r100%";
+    //cout << "\r100%";
 }
 
 
