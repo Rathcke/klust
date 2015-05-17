@@ -10,7 +10,7 @@ from sklearn.metrics import euclidean_distances
 from sklearn.decomposition import PCA
 
 # Read data
-similarities = np.loadtxt('distmat.txt')
+similarities = np.loadtxt('distmat_SILVA_500.txt')
 #similarities = np.loadtxt('distmat_SILVA_100.txt')
 
 # Perform Multi Dimensional Scaling
@@ -25,7 +25,7 @@ pos = mds.fit(similarities).embedding_
 tsne = manifold.TSNE(n_components=2, init='pca', random_state=0)
 pos = tsne.fit_transform(similarities)
 
-# Centroids for t = 0.85
+# Centroids for t = 0.85 on first 500 seqs of SILVA
 centroids = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 12, 13, 14, 15, 16, 17, 18, 19, 20,
         23, 25, 26, 29, 30, 31, 37, 39, 40, 42, 43, 44, 46, 48, 50, 62, 63, 65,
         66, 69, 71, 72, 76, 77, 79, 85, 87, 89, 93, 96, 97, 100, 101, 105, 110,
