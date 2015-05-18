@@ -16,7 +16,7 @@ char get_rand_base_not(char c);
 void permute(std::vector<Seq>& seqs, int count, double ratio,
         std::ofstream& fs_cts);
 
-void permute_chunks(std::vector<Seq>& seqs, int count, double ratio, 
+void permute_chunks(std::vector<Seq>& seqs, int count, double ratio,
 						std::ofstream& fs_cts, int chunk_size);
 
 void print_matrix(std::vector<Seq>& seqs, std::ostream& fs_mat, Distance& dist);

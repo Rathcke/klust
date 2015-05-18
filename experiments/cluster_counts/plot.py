@@ -13,8 +13,8 @@ from sklearn.decomposition import PCA
 i, x, y = np.loadtxt(sys.argv[1])
 
 # scatter plot
-plt.scatter(i, x, s=20, c='g', alpha=0.5)
-plt.scatter(i, y, s=20, c='r', alpha=0.5)
+plt.scatter(i, x, s=30, c='r', alpha=0.6, marker=u'o')
+plt.scatter(i, y, s=30, c='b', alpha=0.8, marker=u'+')
 
 plt.savefig("cluster_counts.png")
 #plt.show()

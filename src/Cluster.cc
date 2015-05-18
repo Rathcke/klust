@@ -216,13 +216,19 @@ inline void get_kmer_bitset(const Seq& s, bitset<KMER_BITSET>& b) {
 void Cluster::kmer_select_clust(vector<Seq>::const_iterator begin,
         vector<Seq>::const_iterator end, list<Centroid>& cts) {
 
+    //int seq_num = -1;
+
     const size_t seqs_size = distance(begin, end);
     unsigned int centroid_count = 0;
     //int numb = -1;
 
     for (auto q_it = begin; q_it != end; ++q_it) {
         cout << "\r" << 100 * (q_it - begin) / seqs_size << "%";
+<<<<<<< HEAD
         //++numb;
+=======
+        //++seq_num;
+>>>>>>> 5142450c4d70e98f61d306944a12edc37910fc5f
 
         bool match = false;
         int rejects = 0;    // number of unsuccessful compares so far
@@ -264,6 +270,8 @@ void Cluster::kmer_select_clust(vector<Seq>::const_iterator begin,
         }
 
         if (!match) {
+            //cout << seq_num << ", " ;
+
             // add new centroid to list
             cts.emplace_front(*q_it, q_bitset, centroid_count++);
             //cout << numb << ", ";
@@ -271,7 +279,12 @@ void Cluster::kmer_select_clust(vector<Seq>::const_iterator begin,
                 cts.front().link = close_match;
         }
     }
+<<<<<<< HEAD
     //cout << "\r100%";
+=======
+    //cout << endl;
+    cout << "\r100%";
+>>>>>>> 5142450c4d70e98f61d306944a12edc37910fc5f
 }
 
 
