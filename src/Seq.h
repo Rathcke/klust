@@ -4,6 +4,8 @@
 #include <fstream>
 #include <vector>
 
+extern unsigned long long dirty;
+
 struct Seq {
     Seq();
     Seq(const char *seq_str, size_t len, const std::string& description);
@@ -23,6 +25,5 @@ struct Seq {
     static void permute(std::vector<Seq>& seqs, int count, double ratio,
         std::ofstream& fs_cts);
 };
-
 
 #endif

@@ -149,9 +149,45 @@ int main(int argc, char *argv[])
             });
     }
 
+
+    vector<int> lengths;
+
+    for (auto& s : seqs) {
+        lengths.push_back(s.length);
+    }
+
+    unsigned long long int sum_len = accumulate(lengths.begin(), lengths.end(),
+            (long long unsigned int) 0);
+    double avg_len = (double) sum_len / (double) lengths.size();
+
+    int min_len = *min_element(lengths.cbegin(), lengths.cend());
+    int max_len = *max_element(lengths.cbegin(), lengths.cend());
+
+    sort(lengths.begin(), lengths.end());
+
+    double median = 0;
+
+    if(lengths.size() % 2 == 0)
+        median = (double) (lengths[lengths.size()/2 - 1] + lengths[lengths.size()/2]) / 2.0;
+    else
+        median = (double) lengths[lengths.size()/2];
+
+
+
+    cout << "avg_len:       " << avg_len   << '\n'
+         << "min_len:       " << min_len   << '\n'
+         << "max_len:       " << max_len   << '\n'
+         << "median:        " << median    << '\n'
+         << "dirty:         " << dirty     << '\n'
+         << "dirty/sum_len: " << (double)dirty/(double)sum_len << endl;
+
+    return 0;
+
+
     /*Utils::permute(seqs, 10, 0.01, fs_cts);
     return 0;*/
-    /*Utils::permute_chunks(seqs, 10, 0.01, fs_cts, 5);
+
+    /*Utils::permute_chunks(seqs, 10, 0.02, fs_cts, 5);
     return 0;*/
 
     /*Distance dist(k, thrs, step);

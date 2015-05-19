@@ -9,6 +9,8 @@
 
 using namespace std;
 
+unsigned long long dirty = 0;
+
 Seq::Seq() {
     length = 0;
     bytes = 0;
@@ -38,9 +40,17 @@ Seq::Seq(const char *seq_str, size_t len, const string& description) {
             case 't': case 'T': case 'u': case 'U':
                 data[i/4] |= 3 << shift; //0b11
                 break;
-            default:
-                // TODO: handle more gracefully
+
+            case 'a': case 'A':
                 break;
+
+            default:
+                ++dirty;
+                break;
+
+            /*default:
+                // TODO: handle more gracefully
+                break;*/
         }
     }
 }
