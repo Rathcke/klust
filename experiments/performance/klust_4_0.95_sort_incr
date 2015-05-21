@@ -1,0 +1,20 @@
+Running with parameters: 
+  k = 4
+  id = 0.95
+  max_rejects = 8
+  depth = 0
+
+Reading sequences...
+Time: 0.970352 sec.
+Seqs/sec: 103055
+
+Sorting by increasing sequence length...
+Clustering 100000 sequences...
+Time: 71.3566 sec.
+Throughput: 1401.41 seqs/sec.
+
+Clusters: 27689
+Max size: 1223
+Avg size: 3.61154
+Min size: 1
+Max mem:  76 MB
