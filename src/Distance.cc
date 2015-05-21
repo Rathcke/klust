@@ -201,7 +201,7 @@ double Distance::levenshtein_window(const string& s, const string& t) {
 
     string shorter, longer;
     int short_len, long_len;
-    double min_dist = 9999;
+    double min_dist = 0;
     double cur_dist;
 
     if (slen <= tlen) {
@@ -220,13 +220,13 @@ double Distance::levenshtein_window(const string& s, const string& t) {
     int windows = long_len - short_len;
 
     if (windows == 0) {
-        return (double)(win_size - levenshtein(s, t)) / (double)win_size;
+        return levenshtein(s, t);
     }
 
     for (int i = 0; i < windows; i++) {
         cur_dist = levenshtein(shorter, longer.substr(i, win_size));
-        min_dist = min(min_dist, cur_dist);
+        min_dist = max(min_dist, cur_dist);
     }
 
-    return (double)(win_size - min_dist) / (double)win_size;
+    return min_dist;
 }

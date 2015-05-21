@@ -213,6 +213,24 @@ int main(int argc, char *argv[])
 
     IO::write_results(cts, fs_cts, fs_cls);
 
+/*    Distance dist(k, thrs, step);
+    size_t size = 0;
+    auto iter = cts.begin();
+    for (auto it = cts.begin(); it != cts.end(); ++it) {
+        size_t cur_size = it->cls_seqs.size();
+        if (cur_size > size) {
+            iter = it;
+            size = cur_size;
+        }
+    }
+    for (auto it = iter->cls_seqs.begin();
+            it != iter->cls_seqs.end(); ++it) {
+        
+        cout << dist.levenshtein_window(iter->seq.to_string(), 
+                ((*it).get()).to_string()) << " ";
+    }
+    cout << endl;*/
+
     if (springy) {
         ofstream fs_springy("springy.html", ofstream::out | ofstream::trunc);
         if (fs_springy) {
