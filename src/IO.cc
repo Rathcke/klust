@@ -1,9 +1,11 @@
+#include <algorithm>
 #include <climits>
 #include <cstring>
 #include <fstream>
 #include <iomanip>
 #include <list>
 #include <string>
+#include <sys/resource.h>
 #include <vector>
 #include <iostream>
 
@@ -88,7 +90,7 @@ int read_seqs(ifstream &fs, vector<Seq>& seqs, int count) {
         p += bytes_read;
         seq_len += bytes_read;
     }
-    data[seq_len] = buf[seq_len];    
+    data[seq_len] = buf[seq_len];
     seq_len += 1;
     if (p != data) {
         seqs.emplace_back(data, seq_len, desc);
@@ -118,6 +120,29 @@ bool read_sequence(ifstream& fs, string& s) {
         getline(fs, tmp);
     }
     return true;
+}
+
+/**
+ * Print statistics about clustering result and memory usage.
+ */
+void print_stats(const vector<Seq>& seqs, const list<Centroid>& cts) {
+    vector<size_t> cluster_sizes;
+    for (auto& c : cts)
+        cluster_sizes.push_back(c.cls_seqs.size());
+
+    size_t max_size = *max_element(cluster_sizes.cbegin(), cluster_sizes.cend()) + 1;
+    size_t min_size = *min_element(cluster_sizes.cbegin(), cluster_sizes.cend()) + 1;
+
+    double avg_size = (double) seqs.size() / (double) cts.size();
+
+    cout << "Clusters: " << cts.size()      << '\n'
+         << "Max size: " << max_size        << '\n'
+         << "Avg size: " << avg_size        << '\n'
+         << "Min size: " << min_size        << '\n';
+
+    struct rusage usage;
+    if(getrusage(RUSAGE_SELF, &usage) == 0)
+        cout << "Max mem:  " << usage.ru_maxrss / 1024 << " MB" << endl;
 }
 
 /**

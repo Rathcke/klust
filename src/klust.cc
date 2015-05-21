@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <chrono>
 #include <climits>
 #include <cstdlib>
 #include <cstring>
@@ -125,14 +126,19 @@ int main(int argc, char *argv[])
      * Reading sequences
      */
     vector<Seq> seqs;
-
     cout << "Reading sequences..." << endl;
-    clock_t read_clock = clock();
+
+    // timing
+    chrono::time_point<chrono::system_clock> start, end;
+    start = chrono::system_clock::now();
+
     count = IO::read_seqs(fs_in, seqs, count);
-    //count = IO::read_seqs2(fs_in, seqs, count);
-    double read_secs = (clock() - read_clock) / (double) CLOCKS_PER_SEC;
-    cout << "Time: "     << read_secs << " sec.\n"
-         << "Seqs/sec: " << count / read_secs << "\n" << endl;
+
+    end = chrono::system_clock::now();
+    chrono::duration<double> elapsed_seconds = end - start;
+
+    cout << "Time: "     << elapsed_seconds.count() << " sec.\n"
+         << "Seqs/sec: " << count / elapsed_seconds.count() << "\n" << endl;
 
     if (sort_decr) {
         cout << "Sorting by decreasing sequence length..." << endl;
@@ -184,20 +190,26 @@ int main(int argc, char *argv[])
     Cluster clust(Distance(k, thrs, step), max_rejects);
     list<Centroid> cts;
 
-    cout << "Kmers Select Clustering " << count << " sequences..." << endl;
-    clock_t comp_clock = clock();
-    cout << "# of clusters: "
-         << clust.clust(seqs, cts, depth)
-         << endl;
-    double comp_secs = (clock() - comp_clock) / (double) CLOCKS_PER_SEC;
+    cout << "Clustering " << count << " sequences..." << endl;
 
-    cout << "Finished clustering:\n"
-         << "Time: "            << comp_secs << " sec.\n"
-         << "Throughput: "      << count / comp_secs << " seqs/sec.\n";
+    // timing
+    start = chrono::system_clock::now();
+
+    clust.clust(seqs, cts, depth);
+
+    end = chrono::system_clock::now();
+    elapsed_seconds = end - start;
+
+    cout << '\n'
+         << "Time: "        << elapsed_seconds.count() << " sec.\n"
+         << "Throughput: "  << count / elapsed_seconds.count() << " seqs/sec.\n"
+         << endl;
 
     /*
      * Outputting results
      */
+    IO::print_stats(seqs, cts);
+
     IO::write_results(cts, fs_cts, fs_cls);
 
     if (springy) {
