@@ -1,6 +1,12 @@
 #ifndef CLUSTER_H
 #define CLUSTER_H
 
+#ifdef DEBUG
+#define DEBUG(x) x
+#else
+#define DEBUG(x)
+#endif
+
 #include <string>
 #include <vector>
 #include <bitset>
@@ -43,8 +49,7 @@ class Cluster
                 int max_rejects);
 
         int thorough_clust(const std::vector<Seq>& seqs,
-                std::ofstream& fs_centroids, std::ofstream& fs_clusters,
-                Distance& dist, int count);
+                std::ofstream& fs_centroids, std::ofstream& fs_clusters);
 
         void kmer_select_clust(std::vector<Seq>::const_iterator begin,
                 std::vector<Seq>::const_iterator end, std::list<Centroid>& cts);

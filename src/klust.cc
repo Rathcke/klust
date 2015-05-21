@@ -19,10 +19,9 @@
 
 using namespace std;
 
-void print_usage(char *argv[]);
-
 int main(int argc, char *argv[])
 {
+
     ios_base::sync_with_stdio(false); // don't share buffers with C style IO
 
     // default similarity and clustering parameters
@@ -48,8 +47,7 @@ int main(int argc, char *argv[])
         {"sort_incr",   no_argument,       0, 'i'},
         {"step_size",   required_argument, 0, 's'},
 
-        {"springy",     no_argument,       0,  0 },
-        {0,             0,                 0,  0 }
+        {"springy",     no_argument,       0,  0 }
     };
 
     int opt, option_index = 0;
@@ -87,14 +85,16 @@ int main(int argc, char *argv[])
                 break;
             default:
                 cout << "unexpected argument" << endl;
-                print_usage(argv);
                 return 1;
         }
     }
 
     if (argc < (optind + 3)) {
-        print_usage(argv);
-        return 0;
+        cerr << "Usage: " << argv[0] << " <FASTA input file> "
+                                        " <FASTA output file for centroid> "
+                                        " <output file for clustering results> "
+                                     << endl; // TODO: mention options
+        return 1;
     }
 
     if (sort_incr && sort_decr) {
@@ -160,9 +160,10 @@ int main(int argc, char *argv[])
     /*Utils::permute_chunks(seqs, 10, 0.01, fs_cts, 5);
     return 0;*/
 
-    /*Distance dist(k, thrs, step);
+ /*   Distance dist(k, thrs, step);
     Utils::print_matrix(seqs, cout, dist);
     return 0;*/
+    
 
 
     /*
@@ -226,23 +227,4 @@ int main(int argc, char *argv[])
     fs_cls.close();
 
     return 0;
-}
-
-void print_usage(char *argv[]) {
-    cout << "Usage: " << argv[0] << " <FASTA input file> "
-                                    " <FASTA output file for centroid> "
-                                    " <output file for clustering results>\n"
-         << "\n"
-         << "Options:\n"
-         << "-c, --count n          Read and process n sequences\n"
-         << "-d, --sort_decr        Sort sequences by decresing length\n"
-         << "-i, --sort_incr        Sort sequences by increasing length\n"
-         << "-k                     Set the k in k-mer, used in similarity metric\n"
-         << "-l, --depth d          Set the depth of the tree of divides, i.e.\n"
-         << "                       cluster 2^d subsets of sequences and combine\n"
-         << "-m, --max_rejects x    Max number of rejects when searching for centroid\n"
-         << "-s, --step_size s      Step s characters between k-mers when comparing\n"
-         << "-t, --id t             Set similarity threshold/identity to t (in [0,1])\n"
-         << "\n"
-         << "--springy              Generate springy JavaScript code\n";
 }

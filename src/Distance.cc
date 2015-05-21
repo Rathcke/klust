@@ -53,7 +53,6 @@ double Distance::distance(const Seq& s, const Seq& t) {
         uint32_t kmer_l = 0; // binary repr. of kmer in longer sequence
         uint32_t kmer_s = 0;
 
-        //memcpy(&kmer_l, (longer + (i/4)), 4);
         kmer_l = stream2int(longer + (i/4));
         kmer_l >>= (32 - 2*(i % 4) - k2);
         kmer_l &= mask;
@@ -66,12 +65,6 @@ double Distance::distance(const Seq& s, const Seq& t) {
         kmers[kmer_s]-- > 0 ? --cur_dist : ++cur_dist;
 
     }
-
-/*    cout << endl << cur_dist << " : ";
-    cur_dist = 0;
-    // Manhattan distance between the two strings
-    for (int i = 0; i < kmer_count; ++i)
-        cur_dist += abs(kmers[i]);*/
 
     int min_dist = cur_dist;    // the least distance window so far
     int win_size = short_len;
@@ -237,94 +230,3 @@ double Distance::levenshtein_window(const string& s, const string& t) {
 
     return (double)(win_size - min_dist) / (double)win_size;
 }
-
-/*void Distance::printDistMatrix(const char* filename, int count) {
-    ifstream fs0(filename);
-    ifstream fs1(filename);
-
-    string fst, snd;
-    double distances[count][count];
-
-    for (int i = 0; i < count; i++)
-        for (int j = 0; j < count; j++)
-            distances[i][j] = -1; // initialize distance matrix entries to -1
-
-    for (int i = 0; i < count; ++i) {
-        io::read_sequence(fs0, fst);
-        transform(fst.begin(), fst.end(), fst.begin(), ::tolower);
-
-        for (int j = 0; j < count; ++j) {
-            io::read_sequence(fs1, snd);
-            transform(snd.begin(), snd.end(), snd.begin(), ::tolower);
-            if (i == j) { // don't compare a sequence to itself
-                distances[i][j] = 0;
-                continue;
-            }
-            if (distances[i][j] != -1) {
-                continue;
-            }
-
-            double newdist = levenshtein(fst, snd);
-            distances[i][j] = newdist;
-            distances[j][i] = newdist;
-        }
-        fs1.seekg(0, ios::beg); // rewind fs1 to start
-    }
-
-    for (int i = 0; i < count; ++i) {
-        for (int j = 0; j < count; ++j) {
-            cout << " " << distances[i][j]; // TODO: reset width?
-        }
-        cout << '\n';
-    }
-
-    fs0.close();
-    fs1.close();
-}
-
-void Distance::jac_printDistMatrix(const char* filename, int count) {
-    ifstream fs0(filename);
-
-    double distances[count][count];
-    vector<Seq> seqs;
-
-    io::read_seqs(fs0, seqs, count);
-
-    for (int i = 0; i < count; i++)
-        for (int j = 0; j < count; j++)
-            distances[i][j] = -1; // initialize distance matrix entries to -1
-
-    for (int i = 0; i < count; ++i) {
-
-        for (int j = 0; j < count; ++j) {
-            if (i == j) { // don't compare a sequence to itself
-                distances[i][j] = 0;
-                continue;
-            }
-            if (distances[i][j] != -1) {
-                continue;
-            }
-
-            double newdist = distance(seqs[i], seqs[j]);
-            distances[i][j] = newdist;
-            distances[j][i] = newdist;
-        }
-    }
-
-    for (int i = 0; i < count; ++i) {
-        for (int j = 0; j < count; ++j) {
-            cout << " " << distances[i][j]; // TODO: reset width?
-        }
-        cout << '\n';
-    }
-
-    fs0.close();
-}*/
-
-/*set<string> Distance::kmers(const Seq& s) {
-    set<string> kmers;
-    for (unsigned int i = 0; i <= s.data.length()-k; i++) {
-        kmers.insert(s.data.substr(i,k));
-    }
-    return kmers;
-}*/
