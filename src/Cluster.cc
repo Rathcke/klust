@@ -24,75 +24,6 @@ using namespace std;
  * sequences. Output the centroids in FASTA format to the output file stream,
  * output clusters to file stream and return the number of centroids.
  */
-/*int Cluster::intersect_clust(fstream& fs_in, fstream& fs_centroids, fstream& fs_clusters,
-        Distance& dist, int count, int max_rejects) {
-
-    struct Centroid {
-        struct Seq seq;
-        set<string> kmers;  // set of occurring kmers in seq
-    };
-
-    vector<struct Centroid> centroids; // alternatively vector<pair<Seq, set<string>>>
-
-    struct Seq s;
-    int i = 0;
-
-    while (IO::read_sequence(fs_in, s) && i < count) {
-        bool match = false;
-        ++i;
-
-        set<string> query_kmers = dist.kmers(s); // kmers in query sequence
-
-        priority_queue<pair<int, int>> q;  // non-increasingly sorted queue
-
-        // calculate intersection and store cardinality and index in queue
-        for (vector<struct Centroid>::const_iterator it = centroids.begin();
-                it != centroids.end(); ++it) {
-            vector<string> intersect;
-            set_intersection(query_kmers.begin(), query_kmers.end(),
-                             (it->kmers).begin(), (it->kmers).end(),
-                             back_inserter(intersect));
-            //cout << "Size of intersect: " << intersect.size() << endl;
-            q.push({intersect.size(), it - centroids.begin()});
-        }
-
-        int rejects = 0;
-        // loop through centroids
-        while(!q.empty() && !match && rejects < max_rejects) {
-            ++rejects;
-            //cout << "q not empty" << endl;
-            int ctr_index = (q.top()).second;
-            Seq ctr = centroids[ctr_index].seq;
-            q.pop();
-
-            if (dist.compare(s.data, ctr.data)) {
-                // write s belongs to centroids[i] to fs_clusters
-                fs_clusters << ctr_index << ": " << s.data << endl;
-                match = true; // found cluster
-                break;
-            }
-        }
-
-        if (!match) {
-            // add new centroid and write to stream in FASTA format
-            Centroid new_centroid = {s, dist.kmers(s)};
-            centroids.push_back(new_centroid);
-
-            fs_centroids << '>' << s.desc << endl
-                         << s.data << endl;
-        }
-    }
-
-    return centroids.size();
-}*/
-
-
-/**
- * Given file stream, read sequences of FASTA format, compute the centroids of
- * the clustering (given threshold and k for k-mers) of the given count of
- * sequences. Output the centroids in FASTA format to the output file stream,
- * output clusters to file stream and return the number of centroids.
- */
 int Cluster::simple_clust(const vector<Seq>& seqs, ofstream& fs_centroids,
         ofstream& fs_clusters, Distance& dist, int count, int max_rejects) {
     unordered_map<int, Seq> centroids;
@@ -216,19 +147,11 @@ inline void get_kmer_bitset(const Seq& s, bitset<KMER_BITSET>& b) {
 void Cluster::kmer_select_clust(vector<Seq>::const_iterator begin,
         vector<Seq>::const_iterator end, list<Centroid>& cts) {
 
-    //int seq_num = -1;
-
     const size_t seqs_size = distance(begin, end);
     unsigned int centroid_count = 0;
-    //int numb = -1;
 
     for (auto q_it = begin; q_it != end; ++q_it) {
         cout << "\r" << 100 * (q_it - begin) / seqs_size << "%";
-<<<<<<< HEAD
-        //++numb;
-=======
-        //++seq_num;
->>>>>>> 5142450c4d70e98f61d306944a12edc37910fc5f
 
         bool match = false;
         int rejects = 0;    // number of unsuccessful compares so far
@@ -270,7 +193,6 @@ void Cluster::kmer_select_clust(vector<Seq>::const_iterator begin,
         }
 
         if (!match) {
-            //cout << seq_num << ", " ;
 
             // add new centroid to list
             cts.emplace_front(*q_it, q_bitset, centroid_count++);
@@ -279,12 +201,8 @@ void Cluster::kmer_select_clust(vector<Seq>::const_iterator begin,
                 cts.front().link = close_match;
         }
     }
-<<<<<<< HEAD
-    //cout << "\r100%";
-=======
-    //cout << endl;
+
     cout << "\r100%";
->>>>>>> 5142450c4d70e98f61d306944a12edc37910fc5f
 }
 
 
