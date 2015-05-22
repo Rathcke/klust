@@ -25,7 +25,7 @@ int main(int argc, char *argv[])
     ios_base::sync_with_stdio(false); // don't share buffers with C style IO
 
     // default similarity and clustering parameters
-    int k = 6;
+    int k = 5;
     double thrs = 0.85;
     int count = INT_MAX;
     int max_rejects = 8;
@@ -155,9 +155,15 @@ int main(int argc, char *argv[])
             });
     }
 
+    //random_shuffle(seqs.begin(), seqs.end());
+
+/*    for (auto& s : seqs) {
+        fs_cts << '>' << s.desc << '\n' << s.to_string() << '\n';
+    }
+    return 0;*/
     /*Utils::permute(seqs, 10, 0.01, fs_cts);
     return 0;*/
-    /*Utils::permute_chunks(seqs, 10, 0.01, fs_cts, 5);
+    /*Utils::permute_chunks(seqs, 999, 0.02, fs_cts, 5);
     return 0;*/
 
  /*   Distance dist(k, thrs, step);
