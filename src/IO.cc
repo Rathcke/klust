@@ -146,18 +146,23 @@ void print_stats(const vector<Seq>& seqs, const list<Centroid>& cts) {
 }
 
 /**
- * Given a list of Centroid structs and two file streams, centroids and
- * clusters, write centroids in FASTA format to the former and clustering
- * results to the latter (in a format inpired by UCLUST's .uc format).
+ * Given a list of Centroid structs, write centroids in FASTA format
+ * to the given file stream.
  */
-void write_results(const list<Centroid>& cts, ofstream& fs_centroids,
-        ofstream& fs_clusters) {
-
+void write_centroids(const list<Centroid>& cts, ofstream& fs_centroids) {
     for (auto& c : cts) {
         // write FASTA format to centroids file
         fs_centroids << '>' << c.seq.desc << '\n'
                      << c.seq.to_string() << '\n';
+    }
+}
 
+/**
+ * Given a list of Centroid structs, write clustering results to the given file
+ * stream in a format inspired by UCLUST's .uc format.
+ */
+void write_clusters(const list<Centroid>& cts, ofstream& fs_clusters) {
+    for (auto& c : cts) {
         // write centroid entry to clusters file
         fs_clusters << 'C' << setw(6) << c.num << ' ' << c.seq.desc << '\n';
 
@@ -169,6 +174,7 @@ void write_results(const list<Centroid>& cts, ofstream& fs_centroids,
         }
     }
 }
+
 
 void springy(const list<Centroid>& cts, ofstream& fs) {
 

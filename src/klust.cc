@@ -19,9 +19,10 @@
 
 using namespace std;
 
+void print_usage(char *argv[]);
+
 int main(int argc, char *argv[])
 {
-
     ios_base::sync_with_stdio(false); // don't share buffers with C style IO
 
     // default similarity and clustering parameters
@@ -34,11 +35,18 @@ int main(int argc, char *argv[])
     bool sort_decr = false;
     int depth = 0;
 
+    bool output_centroids = false;
+    bool output_clusters = false;
+    string centroids_file, clusters_file;
+
     // misc parameters
     bool springy = false;
+    string springy_file;
 
     // CLI argument parsing
     static struct option long_options[] = {
+        {"centroids",   required_argument, 0, 'o'},
+        {"clusters",    required_argument, 0, 'u'},
         {"count",       required_argument, 0, 'c'},
         {"depth",       required_argument, 0, 'l'},
         {"id",          required_argument, 0, 't'},
@@ -47,11 +55,12 @@ int main(int argc, char *argv[])
         {"sort_incr",   no_argument,       0, 'i'},
         {"step_size",   required_argument, 0, 's'},
 
-        {"springy",     no_argument,       0,  0 }
+        {"springy",     required_argument, 0,  1 },
+        {0,             0,                 0,  0 }
     };
 
     int opt, option_index = 0;
-    while ((opt = getopt_long(argc, argv, "c:k:l:m:s:t:",
+    while ((opt = getopt_long(argc, argv, "c:k:l:m:s:t:o:u:",
                     long_options, &option_index)) != -1) {
         switch (opt) {
             case 'c':
@@ -72,29 +81,36 @@ int main(int argc, char *argv[])
             case 'm':
                 max_rejects = atoi(optarg);
                 break;
+            case 'o':
+                output_centroids = true;
+                centroids_file = optarg;
+                break;
             case 's':
                 step = atoi(optarg);
                 break;
             case 't':
                 thrs = atof(optarg);
                 break;
+            case 'u':
+                output_clusters = true;
+                clusters_file = optarg;
+                break;
 
             // misc other parameters
-            case  0 :
+            case  1 :
                 springy = true;
+                springy_file = optarg;
                 break;
             default:
                 cout << "unexpected argument" << endl;
+                print_usage(argv);
                 return 1;
         }
     }
 
-    if (argc < (optind + 3)) {
-        cerr << "Usage: " << argv[0] << " <FASTA input file> "
-                                        " <FASTA output file for centroid> "
-                                        " <output file for clustering results> "
-                                     << endl; // TODO: mention options
-        return 1;
+    if (argc < optind + 1) {
+        print_usage(argv);
+        return 0;
     }
 
     if (sort_incr && sort_decr) {
@@ -103,16 +119,32 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    ifstream fs_in(argv[optind++]);
-    ofstream fs_cts(argv[optind++], ofstream::out | ofstream::trunc);
-    ofstream fs_cls(argv[optind++], ofstream::out | ofstream::trunc);
-
-    if (!(fs_in && fs_cts && fs_cls)) {
-        cerr << "Error opening file" << endl;
-        fs_in.close();
-        fs_cts.close();
-        fs_cls.close();
+    ifstream fs_in(argv[optind]);
+    if (!fs_in) {
+        cerr << "Error opening file \"" << argv[optind] << "\"" << endl;
         return 1;
+    }
+    ++optind;
+
+    ofstream fs_cts, fs_cls;
+
+    if (output_centroids) {
+        fs_cts.open(centroids_file, ofstream::out | ofstream::trunc);
+        if (!fs_cts) {
+            cerr << "Error opening file \"" << centroids_file << "\"" << endl;
+            fs_in.close();
+            return 1;
+        }
+    }
+
+    if (output_clusters) {
+        fs_cls.open(clusters_file, ofstream::out | ofstream::trunc);
+        if (!fs_cls) {
+            cerr << "Error opening file \"" << clusters_file << "\"" << endl;
+            fs_in.close();
+            fs_cts.close();
+            return 1;
+        }
     }
 
     cout << "Running with parameters: "
@@ -169,7 +201,7 @@ int main(int argc, char *argv[])
  /*   Distance dist(k, thrs, step);
     Utils::print_matrix(seqs, cout, dist);
     return 0;*/
-    
+
 
 
     /*
@@ -217,7 +249,10 @@ int main(int argc, char *argv[])
      */
     IO::print_stats(seqs, cts);
 
-    IO::write_results(cts, fs_cts, fs_cls);
+    if (output_centroids)
+        IO::write_centroids(cts, fs_cts);
+    if (output_clusters)
+        IO::write_clusters(cts, fs_cls);
 
 /*    Distance dist(k, thrs, step);
     size_t size = 0;
@@ -231,15 +266,16 @@ int main(int argc, char *argv[])
     }
     for (auto it = iter->cls_seqs.begin();
             it != iter->cls_seqs.end(); ++it) {
-        
-        cout << dist.levenshtein_window(iter->seq.to_string(), 
+
+        cout << dist.levenshtein_window(iter->seq.to_string(),
                 ((*it).get()).to_string()) << " ";
     }
     cout << endl;*/
 
     if (springy) {
-        ofstream fs_springy("springy.html", ofstream::out | ofstream::trunc);
+        ofstream fs_springy(springy_file, ofstream::out | ofstream::trunc);
         if (fs_springy) {
+            cout << "Generating springy code..." << endl;
             IO::springy(cts, fs_springy);
             fs_springy.close();
         } else
@@ -251,4 +287,26 @@ int main(int argc, char *argv[])
     fs_cls.close();
 
     return 0;
+}
+
+void print_usage(char *argv[]) {
+    cout << "Usage: " << argv[0] << " <FASTA input file>\n"
+            "\n"
+            "Options:\n"
+            "-o, --centroids file   Output FASTA file for centroids\n"
+            "-u, --clusters file    Output file for clustering results\n"
+            "-t, --id t             Set similarity threshold/identity to t (in [0,1])\n"
+            "-k k                   Set the k in k-mer, used in similarity metric\n"
+            "-c, --count n          Read and process n sequences\n"
+            "-d, --sort_decr        Sort sequences by decresing length\n"
+            "-i, --sort_incr        Sort sequences by increasing length\n"
+            "-l, --depth d          Set the depth of the tree of divides, i.e.\n"
+            "                       cluster 2^d subsets of sequences and combine\n"
+            "-m, --max_rejects x    Max number of rejects when searching for centroid\n"
+            "-s, --step_size s      Step s characters between k-mers when comparing\n"
+            "\n"
+            "--springy file         Generate springy JavaScript code\n"
+            "\n"
+            "Example: \n"
+            "./klust ../data/SILVA_10k.fasta cts.fasta clusters --sort_incr\n";
 }

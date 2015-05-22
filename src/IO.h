@@ -19,8 +19,9 @@ bool read_sequence(std::ifstream& fs, std::string& s);
 
 void print_stats(const std::vector<Seq>& seqs, const std::list<Centroid>& cts);
 
-void write_results(const std::list<Centroid>& cts,
-        std::ofstream& fs_centroids, std::ofstream& fs_clusters);
+void write_centroids(const std::list<Centroid>& cts, std::ofstream& fs_centroids);
+
+void write_clusters(const std::list<Centroid>& cts, std::ofstream& fs_clusters);
 
 void springy(const std::list<Centroid>& cts, std::ofstream& fs);
 

@@ -20,7 +20,6 @@ Distance::Distance(int kmer, double threshold, int step_size) {
 }
 
 bool Distance::compare(const Seq& s, const Seq& t) {
-    //cout << distance(s, t) << endl;
     return distance(s, t) >= thrs;
 }
 
