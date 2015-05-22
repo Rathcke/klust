@@ -187,9 +187,9 @@ int main(int argc, char *argv[])
             });
     }
 
-    //random_shuffle(seqs.begin(), seqs.end());
+    /*random_shuffle(seqs.begin(), seqs.end());
 
-/*    for (auto& s : seqs) {
+    for (auto& s : seqs) {
         fs_cts << '>' << s.desc << '\n' << s.to_string() << '\n';
     }
     return 0;*/
@@ -198,10 +198,10 @@ int main(int argc, char *argv[])
     /*Utils::permute_chunks(seqs, 999, 0.02, fs_cts, 5);
     return 0;*/
 
- /*   Distance dist(k, thrs, step);
-    Utils::print_matrix(seqs, cout, dist);
-    return 0;*/
-
+    /*Distance dist(k, thrs, step);
+    Utils::print_matrix(seqs, fs_cts, dist);
+    return 0;
+*/
 
 
     /*
