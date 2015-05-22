@@ -189,10 +189,30 @@ int main(int argc, char *argv[])
 
     /*random_shuffle(seqs.begin(), seqs.end());
 
+    /*Distance d2win(k, thrs, step);
+    vector<Seq> different_seqs;
+
     for (auto& s : seqs) {
+        bool match = false;
+        for (auto& t : different_seqs) {
+            if (d2win.compare(s, t))
+                match = true;
+        }
+        if (!match)
+            different_seqs.push_back(s);
+    }
+
+    for (auto& s : different_seqs)
+        fs_cts << '>' << s.desc << '\n' << s.to_string() << '\n';
+
+    return 0;*/
+
+    /*for (auto& s : seqs) {
         fs_cts << '>' << s.desc << '\n' << s.to_string() << '\n';
     }
     return 0;*/
+
+    //random_shuffle(seqs.begin(), seqs.end());
     /*Utils::permute(seqs, 10, 0.01, fs_cts);
     return 0;*/
     /*Utils::permute_chunks(seqs, 999, 0.02, fs_cts, 5);
@@ -200,9 +220,9 @@ int main(int argc, char *argv[])
 
     /*Distance dist(k, thrs, step);
     Utils::print_matrix(seqs, fs_cts, dist);
+
     return 0;
 */
-
 
     /*
      * Comparing sequences
