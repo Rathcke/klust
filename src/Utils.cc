@@ -135,8 +135,8 @@ void permute_chunks(vector<Seq>& seqs, int count, double ratio,
 
 void print_matrix(vector<Seq>& seqs, ostream& fs_mat, Distance& dist) {
     
-    fs_mat.setf(ios::fixed, ios::floatfield);
-    fs_mat.setf(ios::showpoint);
+/*    fs_mat.setf(ios::fixed, ios::floatfield);
+    fs_mat.setf(ios::showpoint);*/
 
     vector<vector<double>> matrix(seqs.size(), vector<double>(seqs.size(), -1));
 
@@ -158,7 +158,7 @@ void print_matrix(vector<Seq>& seqs, ostream& fs_mat, Distance& dist) {
     for (unsigned int i = 0; i < seqs.size(); ++i) {
         for (unsigned int j = 0; j < seqs.size(); ++j) {
 
-            fs_mat << setw(8) << setprecision(0) << matrix[i][j];
+            fs_mat << setw(8) << setprecision(3) << matrix[i][j];
 
         }
         fs_mat << '\n';

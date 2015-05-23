@@ -218,10 +218,10 @@ int main(int argc, char *argv[])
     /*Utils::permute_chunks(seqs, 9, 0.02, fs_cts, 5);
     return 0;
 */
-    Distance dist(k, thrs, step);
+/*    Distance dist(k, thrs, step);
     Utils::print_matrix(seqs, fs_cts, dist);
 
-    return 0;
+    return 0;*/
 
     /*
      * Comparing sequences
