@@ -90,23 +90,23 @@ void permute_chunks(vector<Seq>& seqs, int count, double ratio,
             vector<int> rand_indices;   // indices in sequence to be changed
 
             int j = 0;
-            
+
             while (j < ceil((double) rand_indices_count/chunk_size)) {
                 int random_index = get_rand(0, s.length-chunk_size);
-                
+
                 for (int k = 0; k < rand_indices_count; ++k) {
                     if (rand_indices.empty() ||
                             abs(rand_indices[k] - random_index) >= chunk_size) {
                         rand_indices.push_back(random_index);
                         ++j;
-                        break;  
-                    } else 
+                        break;
+                    } else
                         break;
 
                 }
             }
 
-            string s_perm = s.to_string();           
+            string s_perm = s.to_string();
 
             for (int r : rand_indices) {
 
@@ -115,7 +115,7 @@ void permute_chunks(vector<Seq>& seqs, int count, double ratio,
 
                 for (int j = 0; j < chunk_size; ++j) {
 
-                    if (rand_indices_count == 0)                    
+                    if (rand_indices_count == 0)
                         break;
 
                     s_perm[r+j] = get_rand_base_not(s_perm[r+j]);
