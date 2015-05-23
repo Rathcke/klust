@@ -155,7 +155,7 @@ void print_matrix(vector<Seq>& seqs, ostream& fs_mat, Distance& dist) {
     for (unsigned int i = 0; i < seqs.size(); ++i) {
         for (unsigned int j = 0; j < seqs.size(); ++j) {
 
-            fs_mat << setw(6) << setprecision(3) << matrix[i][j];
+            fs_mat << setw(8) << setprecision(3) << matrix[i][j];
 
         }
         fs_mat << '\n';
