@@ -133,17 +133,23 @@ void permute_chunks(vector<Seq>& seqs, int count, double ratio,
 
 
 void print_matrix(vector<Seq>& seqs, ostream& fs_mat, Distance& dist) {
+    
+    vector<vector<double>> matrix(seqs.size(), vector<double>(seqs.size(), -1));
 
-    double matrix[seqs.size()][seqs.size()];
+    //matrix.resize(seqs.size());
 
     for (unsigned int i = 0; i < seqs.size(); ++i) {
+        cout << "\r" << seqs.size() - i << flush;
         for (unsigned int j = 0; j < seqs.size(); ++j) {
-
-            if (i == j)
+            if (i == j) {
                 matrix[i][j] = 1;
-
-            matrix[i][j] = dist.distance(seqs[i], seqs[j]);
-
+                continue;
+            }
+            if (matrix[j][i] != -1)
+                continue;
+            double d = dist.distance(seqs[i], seqs[j]);
+            matrix[i][j] = d;
+            matrix[j][i] = d;
         }
     }
     for (unsigned int i = 0; i < seqs.size(); ++i) {
