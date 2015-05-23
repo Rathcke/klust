@@ -189,7 +189,7 @@ int main(int argc, char *argv[])
 
     /*random_shuffle(seqs.begin(), seqs.end());
 
-    /*Distance d2win(k, thrs, step);
+    Distance d2win(k, thrs, step);
     vector<Seq> different_seqs;
 
     for (auto& s : seqs) {
