@@ -112,13 +112,14 @@ double Distance::distance(const Seq& s, const Seq& t) {
 
         min_dist = min(cur_dist, min_dist);
     }
+
     jaccard_dist = (double) (total - min_dist) / (double) total;
 
     if (jaccard_dist >= thrs) {
         delete[] kmers;
         return jaccard_dist;
     }
-    
+
     delete[] kmers;
     return jaccard_dist;
 }

@@ -3,6 +3,7 @@
 #include <iomanip>
 #include <random>
 #include <vector>
+#include <iostream>
 
 #include "Seq.h"
 #include "Utils.h"
@@ -134,12 +135,14 @@ void permute_chunks(vector<Seq>& seqs, int count, double ratio,
 
 void print_matrix(vector<Seq>& seqs, ostream& fs_mat, Distance& dist) {
     
+    fs_mat.setf(ios::fixed, ios::floatfield);
+    fs_mat.setf(ios::showpoint);
+
     vector<vector<double>> matrix(seqs.size(), vector<double>(seqs.size(), -1));
 
     //matrix.resize(seqs.size());
 
     for (unsigned int i = 0; i < seqs.size(); ++i) {
-        cout << "\r" << seqs.size() - i << flush;
         for (unsigned int j = 0; j < seqs.size(); ++j) {
             if (i == j) {
                 matrix[i][j] = 1;
@@ -155,7 +158,7 @@ void print_matrix(vector<Seq>& seqs, ostream& fs_mat, Distance& dist) {
     for (unsigned int i = 0; i < seqs.size(); ++i) {
         for (unsigned int j = 0; j < seqs.size(); ++j) {
 
-            fs_mat << setw(8) << setprecision(3) << matrix[i][j];
+            fs_mat << setw(8) << setprecision(0) << matrix[i][j];
 
         }
         fs_mat << '\n';
