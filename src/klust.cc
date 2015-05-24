@@ -155,6 +155,11 @@ int main(int argc, char *argv[])
          << "\n" << endl;
 
     /*
+     * Setting up distance metric
+     */
+    Distance dist(k, thrs, step);
+
+    /*
      * Reading sequences
      */
     vector<Seq> seqs;
@@ -189,6 +194,11 @@ int main(int argc, char *argv[])
 
     //random_shuffle(seqs.begin(), seqs.end());
 
+    //Utils::permute(seqs, 10, 0.01, fs_cts);
+    //Utils::permute_chunks(seqs, 9, 0.02, fs_cts, 5);
+
+    //Utils::print_matrix(seqs, fs_cts, dist);
+
     /*Distance d2win(k, thrs, step);
     vector<Seq> different_seqs;
 
@@ -212,40 +222,10 @@ int main(int argc, char *argv[])
     }
     return 0;*/
 
-    //random_shuffle(seqs.begin(), seqs.end());
-    /*Utils::permute(seqs, 10, 0.01, fs_cts);
-    return 0;*/
-    /*Utils::permute_chunks(seqs, 9, 0.02, fs_cts, 5);
-    return 0;
-*/
-/*    Distance dist(k, thrs, step);
-    Utils::print_matrix(seqs, fs_cts, dist);
-
-    return 0;*/
-
-    /*
-     * Comparing sequences
-     */
-    /*int tot = 0;
-    cout << "Comparing all read sequences...\n" << endl;
-    clock_t comp_clock = clock();
-    for (int i = 0; i < count; ++i)
-        for (int j = 0; j < count; ++j) {
-            if (d2.compare(seqs[i], seqs[j]))
-                ++tot;
-        }
-    double comp_secs = (clock() - comp_clock) / (double) CLOCKS_PER_SEC;
-
-    cout << "Finished comparing:\n"
-         << "Time: "            << comp_secs << " sec.\n"
-         << "Comparisons/sec: " << pow(count, 2) / comp_secs << "\n"
-         << "# of compares: "   << count * count << endl;
-    cout << tot << endl;*/
-
     /*
      * Clustering
      */
-    Cluster clust(Distance(k, thrs, step), max_rejects);
+    Cluster clust(dist, max_rejects);
     list<Centroid> cts;
 
     cout << "Clustering " << count << " sequences..." << endl;
@@ -273,8 +253,7 @@ int main(int argc, char *argv[])
     if (output_clusters)
         IO::write_clusters(cts, fs_cls);
 
-/*    Distance dist(k, thrs, step);
-    size_t size = 0;
+    /*size_t size = 0;
     auto iter = cts.begin();
     for (auto it = cts.begin(); it != cts.end(); ++it) {
         size_t cur_size = it->cls_seqs.size();
@@ -285,7 +264,6 @@ int main(int argc, char *argv[])
     }
     for (auto it = iter->cls_seqs.begin();
             it != iter->cls_seqs.end(); ++it) {
-
         cout << dist.levenshtein_window(iter->seq.to_string(),
                 ((*it).get()).to_string()) << " ";
     }

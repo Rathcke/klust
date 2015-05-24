@@ -41,7 +41,7 @@ struct Centroid {
 class Cluster
 {
     public:
-        Cluster(Distance&& d, int max_rejects)
+        Cluster(Distance& d, int max_rejects)
             : dist {d}, max_rejects {max_rejects} {}
 
         int simple_clust(const std::vector<Seq>& seqs, std::ofstream& fs_centroids,
