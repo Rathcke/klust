@@ -161,7 +161,7 @@ void Cluster::kmer_select_clust(vector<Seq>::const_iterator begin,
         get_kmer_bitset(*q_it, q_bitset);
 
         // pointer to most recent unsuccesful, compared centroid Seq
-        const Seq *close_match = nullptr;
+        Centroid *close_match = nullptr;
 
         int i = 0;
         for (auto c_it = cts.begin();
@@ -181,14 +181,14 @@ void Cluster::kmer_select_clust(vector<Seq>::const_iterator begin,
                     break;
                 }
                 if (c_it->link) {
-                    if (dist.compare(*q_it, *(c_it->link))) {
-                        (c_it->cls_seqs).push_back(ref(*q_it));
+                    if (dist.compare(*q_it, c_it->link->seq)) {
+                        (c_it->link->cls_seqs).push_back(ref(*q_it));
                         match = true; // found cluster
                         break;
                     }
                 }
                 ++rejects;
-                close_match = &(c_it->seq);
+                close_match = &(*c_it);
             }
         }
 

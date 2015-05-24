@@ -1,12 +1,6 @@
 #ifndef CLUSTER_H
 #define CLUSTER_H
 
-#ifdef DEBUG
-#define DEBUG(x) x
-#else
-#define DEBUG(x)
-#endif
-
 #include <string>
 #include <vector>
 #include <bitset>
@@ -29,7 +23,7 @@ struct Centroid {
 
     const unsigned num; // numbering of centroid in the order of discovery
 
-    const Seq *link;
+    Centroid *link;
 
     Centroid(const Seq& s, std::bitset<KMER_BITSET> bits, unsigned int num)
             : seq {s}, bits {bits}, num {num} {
