@@ -72,11 +72,6 @@ double Distance::distance(const Seq& s, const Seq& t) {
 
     double jaccard_dist = 0;
 
-    if (windows == 0) {
-        delete[] kmers;
-        return (double) (total - cur_dist) / (double) total;
-    }
-
     /*
      * pre_gram:  kmer moving out of window
      * post_gram: kmer moving into window
@@ -114,11 +109,6 @@ double Distance::distance(const Seq& s, const Seq& t) {
     }
 
     jaccard_dist = (double) (total - min_dist) / (double) total;
-
-    if (jaccard_dist >= thrs) {
-        delete[] kmers;
-        return jaccard_dist;
-    }
 
     delete[] kmers;
     return jaccard_dist;
