@@ -150,6 +150,7 @@ void Cluster::kmer_select_clust(vector<Seq>::const_iterator begin,
     const size_t seqs_size = distance(begin, end);
     unsigned int centroid_count = 0;
 
+
     for (auto q_it = begin; q_it != end; ++q_it) {
         cout << "\r" << 100 * (q_it - begin) / seqs_size << "%";
 
@@ -176,8 +177,8 @@ void Cluster::kmer_select_clust(vector<Seq>::const_iterator begin,
                 if (dist.compare(*q_it, c_it->seq)) {
                     (c_it->cls_seqs).push_back(ref(*q_it));
                     match = true; // found cluster
-                    cts.push_front(move(*c_it));
-                    cts.erase(c_it);
+                    // moves element at c_it to front of cts
+                    cts.splice(cts.begin(), cts, c_it);
                     break;
                 }
                 if (c_it->link) {
