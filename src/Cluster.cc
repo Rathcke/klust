@@ -176,8 +176,9 @@ void Cluster::kmer_select_clust(vector<Seq>::const_iterator begin,
                 if (dist.compare(*q_it, c_it->seq)) {
                     (c_it->cls_seqs).push_back(ref(*q_it));
                     match = true; // found cluster
-                    cts.push_front(move(*c_it));
-                    cts.erase(c_it);
+
+                    cts.splice(cts.begin(), cts, c_it);
+
                     break;
                 }
                 if (c_it->link) {
