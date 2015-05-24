@@ -17,7 +17,7 @@ from sklearn.metrics import euclidean_distances
 from sklearn.decomposition import PCA
 
 # Read data
-count = 1600
+count = 800
 similarities_all = np.loadtxt('distmat_synth_SILVA_3800_dist.txt')
 similarities = similarities_all[0:count,0:count]
 
@@ -59,5 +59,5 @@ for c in centroids:
 for x, y, m, sz, z in zip(pos[:,0], pos[:,1], markers, sizes, zorders):
     plt.scatter(x, y, s=sz, c=next(colors), marker=m, zorder=z)
 
-#plt.savefig("MDS_t-SNE_SILVA_500.png")
+plt.savefig("MDS_t-SNE_synth_silva_800.png")
 plt.show()
