@@ -13,9 +13,6 @@ namespace Utils {
 
 using namespace std;
 
-/**
- * Return random int in interval [a,b].
- */
 int get_rand(int a, int b) {
     random_device rd;
     mt19937 mt(rd());
@@ -132,9 +129,8 @@ void permute_chunks(vector<Seq>& seqs, int count, double ratio,
     }
 }
 
-
 void print_matrix(vector<Seq>& seqs, ostream& fs_mat, Distance& dist) {
-    
+
 /*    fs_mat.setf(ios::fixed, ios::floatfield);
     fs_mat.setf(ios::showpoint);*/
 
@@ -163,6 +159,22 @@ void print_matrix(vector<Seq>& seqs, ostream& fs_mat, Distance& dist) {
         }
         fs_mat << '\n';
     }
+}
+
+vector<Seq> dissimilar_seqs(vector<Seq>& seqs, Distance& dist) {
+    vector<Seq> ret;
+
+    for (auto& s : seqs) {
+        bool match = false;
+        for (auto& t : ret) {
+            if (dist.compare(s, t))
+                match = true;
+        }
+        if (!match)
+            ret.push_back(s);
+    }
+
+    return ret;
 }
 
 } // namespace Util

@@ -199,28 +199,6 @@ int main(int argc, char *argv[])
 
     //Utils::print_matrix(seqs, fs_cts, dist);
 
-    /*Distance d2win(k, thrs, step);
-    vector<Seq> different_seqs;
-
-    for (auto& s : seqs) {
-        bool match = false;
-        for (auto& t : different_seqs) {
-            if (d2win.compare(s, t))
-                match = true;
-        }
-        if (!match)
-            different_seqs.push_back(s);
-    }
-
-    for (auto& s : different_seqs)
-        fs_cts << '>' << s.desc << '\n' << s.to_string() << '\n';
-
-    return 0;*/
-
-    /*for (auto& s : seqs) {
-        fs_cts << '>' << s.desc << '\n' << s.to_string() << '\n';
-    }
-    return 0;*/
 
     /*
      * Clustering
