@@ -193,7 +193,6 @@ void Cluster::kmer_select_clust(vector<Seq>::const_iterator begin,
         }
 
         if (!match) {
-
             // add new centroid to list
             cts.emplace_front(*q_it, q_bitset, centroid_count++);
             //cout << numb << ", ";
