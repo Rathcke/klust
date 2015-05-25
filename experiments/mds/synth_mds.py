@@ -3,6 +3,8 @@
 # Multidimensional scaling of synthetic dataset based on 380 sequences from
 # SILVA which are at most 0.6 similar. 9 copies of each after the centroid.
 
+import numpy as np
+
 from itertools import cycle
 
 from matplotlib import pyplot as plt
@@ -14,10 +16,9 @@ from sklearn import manifold
 from sklearn.metrics import euclidean_distances
 from sklearn.decomposition import PCA
 
-import sys as sys
-
 # Read data
 count = 400
+#similarities_all = np.loadtxt('distmat_synth_SILVA_3800_dist.txt')
 similarities_all = np.loadtxt('distmat_synth_SILVA_3800_dist.txt')
 similarities = similarities_all[0:count,0:count]
 
@@ -98,6 +99,8 @@ for c in centroids:
     sizes[c] = 50
     alphas[c] = 1.0
 
+plt.figure(num=None, figsize=(16, 12), dpi=100, facecolor='w', edgecolor='k')
+
 # Scatter plot
 #plt.scatter(pos[:,0], pos[:,1], s=20, c=list(colors))
 for x, y, color, m, sz, z, a in zip(pos[:,0], pos[:,1], colors, markers,
@@ -116,6 +119,10 @@ for x, y, color, m, sz, z, a in zip(pos[:,0], pos[:,1], colors, markers,
 #    c += 1
 
 #plt.axis('off')
+plt.xticks([])
+plt.yticks([])
 
-plt.savefig("MDS_t-SNE_synth_silva_" + str(count) + ".png", bbox_inches="tight")
+#plt.savefig("MDS_t-SNE_synth_silva_" + str(count) + ".png", bbox_inches="tight")
+plt.savefig("MDS_t-SNE_synth_silva_levenshtein" + str(count) + ".png",
+        bbox_inches="tight")
 #plt.show()

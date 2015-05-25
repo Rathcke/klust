@@ -21,5 +21,4 @@ struct Seq {
     uint32_t substr(size_t pos, size_t len) const;
 };
 
-
 #endif
