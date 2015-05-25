@@ -25,38 +25,35 @@ using namespace std;
  * output clusters to file stream and return the number of centroids.
  */
 int Cluster::simple_clust(const vector<Seq>& seqs, ofstream& fs_centroids,
-        ofstream& fs_clusters, Distance& dist, int count, int max_rejects) {
+        ofstream& fs_clusters) {
+
     unordered_map<int, Seq> centroids;
 
     int centroid_count = 0;
 
-    double write_secs = 0;
-
     for (auto q_it = seqs.cbegin(); q_it != seqs.cend(); ++q_it) {
+
         bool match = false;
         vector<int> s_keys = dist.compute_key(*q_it, max_rejects);
+
         if (s_keys.empty())
           throw logic_error("Calling compute_key on "
-                        + (*q_it).to_string() + " returns an empty vector" );
+                  + (*q_it).to_string() + " returns an empty vector");
 
         for (auto it = s_keys.cbegin(); it != s_keys.cend(); ++it) {
-            if (centroids.find(*it) == centroids.end()) {
+            if (centroids.find(*it) == centroids.end())
                 continue;
-            }
-            Seq& target = centroids[*it];
-            double d = dist.distance(*q_it, target);
-            if (d >= dist.threshold()) {
-                // write s belongs to centroids[i] to fs_clusters
-                //clock_t read_clock = clock();
 
+            Seq& target = centroids[*it];
+
+            if (dist.compare(*q_it, target)) {
+                // write s belongs to centroids[i] to fs_clusters
                 /*fs_clusters << "H " << setw(6) << t_it - cts_index.cbegin() << " "
                             << setw(10) << setprecision(5) << fixed << d << " "
-                            << (*q_it).desc << " " << seqs[*t_it].desc << "\n";*/
+                            << (*q_it).desc << " " << seqs[*t_it].desc << "\n";
 
-                /*fs_clusters << (*q_it).to_string() << " "
+                fs_clusters << (*q_it).to_string() << " "
                             << target.to_string()  << '\n';*/
-
-                //write_secs += (clock() - read_clock) / (double) CLOCKS_PER_SEC;
 
                 match = true; // found cluster
                 break;
@@ -67,20 +64,14 @@ int Cluster::simple_clust(const vector<Seq>& seqs, ofstream& fs_centroids,
             // add new centroid and write to stream in FASTA format
             centroids[s_keys[0]] = *q_it;
 
-            clock_t read_clock = clock();
-
             // write centroid entry to to clusters file
             fs_clusters << "C " << setw(6) << centroid_count++ << " "
                         << (*q_it).desc << "\n";
             // write FASTA format to centroids file
             fs_centroids << ">" << (*q_it).desc << '\n'
                          << (*q_it).to_string()   << '\n';
-
-            write_secs += (clock() - read_clock) / (double) CLOCKS_PER_SEC;
         }
     }
-
-    cout << "Time spent on file output: " << write_secs << " sec." << endl;
 
     return centroid_count;
 }

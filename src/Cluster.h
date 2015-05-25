@@ -1,12 +1,11 @@
 #ifndef CLUSTER_H
 #define CLUSTER_H
 
+#include <bitset>
+#include <functional>
+#include <list>
 #include <string>
 #include <vector>
-#include <bitset>
-#include <list>
-
-#include <functional>
 
 #include "Distance.h"
 
@@ -39,8 +38,7 @@ class Cluster
             : dist {d}, max_rejects {max_rejects} {}
 
         int simple_clust(const std::vector<Seq>& seqs, std::ofstream& fs_centroids,
-                std::ofstream& fs_clusters, Distance& dist, int count,
-                int max_rejects);
+                std::ofstream& fs_clusters);
 
         int thorough_clust(const std::vector<Seq>& seqs,
                 std::ofstream& fs_centroids, std::ofstream& fs_clusters);

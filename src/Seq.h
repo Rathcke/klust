@@ -19,9 +19,6 @@ struct Seq {
     std::string to_string() const;
 
     uint32_t substr(size_t pos, size_t len) const;
-
-    static void permute(std::vector<Seq>& seqs, int count, double ratio,
-        std::ofstream& fs_cts);
 };
 
 
