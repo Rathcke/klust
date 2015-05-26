@@ -141,12 +141,18 @@ void Cluster::kmer_select_clust(vector<Seq>::const_iterator begin,
     const size_t seqs_size = distance(begin, end);
     unsigned int centroid_count = 0;
 
+    // DEBUG
+    vector<int> rejects_counts, tries_counts, false_negatives_counts;
+    int reached_end = 0, found_centroid = 0, reached_max_rejects = 0;
 
     for (auto q_it = begin; q_it != end; ++q_it) {
         cout << "\r" << 100 * (q_it - begin) / seqs_size << "%";
 
         bool match = false;
         int rejects = 0;    // number of unsuccessful compares so far
+
+        // DEBUG
+        int try_count = 0, false_negative_count = 0;
 
         // bitset of kmers occuring in query sequence
         bitset<KMER_BITSET> q_bitset(0);
@@ -155,9 +161,8 @@ void Cluster::kmer_select_clust(vector<Seq>::const_iterator begin,
         // pointer to most recent unsuccesful, compared centroid Seq
         Centroid *close_match = nullptr;
 
-        int i = 0;
         for (auto c_it = cts.begin();
-                (c_it != cts.end()) && (rejects < max_rejects); ++c_it, ++i) {
+                (c_it != cts.end()) && (rejects < max_rejects); ++c_it) {
 
             // count number of kmers occurring in both query and target sequence
             size_t set_bits = (q_bitset & c_it->bits).count();
@@ -165,6 +170,9 @@ void Cluster::kmer_select_clust(vector<Seq>::const_iterator begin,
             // if the # of distinct kmers in both query and target is >= to
             // id times the # of distinct kmers in the target, then compare
             if (set_bits >= c_it->count * dist.threshold()) {
+                // DEBUG
+                ++try_count;
+
                 if (dist.compare(*q_it, c_it->seq)) {
                     (c_it->cls_seqs).push_back(ref(*q_it));
                     match = true; // found cluster
@@ -182,6 +190,14 @@ void Cluster::kmer_select_clust(vector<Seq>::const_iterator begin,
                 ++rejects;
                 close_match = &(*c_it);
             }
+            // DEBUG
+            else if (dist.compare(*q_it, c_it->seq) ||
+                    (c_it->link && dist.compare(*q_it, c_it->link->seq)))
+                ++false_negative_count;
+
+            // DEBUG
+            if (next(c_it) == cts.end())
+                ++reached_end;
         }
 
         if (!match) {
@@ -191,9 +207,35 @@ void Cluster::kmer_select_clust(vector<Seq>::const_iterator begin,
             if (close_match)
                 cts.front().link = close_match;
         }
-    }
+        // DEBUG
+        else
+            ++found_centroid;
 
+        // DEBUG
+        if (!match && rejects == max_rejects)
+            ++reached_max_rejects;
+
+        // DEBUG
+        rejects_counts.push_back(rejects);
+        tries_counts.push_back(try_count);
+        false_negatives_counts.push_back(false_negative_count);
+    }
     cout << "\r100%";
+
+    // DEBUG
+    double avg_rejects = accumulate(rejects_counts.cbegin(),
+            rejects_counts.cend(), 0.0) / rejects_counts.size();
+    double avg_tries = accumulate(tries_counts.cbegin(),
+            tries_counts.cend(), 0.0) / tries_counts.size();
+    double avg_false_negatives = accumulate(false_negatives_counts.cbegin(),
+            false_negatives_counts.cend(), 0.0) / false_negatives_counts.size();
+    cout << '\n'
+         << "avg_rejects         = " << avg_rejects         << '\n'
+         << "avg_tries           = " << avg_tries           << '\n'
+         << "avg_false_negatives = " << avg_false_negatives << '\n'
+         << "found centroid      = " << found_centroid      << '\n'
+         << "reached_end         = " << reached_end         << '\n'
+         << "reached_max_rejects = " << reached_max_rejects << endl;
 }
 
 
