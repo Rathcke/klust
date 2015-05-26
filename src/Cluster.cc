@@ -155,9 +155,8 @@ void Cluster::kmer_select_clust(vector<Seq>::const_iterator begin,
         // pointer to most recent unsuccesful, compared centroid Seq
         Centroid *close_match = nullptr;
 
-        int i = 0;
         for (auto c_it = cts.begin();
-                (c_it != cts.end()) && (rejects < max_rejects); ++c_it, ++i) {
+                (c_it != cts.end()) && (rejects < max_rejects); ++c_it) {
 
             // count number of kmers occurring in both query and target sequence
             size_t set_bits = (q_bitset & c_it->bits).count();
