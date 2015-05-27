@@ -128,21 +128,24 @@ bool read_sequence(ifstream& fs, string& s) {
 void print_stats(const vector<Seq>& seqs, const list<Centroid>& cts) {
     vector<size_t> cluster_sizes;
     for (auto& c : cts)
-        cluster_sizes.push_back(c.cls_seqs.size());
+        cluster_sizes.push_back(c.cls_seqs.size() + 1); // add 1 for centroid
 
-    size_t max_size = *max_element(cluster_sizes.cbegin(), cluster_sizes.cend()) + 1;
-    size_t min_size = *min_element(cluster_sizes.cbegin(), cluster_sizes.cend()) + 1;
+    size_t max_size = *max_element(cluster_sizes.cbegin(), cluster_sizes.cend());
+    size_t min_size = *min_element(cluster_sizes.cbegin(), cluster_sizes.cend());
 
     double avg_size = (double) seqs.size() / (double) cts.size();
 
-    cout << "Clusters: " << cts.size()      << '\n'
-         << "Max size: " << max_size        << '\n'
-         << "Avg size: " << avg_size        << '\n'
-         << "Min size: " << min_size        << '\n';
+    size_t singletons = count(cluster_sizes.cbegin(), cluster_sizes.cend(), 1);
+
+    cout << "Clusters:   " << cts.size()      << '\n'
+         << "Max size:   " << max_size        << '\n'
+         << "Avg size:   " << avg_size        << '\n'
+         << "Min size:   " << min_size        << '\n'
+         << "Singletons: " << singletons      << '\n';
 
     struct rusage usage;
     if(getrusage(RUSAGE_SELF, &usage) == 0)
-        cout << "Max mem:  " << usage.ru_maxrss / 1024 << " MB" << endl;
+        cout << "Max mem:    " << usage.ru_maxrss / 1024 << " MB" << endl;
 }
 
 /**
