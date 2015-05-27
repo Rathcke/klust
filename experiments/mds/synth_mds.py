@@ -121,12 +121,22 @@ for x, y, color, m, sz, z, a in zip(pos[:,0], pos[:,1], colors, markers,
 #    c += 1
 
 #plt.axis('off')
-plt.xticks([])
-plt.yticks([])
+
+#plt.xticks([])
+#plt.yticks([])
+
+plt.xlim(-4000,1000)
+plt.ylim(-800,800)
+
 
 plt.tight_layout()
 
-plt.savefig("MDS_t-SNE_" + sys.argv[1] + "_" + str(count) + ".png",
+
+
+#plt.add_subplot(212, axisbg='r')
+
+
+plt.savefig("MDS_t-SNE_" + sys.argv[1] + "_" + str(count) + "_sub.png",
         bbox_inches="tight")
 
 #plt.savefig("MDS_t-SNE_synth_silva_" + str(count) + ".png", bbox_inches="tight")
