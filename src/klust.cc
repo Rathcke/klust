@@ -192,14 +192,6 @@ int main(int argc, char *argv[])
             });
     }
 
-    //random_shuffle(seqs.begin(), seqs.end());
-
-    //Utils::permute(seqs, 10, 0.01, fs_cts);
-    //Utils::permute_chunks(seqs, 9, 0.02, fs_cts, 5);
-
-    //Utils::print_matrix(seqs, fs_cts, dist);
-
-
     /*
      * Clustering
      */
@@ -230,22 +222,6 @@ int main(int argc, char *argv[])
         IO::write_centroids(cts, fs_cts);
     if (output_clusters)
         IO::write_clusters(cts, fs_cls);
-
-    /*size_t size = 0;
-    auto iter = cts.begin();
-    for (auto it = cts.begin(); it != cts.end(); ++it) {
-        size_t cur_size = it->cls_seqs.size();
-        if (cur_size > size) {
-            iter = it;
-            size = cur_size;
-        }
-    }
-    for (auto it = iter->cls_seqs.begin();
-            it != iter->cls_seqs.end(); ++it) {
-        cout << dist.levenshtein_window(iter->seq.to_string(),
-                ((*it).get()).to_string()) << " ";
-    }
-    cout << endl;*/
 
     if (springy) {
         ofstream fs_springy(springy_file, ofstream::out | ofstream::trunc);
