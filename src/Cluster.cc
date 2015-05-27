@@ -143,7 +143,7 @@ void Cluster::kmer_select_clust(vector<Seq>::const_iterator begin,
 
     // DEBUG
     vector<int> rejects_counts, tries_counts, false_negatives_counts;
-    int reached_end = 0, found_centroid = 0, reached_max_rejects = 0;
+    int not_try_count = 0, found_centroid = 0, reached_max_rejects = 0;
 
     for (auto q_it = begin; q_it != end; ++q_it) {
         cout << "\r" << 100 * (q_it - begin) / seqs_size << "%";
@@ -191,13 +191,12 @@ void Cluster::kmer_select_clust(vector<Seq>::const_iterator begin,
                 close_match = &(*c_it);
             }
             // DEBUG
-            else if (dist.compare(*q_it, c_it->seq) ||
+            else {
+                ++not_try_count;
+                if (dist.compare(*q_it, c_it->seq) ||
                     (c_it->link && dist.compare(*q_it, c_it->link->seq)))
-                ++false_negative_count;
-
-            // DEBUG
-            if (next(c_it) == cts.end())
-                ++reached_end;
+                    ++false_negative_count;
+            }
         }
 
         if (!match) {
@@ -227,6 +226,8 @@ void Cluster::kmer_select_clust(vector<Seq>::const_iterator begin,
             rejects_counts.cend(), 0.0) / rejects_counts.size();
     double avg_tries = accumulate(tries_counts.cbegin(),
             tries_counts.cend(), 0.0) / tries_counts.size();
+    double total_tries = accumulate(tries_counts.cbegin(),
+            tries_counts.cend(), 0.0);
     double avg_false_negatives = accumulate(false_negatives_counts.cbegin(),
             false_negatives_counts.cend(), 0.0) / false_negatives_counts.size();
     cout << '\n'
@@ -234,7 +235,7 @@ void Cluster::kmer_select_clust(vector<Seq>::const_iterator begin,
          << "avg_tries           = " << avg_tries           << '\n'
          << "avg_false_negatives = " << avg_false_negatives << '\n'
          << "found centroid      = " << found_centroid      << '\n'
-         << "reached_end         = " << reached_end         << '\n'
+         << "try ratio           = " << total_tries/(total_tries+not_try_count) << '\n'
          << "reached_max_rejects = " << reached_max_rejects << endl;
 }
 
