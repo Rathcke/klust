@@ -114,15 +114,13 @@ double Distance::distance(const Seq& s, const Seq& t) {
     return jaccard_dist;
 }
 
-/* Returns a sorted vector by decreasing order and returns the n most
-   frequent kmers if they exist */
 vector<int> Distance::compute_key(const Seq& s, int n) {
     const size_t slen = s.length;
     uint8_t *data = s.data;
 
-    // allocate array of length equal to the number of different kmers
-    const int kmer_count = pow(4, k);
-    //int *kmers = new int[kmer_count](); // zero initialized due to ()
+    // initialize zero filled vector of length equal to
+    // the number of different k-mers (4^k)
+    static const size_t kmer_count = pow(4, k);
     vector<int> kmers;
     kmers.resize(kmer_count);
 
@@ -146,8 +144,6 @@ vector<int> Distance::compute_key(const Seq& s, int n) {
     partial_sort_copy(kmers.begin(), kmers.end(),
             ret.begin(), ret.end(), greater<int>());
 
-
-    //delete[] kmers;
     return ret;
 }
 

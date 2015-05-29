@@ -14,6 +14,10 @@ class Distance
         bool compare(const Seq& s, const Seq& t);
         double distance(const Seq& s, const Seq& t);
 
+        /**
+         * Given a sequence, return the int representations of up to the n most
+         * frequent k-mers, if they exist.
+         */
         std::vector<int> compute_key(const Seq& s, int n);
 
         double levenshtein(const std::string& s, const std::string& t);

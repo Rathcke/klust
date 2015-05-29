@@ -259,5 +259,5 @@ void print_usage(char *argv[]) {
             "--springy file         Generate springy JavaScript code\n"
             "\n"
             "Example: \n"
-            "./klust ../data/SILVA_10k.fasta cts.fasta clusters --sort_incr\n";
+            "./klust ../data/SILVA_10k.fasta centroids.fasta clusters --sort_incr\n";
 }

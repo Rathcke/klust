@@ -18,12 +18,6 @@
 
 using namespace std;
 
-/**
- * Given file stream, read sequences of FASTA format, compute the centroids of
- * the clustering (given threshold and k for k-mers) of the given count of
- * sequences. Output the centroids in FASTA format to the output file stream,
- * output clusters to file stream and return the number of centroids.
- */
 int Cluster::simple_clust(const vector<Seq>& seqs, ofstream& fs_centroids,
         ofstream& fs_clusters) {
 
@@ -119,7 +113,6 @@ inline void get_kmer_bitset(const Seq& s, bitset<KMER_BITSET>& b) {
     for (size_t i = 0; i <= s.length - KMER_LEN; ++i) {
         uint32_t kmer = 0;
 
-        //memcpy(&kmer_l, (longer + (i/4)), 4);
         kmer = Distance::stream2int(s.data + (i/4));
         kmer >>= (32 - 2*(i % 4) - k2);
         kmer &= mask;
@@ -127,20 +120,11 @@ inline void get_kmer_bitset(const Seq& s, bitset<KMER_BITSET>& b) {
     }
 }
 
-
-/**
- * For every sequence in the given collection, search through the centroids for
- * one where the number of distinct kmers in both the query sequence and
- * centroid are at least dist.threshold() times the number of distinct kmers in
- * the centroid sequence. If no match is found after max_rejects tries, the
- * sequence becomes a new centroid.
- */
 void Cluster::kmer_select_clust(vector<Seq>::const_iterator begin,
         vector<Seq>::const_iterator end, list<Centroid>& cts) {
 
     const size_t seqs_size = distance(begin, end);
     unsigned int centroid_count = 0;
-
 
     for (auto q_it = begin; q_it != end; ++q_it) {
         cout << "\r" << 100 * (q_it - begin) / seqs_size << "%";
@@ -259,9 +243,6 @@ int Cluster::clust(const vector<Seq>& seqs, list<Centroid>& cts, int depth) {
     return cts.size();
 }
 
-/**
- * Merge two vectors of centroids and store the result in the first vector.
- */
 void Cluster::merge(list<Centroid>& res, const list<Centroid>& c1) {
     int rejects = 0;
     const auto res_end = res.end();
