@@ -126,6 +126,8 @@ void Cluster::kmer_select_clust(vector<Seq>::const_iterator begin,
     const size_t seqs_size = distance(begin, end);
     unsigned int centroid_count = 0;
 
+    bitset<KMER_BITSET> q_bitset(0);
+
     for (auto q_it = begin; q_it != end; ++q_it) {
         cout << "\r" << 100 * (q_it - begin) / seqs_size << "%";
 
@@ -133,7 +135,7 @@ void Cluster::kmer_select_clust(vector<Seq>::const_iterator begin,
         int rejects = 0;    // number of unsuccessful compares so far
 
         // bitset of kmers occuring in query sequence
-        bitset<KMER_BITSET> q_bitset(0);
+        q_bitset.reset();
         get_kmer_bitset(*q_it, q_bitset);
 
         // pointer to most recent unsuccesful, compared centroid Seq
