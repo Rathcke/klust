@@ -22,7 +22,7 @@ make
 ```
 
 
-## Example
+### Example
 
 The following example will cluster the sequences in the FASTA format file
 `../data/SILVA_10k.fasta` which contains 10,000 RNA sequences (the first 10k
