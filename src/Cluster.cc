@@ -27,9 +27,11 @@ int Cluster::simple_clust(const vector<Seq>& seqs, ofstream& fs_centroids,
     unordered_map<uint32_t, Seq> centroids;
 
     int centroid_count = 0;
+    int i = 0;
 
-    //for (auto q_it = seqs.cbegin(); q_it != seqs.cend(); ++q_it) {
     for (const auto& s : seqs) {
+
+        cout << "\r" << ++i;
 
         bool match = false;
         vector<uint32_t> freq_kmers = most_frequent_kmers(s, max_rejects);
@@ -38,7 +40,6 @@ int Cluster::simple_clust(const vector<Seq>& seqs, ofstream& fs_centroids,
           throw logic_error("Calling most_frequent_kmers on "
                   + s.to_string() + " returns an empty vector");
 
-        //for (auto it = freq_kmers.cbegin(); it != freq_kmers.cend(); ++it) {
         for (const auto& kmer : freq_kmers) {
             // skip k-mer if not most frequent in any existing centroid
             if (centroids.find(kmer) == centroids.end())
