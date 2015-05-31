@@ -32,5 +32,5 @@ sequence length. The centroids will be written to the file `centroids.fasta`
 and the clustering results to the file `clusters`:
 
 ```sh
-./klust ../data/SILVA_10k.fasta centroids.fasta clusters --sort_incr
+./klust ../data/SILVA_10k.fasta -o centroids.fasta -u clusters --sort_incr
 ```
