@@ -21,31 +21,34 @@ using namespace std;
 int Cluster::simple_clust(const vector<Seq>& seqs, ofstream& fs_centroids,
         ofstream& fs_clusters) {
 
-    unordered_map<int, Seq> centroids;
+    // map from binary representation of k-mer to Seq
+    unordered_map<uint32_t, Seq> centroids;
 
     int centroid_count = 0;
 
-    for (auto q_it = seqs.cbegin(); q_it != seqs.cend(); ++q_it) {
+    //for (auto q_it = seqs.cbegin(); q_it != seqs.cend(); ++q_it) {
+    for (const auto& s : seqs) {
 
         bool match = false;
-        vector<int> s_keys = dist.compute_key(*q_it, max_rejects);
+        vector<uint32_t> freq_kmers = most_frequent_kmers(s, max_rejects);
 
-        if (s_keys.empty())
-          throw logic_error("Calling compute_key on "
-                  + (*q_it).to_string() + " returns an empty vector");
+        if (freq_kmers.empty())
+          throw logic_error("Calling most_frequent_kmers on "
+                  + s.to_string() + " returns an empty vector");
 
-        for (auto it = s_keys.cbegin(); it != s_keys.cend(); ++it) {
-            if (centroids.find(*it) == centroids.end())
+        //for (auto it = freq_kmers.cbegin(); it != freq_kmers.cend(); ++it) {
+        for (const auto& kmer : freq_kmers) {
+            // skip k-mer if not most frequent in any existing centroid
+            if (centroids.find(kmer) == centroids.end())
                 continue;
 
-            Seq& target = centroids[*it];
+            Seq& target = centroids[kmer];
 
-            if (dist.compare(*q_it, target)) {
+            if (dist.compare(s, target)) {
                 // write s belongs to centroids[i] to fs_clusters
                 /*fs_clusters << "H " << setw(6) << t_it - cts_index.cbegin() << " "
                             << setw(10) << setprecision(5) << fixed << d << " "
                             << (*q_it).desc << " " << seqs[*t_it].desc << "\n";
-
                 fs_clusters << (*q_it).to_string() << " "
                             << target.to_string()  << '\n';*/
 
@@ -56,14 +59,14 @@ int Cluster::simple_clust(const vector<Seq>& seqs, ofstream& fs_centroids,
 
         if (!match) {
             // add new centroid and write to stream in FASTA format
-            centroids[s_keys[0]] = *q_it;
+            centroids[freq_kmers[0]] = s;
 
             // write centroid entry to to clusters file
-            fs_clusters << "C " << setw(6) << centroid_count++ << " "
-                        << (*q_it).desc << "\n";
+            fs_clusters << "C " << setw(6) << centroid_count++
+                        << " "  << s.desc  << "\n";
             // write FASTA format to centroids file
-            fs_centroids << ">" << (*q_it).desc << '\n'
-                         << (*q_it).to_string()   << '\n';
+            fs_centroids << ">" << s.desc << '\n'
+                         << s.to_string() << '\n';
         }
     }
 
@@ -271,4 +274,44 @@ void Cluster::merge(list<Centroid>& res, const list<Centroid>& c1) {
         if (!match)
             res.push_back(*it1);
     }
+}
+
+vector<uint32_t> Cluster::most_frequent_kmers(const Seq& s, int n) {
+    static const int k = dist.kmer(); // value for k from Distance object
+
+    const size_t slen = s.length;
+    uint8_t *data = s.data;
+
+    // initialize zero filled vector of length equal to
+    // the number of different k-mers (4^k)
+    static const size_t kmer_count = pow(4, k);
+    vector<pair<uint32_t,int>> kmers;
+    kmers.resize(kmer_count);
+
+    static const uint32_t k2 = 2 * k;
+    static const uint32_t mask = pow(2, k2) - 1; // 0b001111 (2*k 1's)
+
+    // count kmers in the sequence
+    for (size_t i = 0; i <= slen - k; ++i) {
+        uint32_t kmer = 0; // binary repr. of kmer
+
+        kmer = dist.stream2int(data + (i/4));
+        kmer >>= (32 - 2*(i % 4) - k2);
+        kmer &= mask;
+
+        ++kmers[kmer];
+    }
+
+    sort(kmers.begin(), kmers.end(),
+        [](const pair<uint32_t,int>& l, const pair<uint32_t,int>& r) {
+            return l.second > r.second;
+        });
+
+    vector<int> ret;
+    ret.resize(n);
+
+    transform(kmer.cbegin(), kmers.cend(), back_inserter(ret),
+        [](const pair<uint32_t,int>& e) { return p.first; });
+
+    return ret;
 }

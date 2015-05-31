@@ -13,12 +13,6 @@
 
 using namespace std;
 
-Distance::Distance(int kmer, double threshold, int step_size) {
-    this->k = kmer;
-    this->thrs = threshold;
-    this->step = step_size;
-}
-
 bool Distance::compare(const Seq& s, const Seq& t) {
     return distance(s, t) >= thrs;
 }
@@ -112,39 +106,6 @@ double Distance::distance(const Seq& s, const Seq& t) {
 
     delete[] kmers;
     return jaccard_dist;
-}
-
-vector<int> Distance::compute_key(const Seq& s, int n) {
-    const size_t slen = s.length;
-    uint8_t *data = s.data;
-
-    // initialize zero filled vector of length equal to
-    // the number of different k-mers (4^k)
-    static const size_t kmer_count = pow(4, k);
-    vector<int> kmers;
-    kmers.resize(kmer_count);
-
-    static const uint32_t k2 = 2 * k;
-    static const uint32_t mask = pow(2, k2) - 1; // 0b001111 (2*k 1's)
-
-    // count kmers in the sequence
-    for (size_t i = 0; i <= slen - k; ++i) {
-        uint32_t kmer = 0; // binary repr. of kmer
-
-        kmer = stream2int(data + (i/4));
-        kmer >>= (32 - 2*(i % 4) - k2);
-        kmer &= mask;
-
-        ++kmers[kmer];
-    }
-
-    vector<int> ret;
-    ret.resize(n);
-
-    partial_sort_copy(kmers.begin(), kmers.end(),
-            ret.begin(), ret.end(), greater<int>());
-
-    return ret;
 }
 
 double Distance::levenshtein(const string& s, const string& t) {

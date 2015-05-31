@@ -123,6 +123,7 @@ uint32_t Seq::substr(size_t pos, size_t len) const {
            (uint32_t) data[index+2] <<  8 |
            (uint32_t) data[index+3];
 
+    // right shift k-mer to least significant byte (i.e. lowest possible value)
     kmer >>= (32 - 2*(pos % 4) - k2);
     kmer &= mask;
 

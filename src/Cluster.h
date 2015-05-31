@@ -86,6 +86,12 @@ class Cluster
          * Merge two vectors of centroids and store the result in the first vector.
          */
         void merge(std::list<Centroid>& res, const std::list<Centroid>& c1);
+
+        /**
+         * Given a sequence, return the uint32_t representations of up to the n
+         * most frequent k-mers or as many as exists.
+         */
+        std::vector<uint32_t> most_frequent_kmers(const Seq& s, int n);
 };
 
 #endif
