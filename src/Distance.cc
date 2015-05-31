@@ -13,12 +13,6 @@
 
 using namespace std;
 
-Distance::Distance(int kmer, double threshold, int step_size) {
-    this->k = kmer;
-    this->thrs = threshold;
-    this->step = step_size;
-}
-
 bool Distance::compare(const Seq& s, const Seq& t) {
     return distance(s, t) >= thrs;
 }

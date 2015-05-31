@@ -9,9 +9,19 @@
 class Distance
 {
     public:
-        Distance(int kmer, double threshold, int step_size);
+        Distance(int kmer, double threshold, int step_size)
+            : k {kmer}, thrs {threshold}, step {step_size} {}
 
+        /**
+         * Compare two Seqs and return true if their similarity is greater than
+         * or equal to the threshold similarity.
+         */
         bool compare(const Seq& s, const Seq& t);
+
+        /**
+         * Calculate the k-mer based similarity between the two given Seqs.
+         * Return a value in the interval [0,1].
+         */
         double distance(const Seq& s, const Seq& t);
 
         /**
@@ -23,12 +33,6 @@ class Distance
         double levenshtein(const std::string& s, const std::string& t);
 
         double levenshtein_window(const std::string& s, const std::string& t);
-
-        std::set<std::string> kmers(const Seq& s);
-
-        void printDistMatrix(const char* filename, int count);
-
-        void jac_printDistMatrix(const char* filename, int count);
 
         inline double threshold() { return thrs; }
 
