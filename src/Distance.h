@@ -14,12 +14,6 @@ class Distance
         bool compare(const Seq& s, const Seq& t);
         double distance(const Seq& s, const Seq& t);
 
-        /**
-         * Given a sequence, return the int representations of up to the n most
-         * frequent k-mers, if they exist.
-         */
-        std::vector<int> compute_key(const Seq& s, int n);
-
         double levenshtein(const std::string& s, const std::string& t);
 
         double levenshtein_window(const std::string& s, const std::string& t);
@@ -30,8 +24,20 @@ class Distance
 
         void jac_printDistMatrix(const char* filename, int count);
 
+        /**
+         * Return the threshold.
+         */
         inline double threshold() { return thrs; }
 
+        /**
+         * Return the value for the distance parameter k.
+         */
+        inline int kmer() { return k; }
+
+        /**
+         * Given a pointer to an array of uint8_t, extract a uint32_t
+         * containing the bytes from four uint8_t in a row.
+         */
         static inline uint32_t stream2int(const uint8_t *stream) {
             return (((uint32_t) stream[0]) << 24 |
                     ((uint32_t) stream[1]) << 16 |
