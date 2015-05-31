@@ -47,13 +47,6 @@ int Cluster::simple_clust(const vector<Seq>& seqs, ofstream& fs_centroids,
             Seq& target = centroids[kmer];
 
             if (dist.compare(s, target)) {
-                // write s belongs to centroids[i] to fs_clusters
-                /*fs_clusters << "H " << setw(6) << t_it - cts_index.cbegin() << " "
-                            << setw(10) << setprecision(5) << fixed << d << " "
-                            << (*q_it).desc << " " << seqs[*t_it].desc << "\n";
-                fs_clusters << (*q_it).to_string() << " "
-                            << target.to_string()  << '\n';*/
-
                 match = true; // found cluster
                 break;
             }
@@ -292,13 +285,9 @@ vector<uint32_t> Cluster::most_frequent_kmers(const Seq& s, int n) {
 
     // initialize vector and resize to number of most freq kmers requested
     vector<uint32_t> ret;
-    ret.resize(n);
 
     for (auto& x : kmers)
         ret.push_back(x.first);
-
-    /*transform(kmers.cbegin(), kmers.cend(), back_inserter(ret),
-        [](const pair<uint32_t,int>& e) { return p.first; });*/
 
     return ret;
 }
