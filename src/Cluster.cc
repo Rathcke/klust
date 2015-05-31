@@ -1,9 +1,11 @@
 #include <algorithm>
 #include <cmath>
 #include <fstream>
+#include <functional>
 #include <iomanip>
 #include <iostream>
 #include <list>
+#include <map>
 #include <queue>
 #include <set>
 #include <stdexcept>
@@ -277,41 +279,26 @@ void Cluster::merge(list<Centroid>& res, const list<Centroid>& c1) {
 }
 
 vector<uint32_t> Cluster::most_frequent_kmers(const Seq& s, int n) {
+
     static const int k = dist.kmer(); // value for k from Distance object
-
     const size_t slen = s.length;
-    uint8_t *data = s.data;
 
-    // initialize zero filled vector of length equal to
-    // the number of different k-mers (4^k)
-    static const size_t kmer_count = pow(4, k);
-    vector<pair<uint32_t,int>> kmers;
-    kmers.resize(kmer_count);
-
-    static const uint32_t k2 = 2 * k;
-    static const uint32_t mask = pow(2, k2) - 1; // 0b001111 (2*k 1's)
+    // map from uint32_t representation of k-mer to number of occurrences
+    map<uint32_t, int, greater<uint32_t>>kmers;
 
     // count kmers in the sequence
-    for (size_t i = 0; i <= slen - k; ++i) {
-        uint32_t kmer = 0; // binary repr. of kmer
+    for (size_t i = 0; i <= slen - k; ++i)
+        ++kmers[s.substr(i, k)];
 
-        kmer = dist.stream2int(data + (i/4));
-        kmer >>= (32 - 2*(i % 4) - k2);
-        kmer &= mask;
-
-        ++kmers[kmer];
-    }
-
-    sort(kmers.begin(), kmers.end(),
-        [](const pair<uint32_t,int>& l, const pair<uint32_t,int>& r) {
-            return l.second > r.second;
-        });
-
-    vector<int> ret;
+    // initialize vector and resize to number of most freq kmers requested
+    vector<uint32_t> ret;
     ret.resize(n);
 
-    transform(kmer.cbegin(), kmers.cend(), back_inserter(ret),
-        [](const pair<uint32_t,int>& e) { return p.first; });
+    for (auto& x : kmers)
+        ret.push_back(x.first);
+
+    /*transform(kmers.cbegin(), kmers.cend(), back_inserter(ret),
+        [](const pair<uint32_t,int>& e) { return p.first; });*/
 
     return ret;
 }
