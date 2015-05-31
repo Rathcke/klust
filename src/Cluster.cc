@@ -141,18 +141,15 @@ void Cluster::kmer_select_clust(vector<Seq>::const_iterator begin,
     const size_t seqs_size = distance(begin, end);
     unsigned int centroid_count = 0;
 
-    // DEBUG
-    vector<int> rejects_counts, tries_counts, false_negatives_counts;
-    int not_try_count = 0, found_centroid = 0, reached_max_rejects = 0;
+    // DEBUG    
+    int total = 0, try_count = 0, reached_max_rejects = 0, 
+        false_negatives = 0, total_rejects = 0;
 
     for (auto q_it = begin; q_it != end; ++q_it) {
         cout << "\r" << 100 * (q_it - begin) / seqs_size << "%";
 
         bool match = false;
         int rejects = 0;    // number of unsuccessful compares so far
-
-        // DEBUG
-        int try_count = 0, false_negative_count = 0;
 
         // bitset of kmers occuring in query sequence
         bitset<KMER_BITSET> q_bitset(0);
@@ -167,6 +164,7 @@ void Cluster::kmer_select_clust(vector<Seq>::const_iterator begin,
             // count number of kmers occurring in both query and target sequence
             size_t set_bits = (q_bitset & c_it->bits).count();
 
+            ++total;
             // if the # of distinct kmers in both query and target is >= to
             // id times the # of distinct kmers in the target, then compare
             if (set_bits >= c_it->count * dist.threshold()) {
@@ -188,14 +186,14 @@ void Cluster::kmer_select_clust(vector<Seq>::const_iterator begin,
                     }
                 }
                 ++rejects;
+                ++total_rejects;
                 close_match = &(*c_it);
             }
             // DEBUG
             else {
-                ++not_try_count;
                 if (dist.compare(*q_it, c_it->seq) ||
                     (c_it->link && dist.compare(*q_it, c_it->link->seq)))
-                    ++false_negative_count;
+                    ++false_negatives;
             }
         }
 
@@ -206,37 +204,19 @@ void Cluster::kmer_select_clust(vector<Seq>::const_iterator begin,
             if (close_match)
                 cts.front().link = close_match;
         }
-        // DEBUG
-        else
-            ++found_centroid;
 
         // DEBUG
         if (!match && rejects == max_rejects)
             ++reached_max_rejects;
-
-        // DEBUG
-        rejects_counts.push_back(rejects);
-        tries_counts.push_back(try_count);
-        false_negatives_counts.push_back(false_negative_count);
+        
     }
     cout << "\r100%";
 
-    // DEBUG
-    double avg_rejects = accumulate(rejects_counts.cbegin(),
-            rejects_counts.cend(), 0.0) / rejects_counts.size();
-    double avg_tries = accumulate(tries_counts.cbegin(),
-            tries_counts.cend(), 0.0) / tries_counts.size();
-    double total_tries = accumulate(tries_counts.cbegin(),
-            tries_counts.cend(), 0.0);
-    double avg_false_negatives = accumulate(false_negatives_counts.cbegin(),
-            false_negatives_counts.cend(), 0.0) / false_negatives_counts.size();
     cout << '\n'
-         << "avg_rejects         = " << avg_rejects         << '\n'
-         << "avg_tries           = " << avg_tries           << '\n'
-         << "avg_false_negatives = " << avg_false_negatives << '\n'
-         << "found centroid      = " << found_centroid      << '\n'
-         << "try ratio           = " << total_tries/(total_tries+not_try_count) << '\n'
-         << "reached_max_rejects = " << reached_max_rejects << endl;
+         << "reject ratio          = " << (double) total_rejects/try_count << '\n'
+         << "false negative ratio  = " << (double) false_negatives/total   << '\n'
+         << "try ratio             = " << (double) try_count/total         << '\n'
+         << "reached_max_rejects   = " << reached_max_rejects              << endl;
 }
 
 
