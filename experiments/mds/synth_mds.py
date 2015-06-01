@@ -126,10 +126,10 @@ plt.yticks([])
 
 plt.tight_layout()
 
-plt.savefig("MDS_t-SNE_" + sys.argv[1] + "_" + str(count) + ".png",
-        bbox_inches="tight")
+#plt.savefig("MDS_t-SNE_" + sys.argv[1] + "_" + str(count) + ".svg",
+#        bbox_inches="tight")
 
 #plt.savefig("MDS_t-SNE_synth_silva_" + str(count) + ".png", bbox_inches="tight")
 #plt.savefig("MDS_t-SNE_synth_silva_levenshtein" + str(count) + ".png",
 #        bbox_inches="tight")
-#plt.show()
+plt.show()

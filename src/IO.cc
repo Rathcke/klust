@@ -185,8 +185,8 @@ void springy(const list<Centroid>& cts, ofstream& fs) {
           "<body>\n"
           "<script src=\"http://ajax.googleapis.com/ajax/libs/jquery/"
           "1.3.2/jquery.min.js\"></script>\n"
-          "<script src=\"springy.js\"></script>\n"
-          "<script src=\"springyui.js\"></script>\n"
+          "<script src=\"springy/springy.js\"></script>\n"
+          "<script src=\"springy/springyui.js\"></script>\n"
           "<script>\n"
           "var graph = new Springy.Graph();\n\n";
 
