@@ -11,7 +11,7 @@ from sklearn.metrics import euclidean_distances
 from sklearn.decomposition import PCA
 
 # read data
-kmer = np.matrix(np.loadtxt('../../data/k8_distmat'))
+kmer = np.matrix(np.loadtxt('../../data/k5_distmat'))
 lev = np.matrix(np.loadtxt('../../data/lev_distmat'))
 
 # transform into array of upper tringle of matrix
@@ -32,11 +32,14 @@ fig, ax = plt.subplots() #figsize=[5,4])
 
 ax.scatter(kmer_a, lev_a, s=2, c='g', alpha=0.4)
 
-ax.set_xlim(0.00, 1.05)
+#ax.set_xlim(0.00, 1.05)
+#ax.set_ylim(0.02, 1.05)
+
+ax.set_xlim(0.42, 1.05)
 ax.set_ylim(0.02, 1.05)
 
 #plt.suptitle('test title', fontsize=20)
-plt.xlabel('k-mer similarity (k = 8)', fontsize=18)
+plt.xlabel('k-mer similarity (k = 5)', fontsize=18)
 plt.ylabel('Levenshtein similarity', fontsize=18)
 
 # subplot
@@ -52,11 +55,13 @@ mark_inset(ax, axins, loc1=2, loc2=1, fc="none", ec="0.5")
 #axins.axis([0.85,1.01,0.85,1.01])
 axins.xaxis.tick_top()
 
+ax.set_aspect('equal')
+
 #m, b = np.polyfit(kmer_a, lev_a, 1)
 #ax.plot(kmer_a, m*kmer_a + b, '-')
 
 plt.draw()
 plt.show()
 
-#plt.savefig("distance_comparison_k8.png")
+#plt.savefig("distance_comparison_k5.png")
 #plt.show()
