@@ -21,6 +21,28 @@ cd klust/src
 make
 ```
 
+Simply running klust with no arguments will print instructions for usage:
+
+```sh
+$ ./klust
+Usage: ./src/klust <FASTA input file>
+
+Options:
+-o, --centroids file   Output FASTA file for centroids
+-u, --clusters file    Output file for clustering results
+-t, --id t             Set similarity threshold/identity to t (in [0,1])
+-k k                   Set the k in k-mer, used in similarity metric
+-c, --count n          Read and process n sequences
+-d, --sort_decr        Sort sequences by decresing length
+-i, --sort_incr        Sort sequences by increasing length
+-l, --depth d          Set the depth of the tree of divides, i.e.
+                       cluster 2^d subsets of sequences and combine
+-m, --max_rejects x    Max number of rejects when searching for centroid
+-s, --step_size s      Step s characters between k-mers when comparing
+
+--springy file         Generate springy JavaScript code
+```
+
 
 ### Example
 

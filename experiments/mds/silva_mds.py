@@ -168,7 +168,7 @@ plt.ylim(-35.0, 38.0)
 
 plt.tight_layout()
 
-plt.savefig("SILVA_t-SNE_" + str(count) + ".png",
+plt.savefig("SILVA_t-SNE_" + str(count) + ".svg",
         bbox_inches="tight")
 
 #plt.show()
