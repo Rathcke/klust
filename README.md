@@ -25,7 +25,7 @@ Simply running klust with no arguments will print instructions for usage:
 
 ```sh
 $ ./klust
-Usage: ./src/klust <FASTA input file>
+Usage: ./klust <FASTA input file>
 
 Options:
 -o, --centroids file   Output FASTA file for centroids
