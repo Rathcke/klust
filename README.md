@@ -23,7 +23,7 @@ make
 
 Simply running klust with no arguments will print instructions for usage:
 
-```sh
+```
 $ ./klust
 Usage: ./klust <FASTA input file>
 
