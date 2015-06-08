@@ -30,7 +30,6 @@ int main(int argc, char *argv[])
     double thrs = 0.85;
     int count = INT_MAX;
     int max_rejects = 8;
-    int step = 1;
     bool sort_incr = false;
     bool sort_decr = false;
     int depth = 0;
@@ -53,14 +52,13 @@ int main(int argc, char *argv[])
         {"max_rejects", required_argument, 0, 'm'},
         {"sort_decr",   no_argument,       0, 'd'},
         {"sort_incr",   no_argument,       0, 'i'},
-        {"step_size",   required_argument, 0, 's'},
 
         {"springy",     required_argument, 0,  1 },
         {0,             0,                 0,  0 }
     };
 
     int opt, option_index = 0;
-    while ((opt = getopt_long(argc, argv, "c:dik:l:m:o:s:t:u:",
+    while ((opt = getopt_long(argc, argv, "c:dik:l:m:o:t:u:",
                     long_options, &option_index)) != -1) {
         switch (opt) {
             case 'c':
@@ -84,9 +82,6 @@ int main(int argc, char *argv[])
             case 'o':
                 output_centroids = true;
                 centroids_file = optarg;
-                break;
-            case 's':
-                step = atoi(optarg);
                 break;
             case 't':
                 thrs = atof(optarg);
@@ -157,7 +152,7 @@ int main(int argc, char *argv[])
     /*
      * Setting up distance metric
      */
-    Distance dist(k, thrs, step);
+    Distance dist(k, thrs);
 
     /*
      * Reading sequences
@@ -254,7 +249,6 @@ void print_usage(char *argv[]) {
             "-l, --depth d          Set the depth of the tree of divides, i.e.\n"
             "                       cluster 2^d subsets of sequences and combine\n"
             "-m, --max_rejects x    Max number of rejects when searching for centroid\n"
-            "-s, --step_size s      Step s characters between k-mers when comparing\n"
             "\n"
             "--springy file         Generate springy JavaScript code\n"
             "\n"

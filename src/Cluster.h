@@ -76,7 +76,8 @@ class Cluster
          * combine the resulting list of centroids and return in the Centroid
          * list given as argument.
          */
-        int clust(const std::vector<Seq>& seqs, std::list<Centroid>& cts, int depth = 0);
+        int clust(const std::vector<Seq>& seqs, std::list<Centroid>& cts,
+                int depth = 0);
 
     private:
         Distance& dist;

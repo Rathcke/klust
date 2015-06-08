@@ -1,4 +1,4 @@
-CC=g++
+CC=clang++
 CFLAGS=-g -c -Wall -std=c++11 -O3 -march=native -pthread
 LDFLAGS=-pthread
 

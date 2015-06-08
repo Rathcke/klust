@@ -17,35 +17,6 @@ namespace IO {
 
 using namespace std;
 
-int read_seqs2(istream &fs, vector<Seq>& seqs, int count) {
-    if (count != INT_MAX)
-        seqs.reserve(count); // reserve space if sequence count is specified
-
-    string seq, desc;
-
-    int i = 0;
-    while (i < count) {
-        seq.clear();
-        desc.clear();
-
-        if (fs)
-            getline(fs, desc);
-        else
-            break;
-        getline(fs, seq, '>');
-
-        seqs.emplace_back(seq.c_str(), seq.length(), desc);
-        ++i;
-    }
-
-    return seqs.size();
-}
-
-/**
- * Read the specified number of sequences from the given filestream (in FASTA
- * format), construct a Seq object for each sequence and store in the given
- * vector. Return the number of read sequences.
- */
 int read_seqs(ifstream &fs, vector<Seq>& seqs, int count) {
     // replacing internal buffer with a larger one, might speed things up
     //const unsigned int in_buf_size = 1024 * 1024;
@@ -102,10 +73,30 @@ int read_seqs(ifstream &fs, vector<Seq>& seqs, int count) {
     return seqs.size();
 }
 
-/**
- * Read [DR]NA sequence from given filestream in given string.
- * Return true on success and false if there's no more to read.
- */
+int read_seqs2(istream &fs, vector<Seq>& seqs, int count) {
+    if (count != INT_MAX)
+        seqs.reserve(count); // reserve space if sequence count is specified
+
+    string seq, desc;
+
+    int i = 0;
+    while (i < count) {
+        seq.clear();
+        desc.clear();
+
+        if (fs)
+            getline(fs, desc);
+        else
+            break;
+        getline(fs, seq, '>');
+
+        seqs.emplace_back(seq.c_str(), seq.length(), desc);
+        ++i;
+    }
+
+    return seqs.size();
+}
+
 bool read_sequence(ifstream& fs, string& s) {
     string tmp;
     s.clear();
@@ -114,7 +105,7 @@ bool read_sequence(ifstream& fs, string& s) {
     if (tmp.empty())
         return false;
     while (tmp[0] == '>')
-        getline(fs, tmp);                  // ignore '>' line
+        getline(fs, tmp);                       // ignore '>' line
     while (!tmp.empty() && tmp[0] != '>') {     // read until next '>' line
         s += tmp;
         getline(fs, tmp);
@@ -122,9 +113,6 @@ bool read_sequence(ifstream& fs, string& s) {
     return true;
 }
 
-/**
- * Print statistics about clustering result and memory usage.
- */
 void print_stats(const vector<Seq>& seqs, const list<Centroid>& cts) {
     vector<size_t> cluster_sizes;
     for (auto& c : cts)
@@ -148,10 +136,6 @@ void print_stats(const vector<Seq>& seqs, const list<Centroid>& cts) {
         cout << "Max mem:    " << usage.ru_maxrss / 1024 << " MB" << endl;
 }
 
-/**
- * Given a list of Centroid structs, write centroids in FASTA format
- * to the given file stream.
- */
 void write_centroids(const list<Centroid>& cts, ofstream& fs_centroids) {
     for (auto& c : cts) {
         // write FASTA format to centroids file
@@ -160,10 +144,6 @@ void write_centroids(const list<Centroid>& cts, ofstream& fs_centroids) {
     }
 }
 
-/**
- * Given a list of Centroid structs, write clustering results to the given file
- * stream in a format inspired by UCLUST's .uc format.
- */
 void write_clusters(const list<Centroid>& cts, ofstream& fs_clusters) {
     for (auto& c : cts) {
         // write centroid entry to clusters file
@@ -177,7 +157,6 @@ void write_clusters(const list<Centroid>& cts, ofstream& fs_clusters) {
         }
     }
 }
-
 
 void springy(const list<Centroid>& cts, ofstream& fs) {
 

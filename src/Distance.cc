@@ -141,39 +141,3 @@ double Distance::levenshtein(const string& s, const string& t) {
         return (double)(slen - col[slen]) / (double)slen;
     //return col[slen];
 }
-
-double Distance::levenshtein_window(const string& s, const string& t) {
-    int slen = s.length();
-    int tlen = t.length();
-
-    string shorter, longer;
-    int short_len, long_len;
-    double min_dist = 0;
-    double cur_dist;
-
-    if (slen <= tlen) {
-        shorter = s;
-        short_len = slen;
-        longer = t;
-        long_len = tlen;
-    } else {
-        shorter = t;
-        short_len = tlen;
-        longer = s;
-        long_len = slen;
-    }
-
-    int win_size = short_len;
-    int windows = long_len - short_len;
-
-    if (windows == 0) {
-        return levenshtein(s, t);
-    }
-
-    for (int i = 0; i < windows; i++) {
-        cur_dist = levenshtein(shorter, longer.substr(i, win_size));
-        min_dist = max(min_dist, cur_dist);
-    }
-
-    return min_dist;
-}

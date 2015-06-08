@@ -111,7 +111,7 @@ string Seq::to_string() const {
  * current sequence object and of the given length.
  */
 uint32_t Seq::substr(size_t pos, size_t len) const {
-    static const int kmer_count = pow(4, len);  // TODO: don't do this for every Seq object
+    static const int kmer_count = pow(4, len);
     static const uint32_t k2 = 2 * len;
     static const uint32_t mask = kmer_count - 1; // 0b001111 (2*k 1's)
 

@@ -9,8 +9,8 @@
 class Distance
 {
     public:
-        Distance(int kmer, double threshold, int step_size)
-            : k {kmer}, thrs {threshold}, step {step_size} {}
+        Distance(int kmer, double threshold)
+            : k {kmer}, thrs {threshold} {}
 
         /**
          * Compare two Seqs and return true if their similarity is greater than
@@ -24,9 +24,11 @@ class Distance
          */
         double distance(const Seq& s, const Seq& t);
 
+        /**
+         * Returns the Levenshtein distance between the two given strings.
+         * Uses a bottom-up dynamic programming algorithm.
+         */
         double levenshtein(const std::string& s, const std::string& t);
-
-        double levenshtein_window(const std::string& s, const std::string& t);
 
         /**
          * Return the threshold.
@@ -52,7 +54,6 @@ class Distance
     private:
         int k;          // k in k-mer (word length)
         double thrs;    // threshold
-        int step;
 };
 
 #endif

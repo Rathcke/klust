@@ -38,7 +38,6 @@ Options:
 -l, --depth d          Set the depth of the tree of divides, i.e.
                        cluster 2^d subsets of sequences and combine
 -m, --max_rejects x    Max number of rejects when searching for centroid
--s, --step_size s      Step s characters between k-mers when comparing
 
 --springy file         Generate springy JavaScript code
 ```
