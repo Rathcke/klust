@@ -131,9 +131,16 @@ void print_stats(const vector<Seq>& seqs, const list<Centroid>& cts) {
          << "Min size:   " << min_size        << '\n'
          << "Singletons: " << singletons      << '\n';
 
+    // print maximum memory usage of process (including threads) if available
     struct rusage usage;
-    if(getrusage(RUSAGE_SELF, &usage) == 0)
-        cout << "Max mem:    " << usage.ru_maxrss / 1024 << " MB" << endl;
+    if (getrusage(RUSAGE_SELF, &usage) == 0) {
+        size_t max_mem_used = usage.ru_maxrss;  // in kilobytes on Linux
+        #ifdef __APPLE__
+            // on OS X ru_maxrss is in bytes
+            max_mem_used /= 1024;
+        #endif
+        cout << "Max mem:    " << max_mem_used / 1024 << " MB" << endl;
+    }
 }
 
 void write_centroids(const list<Centroid>& cts, ofstream& fs_centroids) {
